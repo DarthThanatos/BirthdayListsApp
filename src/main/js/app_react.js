@@ -69,8 +69,6 @@ class App extends React.Component {
 	}
 
 	render() {
-		console.log(this.state)
-
 		var sectionStyle = {
           width: "85%",
           height: "100%",
@@ -78,7 +76,6 @@ class App extends React.Component {
           marginRight: "auto",
 
         }
-
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
@@ -114,6 +111,27 @@ class Header extends React.Component{
 }
 
 class Footer extends React.Component{
+    render(){
+		var sectionStyle = {
+             width: "1200px",
+             border: ".1px solid #0066cc",
+             height: "200px"
+        }
+        return(
+            <div style={sectionStyle}>
+                <br/>
+                <div style={{marginLeft:"15px", height: "25px", width: "1200px", textAlign:"left", fontWeight: "bold", fontSize:"25px"}}>Prezenty</div>
+                <br/>
+                <div style={{marginLeft:"15px", height: "25px", width: "1200px", textAlign:"left", fontSize:"17px"}}> Aby wygodnie publikować swoje listy prezentów, już nie musisz szukać dalej</div>
+                <br/>
+                <div style={{height: "25px", width: "1200px", textAlign:"center", fontSize:"17px", fontWeight: "bold"}}>Znajdz nas na:</div>
+                <ServicesIcons/>
+            </div>
+        )
+    }
+}
+
+class ServicesIcons extends React.Component{
 
     fbClicked(){
         console.log("Fb was clicked")
@@ -121,9 +139,6 @@ class Footer extends React.Component{
 
     render(){
         var sectionStyle={
-             width: "1200px",
-             border: ".1px solid #0066cc",
-             height: "150px",
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
@@ -131,7 +146,11 @@ class Footer extends React.Component{
         }
         return (
             <div style={sectionStyle}>
-                <button style={{borderRadius: "12px", display: "flex", flexDirection: "row", alignItems: "center", height: "75px"}} onClick={this.fbClicked}> <img src="fb.png" style={{marginLeft:"15px", marginRight:"15px"}}/> </button>
+
+                <button style={{borderRadius: "12px", display: "flex", flexDirection: "row", alignItems: "center", height: "75px"}} onClick={this.fbClicked}>
+                    <img src="fb.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
+                 </button>
+
                 <img src="service.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
                 <img src="google.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
                 <img src="pinterest.png" style={{marginLeft:"15px", marginRight:"15px"}}/>

@@ -139,8 +139,6 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            console.log(this.state);
-	
 	            var sectionStyle = {
 	                width: "85%",
 	                height: "100%",
@@ -148,7 +146,6 @@
 	                marginRight: "auto"
 	
 	            };
-	
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
@@ -219,6 +216,52 @@
 	    }
 	
 	    _createClass(Footer, [{
+	        key: 'render',
+	        value: function render() {
+	            var sectionStyle = {
+	                width: "1200px",
+	                border: ".1px solid #0066cc",
+	                height: "200px"
+	            };
+	            return React.createElement(
+	                'div',
+	                { style: sectionStyle },
+	                React.createElement('br', null),
+	                React.createElement(
+	                    'div',
+	                    { style: { marginLeft: "15px", height: "25px", width: "1200px", textAlign: "left", fontWeight: "bold", fontSize: "25px" } },
+	                    'Prezenty'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement(
+	                    'div',
+	                    { style: { marginLeft: "15px", height: "25px", width: "1200px", textAlign: "left", fontSize: "17px" } },
+	                    ' Aby wygodnie publikowa\u0107 swoje listy prezent\xF3w, ju\u017C nie musisz szuka\u0107 dalej'
+	                ),
+	                React.createElement('br', null),
+	                React.createElement(
+	                    'div',
+	                    { style: { height: "25px", width: "1200px", textAlign: "center", fontSize: "17px", fontWeight: "bold" } },
+	                    'Znajdz nas na:'
+	                ),
+	                React.createElement(ServicesIcons, null)
+	            );
+	        }
+	    }]);
+	
+	    return Footer;
+	}(React.Component);
+	
+	var ServicesIcons = function (_React$Component4) {
+	    _inherits(ServicesIcons, _React$Component4);
+	
+	    function ServicesIcons() {
+	        _classCallCheck(this, ServicesIcons);
+	
+	        return _possibleConstructorReturn(this, (ServicesIcons.__proto__ || Object.getPrototypeOf(ServicesIcons)).apply(this, arguments));
+	    }
+	
+	    _createClass(ServicesIcons, [{
 	        key: 'fbClicked',
 	        value: function fbClicked() {
 	            console.log("Fb was clicked");
@@ -227,9 +270,6 @@
 	        key: 'render',
 	        value: function render() {
 	            var sectionStyle = {
-	                width: "1200px",
-	                border: ".1px solid #0066cc",
-	                height: "150px",
 	                display: "flex",
 	                flexDirection: "row",
 	                justifyContent: "center",
@@ -241,9 +281,7 @@
 	                React.createElement(
 	                    'button',
 	                    { style: { borderRadius: "12px", display: "flex", flexDirection: "row", alignItems: "center", height: "75px" }, onClick: this.fbClicked },
-	                    ' ',
-	                    React.createElement('img', { src: 'fb.png', style: { marginLeft: "15px", marginRight: "15px" } }),
-	                    ' '
+	                    React.createElement('img', { src: 'fb.png', style: { marginLeft: "15px", marginRight: "15px" } })
 	                ),
 	                React.createElement('img', { src: 'service.png', style: { marginLeft: "15px", marginRight: "15px" } }),
 	                React.createElement('img', { src: 'google.png', style: { marginLeft: "15px", marginRight: "15px" } }),
@@ -253,11 +291,11 @@
 	        }
 	    }]);
 	
-	    return Footer;
+	    return ServicesIcons;
 	}(React.Component);
 	
-	var Center = function (_React$Component4) {
-	    _inherits(Center, _React$Component4);
+	var Center = function (_React$Component5) {
+	    _inherits(Center, _React$Component5);
 	
 	    function Center() {
 	        _classCallCheck(this, Center);
@@ -290,8 +328,8 @@
 	    return Center;
 	}(React.Component);
 	
-	var ListSquare = function (_React$Component5) {
-	    _inherits(ListSquare, _React$Component5);
+	var ListSquare = function (_React$Component6) {
+	    _inherits(ListSquare, _React$Component6);
 	
 	    function ListSquare() {
 	        _classCallCheck(this, ListSquare);
@@ -315,8 +353,8 @@
 	    return ListSquare;
 	}(React.Component);
 	
-	var GuestApp = function (_React$Component6) {
-	    _inherits(GuestApp, _React$Component6);
+	var GuestApp = function (_React$Component7) {
+	    _inherits(GuestApp, _React$Component7);
 	
 	    function GuestApp() {
 	        _classCallCheck(this, GuestApp);
