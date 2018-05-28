@@ -175,7 +175,6 @@ class ListSquare extends React.Component{
          }
         return (
             <div style={sectionStyle}>
-                <p> Hello </p>
             </div>
         )
     }
