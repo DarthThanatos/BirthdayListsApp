@@ -1,4 +1,5 @@
 'use strict';
+import SearchBar from 'material-ui-search-bar'
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -190,11 +191,100 @@ class ListSquare extends React.Component{
             width: "1000px",
             height: "800px",
             background: "white",
-            opacity: 0.7
+            opacity: 0.9
          }
         return (
             <div style={sectionStyle}>
+                <ListSquareHeader/>
+                <ListSquareMainBody/>
             </div>
+        )
+    }
+}
+
+class ListSquareHeader extends React.Component{
+    render(){
+        var sectionStyle = {
+             width: "1000px",
+             border: ".1px solid #0066cc",
+             height: "200px"
+        }
+        return(
+            <div style={sectionStyle}>
+                <br/>
+                <div style={{height: "25px", width: "1000px", textAlign:"center", fontWeight: "bold", fontSize:"25px"}}> 19 urodzinki</div>
+                <div style={{height: "25px", width: "1000px", textAlign:"center", fontSize:"17px"}}> 20 maja 2018 (za 5 dni)</div>
+                <SearchBarComponent/>
+                <ListSquareNavigationButtons/>
+            </div>
+        )
+    }
+}
+
+
+class SearchBarComponent extends React.Component{
+    render(){
+        return(
+            <div style={{width: "100%",  display: "flex", justifyContent:"center"}}>
+                <div style={{border: ".1px solid #000000", height:"60px", width: "80%", display: "flex", flexDirection: "row", alignItems: "center",}}>
+                    <SearchBar
+                      onChange={() => console.log('onChange')}
+                      onRequestSearch={() => console.log('onRequestSearch')}
+                      style={{
+                        margin: '0 auto',
+                        backgroundColor: 'rgb(255,240,240)',
+                        width: "98%"
+                      }}
+                    />
+                </div>
+            </div>
+        )
+    }
+
+}
+
+class ListSquareNavigationButtons extends React.Component{
+
+    all(){
+        console.log("Clicked select all presents button")
+    }
+
+    reserved(){
+        console.log("Clicked select reserved presents button")
+    }
+
+    notReserved(){
+        console.log("Clicked select not reserved presents button")
+    }
+
+    render(){
+        var sectionStyle={
+            width:"100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: 'flex-start',
+            marginLeft:"10%"
+        }
+        return (
+            <div style={sectionStyle}>
+                <button style={{borderRadius: "12px", height: "75px"}} onClick={this.all}>Wszystkie(15)</button>
+                <button style={{borderRadius: "12px", height: "75px"}} onClick={this.notReserved}>Niezarezerwowane(10)</button>
+                <button style={{borderRadius: "12px", height: "75px"}} onClick={this.reserved}>Zarezerwowane(5)</button>
+            </div>
+        )
+    }
+}
+
+class ListSquareMainBody extends React.Component{
+    render(){
+        var sectionStyle = {
+             width: "1000px",
+             border: ".1px solid #0066cc",
+             height: "600px"
+        }
+        return(
+            <div style={sectionStyle}></div>
         )
     }
 }
