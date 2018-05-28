@@ -10,4 +10,10 @@ public class ReactController {
     public String homeReact(){
         return "index_react";
     }
+
+
+    @GetMapping("/react_guest")
+    public String guestHomeReact(){
+        return "index_react_guest";
+    }
 }

@@ -9,7 +9,9 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {employees: []};
+		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo"};
+		console.log("state: " )
+		console.log(this.state)
 	}
 
     registerMockedUser() {
@@ -67,16 +69,30 @@ class App extends React.Component {
 	}
 
 	render() {
-		return (
-			<p>
-				{this.state.token}
-			</p>
-		)
+		console.log(this.state)
+		return ( <p> {this.state.token}</p> )
 	}
 }
 
-ReactDOM.render(
-	<App />,
-	document.getElementById('react')
-)
+class GuestApp extends React.Component{
+
+	render() {
+		return ( <p>Hello Guest</p> )
+	}
+}
+
+try{
+    ReactDOM.render(
+        <App />,
+        document.getElementById('react')
+    )
+}catch(e){ console.log("not found element: react")}
+
+try {
+
+    ReactDOM.render(
+        <GuestApp />,
+        document.getElementById('react_guest')
+    )
+}catch(e){console.log("not found element: react_guest")}
 

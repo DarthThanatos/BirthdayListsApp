@@ -63,92 +63,130 @@
 	var follow = __webpack_require__(/*! ./follow */ 232);
 	
 	var App = function (_React$Component) {
-		_inherits(App, _React$Component);
+					_inherits(App, _React$Component);
 	
-		function App(props) {
-			_classCallCheck(this, App);
+					function App(props) {
+									_classCallCheck(this, App);
 	
-			var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+									var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-			_this.state = { employees: [] };
-			return _this;
-		}
-	
-		_createClass(App, [{
-			key: 'registerMockedUser',
-			value: function registerMockedUser() {
-				var _this2 = this;
-	
-				client({ method: 'POST', path: '/auth/register', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
-					console.log(response);
-					_this2.printToken();
-				}, function (response) {
-					console.log("invalid registering of mocked user");
-					_this2.printToken(); //we are going to log in anyway
-				});
-			}
-		}, {
-			key: 'printToken',
-			value: function printToken() {
-				var _this3 = this;
-	
-				client({ method: 'POST', path: '/auth/login', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
-					console.log(response);
-					_this3.setState({ token: response.entity.token });
-					_this3.postWishList(response.entity.token);
-				});
-			}
-		}, {
-			key: 'postWishList',
-			value: function postWishList(token) {
-				var _this4 = this;
-	
-				console.log("token: " + token);
-				client({
-					method: 'POST',
-					path: '/api/list',
-					entity: {
-						listName: "19 urodzinki",
-						suggestions: true,
-						inform: false,
-						color: 'red'
-					},
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': "bearer " + token
+									_this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo" };
+									console.log("state: ");
+									console.log(_this.state);
+									return _this;
 					}
-				}).done(function (response) {
-					console.log(response);
-					_this4.getAllLists(token);
-				});
-			}
-		}, {
-			key: 'getAllLists',
-			value: function getAllLists(token) {
-				client({ method: 'GET', path: '/api/list', headers: { 'Authorization': "bearer " + token } }).done(function (response) {
-					console.log(response);
-				});
-			}
-		}, {
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				this.registerMockedUser();
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				return React.createElement(
-					'p',
-					null,
-					this.state.token
-				);
-			}
-		}]);
 	
-		return App;
+					_createClass(App, [{
+									key: 'registerMockedUser',
+									value: function registerMockedUser() {
+													var _this2 = this;
+	
+													client({ method: 'POST', path: '/auth/register', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+																	console.log(response);
+																	_this2.printToken();
+													}, function (response) {
+																	console.log("invalid registering of mocked user");
+																	_this2.printToken(); //we are going to log in anyway
+													});
+									}
+					}, {
+									key: 'printToken',
+									value: function printToken() {
+													var _this3 = this;
+	
+													client({ method: 'POST', path: '/auth/login', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+																	console.log(response);
+																	_this3.setState({ token: response.entity.token });
+																	_this3.postWishList(response.entity.token);
+													});
+									}
+					}, {
+									key: 'postWishList',
+									value: function postWishList(token) {
+													var _this4 = this;
+	
+													console.log("token: " + token);
+													client({
+																	method: 'POST',
+																	path: '/api/list',
+																	entity: {
+																					listName: "19 urodzinki",
+																					suggestions: true,
+																					inform: false,
+																					color: 'red'
+																	},
+																	headers: {
+																					'Content-Type': 'application/json',
+																					'Authorization': "bearer " + token
+																	}
+													}).done(function (response) {
+																	console.log(response);
+																	_this4.getAllLists(token);
+													});
+									}
+					}, {
+									key: 'getAllLists',
+									value: function getAllLists(token) {
+													client({ method: 'GET', path: '/api/list', headers: { 'Authorization': "bearer " + token } }).done(function (response) {
+																	console.log(response);
+													});
+									}
+					}, {
+									key: 'componentDidMount',
+									value: function componentDidMount() {
+													this.registerMockedUser();
+									}
+					}, {
+									key: 'render',
+									value: function render() {
+													console.log(this.state);
+													return React.createElement(
+																	'p',
+																	null,
+																	' ',
+																	this.state.token
+													);
+									}
+					}]);
+	
+					return App;
 	}(React.Component);
 	
-	ReactDOM.render(React.createElement(App, null), document.getElementById('react'));
+	var GuestApp = function (_React$Component2) {
+					_inherits(GuestApp, _React$Component2);
+	
+					function GuestApp() {
+									_classCallCheck(this, GuestApp);
+	
+									return _possibleConstructorReturn(this, (GuestApp.__proto__ || Object.getPrototypeOf(GuestApp)).apply(this, arguments));
+					}
+	
+					_createClass(GuestApp, [{
+									key: 'render',
+									value: function render() {
+													return React.createElement(
+																	'p',
+																	null,
+																	'Hello Guest'
+													);
+									}
+					}]);
+	
+					return GuestApp;
+	}(React.Component);
+	
+	try {
+					ReactDOM.render(React.createElement(App, null), document.getElementById('react'));
+	} catch (e) {
+					console.log("not found element: react");
+	}
+	
+	try {
+	
+					ReactDOM.render(React.createElement(GuestApp, null), document.getElementById('react_guest'));
+	} catch (e) {
+					console.log("not found element: react_guest");
+	}
 
 /***/ }),
 /* 1 */
