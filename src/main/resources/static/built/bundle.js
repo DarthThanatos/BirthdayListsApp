@@ -70,7 +70,7 @@
 	
 									var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-									_this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo" };
+									_this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo2" };
 									console.log("state: ");
 									console.log(_this.state);
 									return _this;
@@ -140,16 +140,19 @@
 									key: 'render',
 									value: function render() {
 													console.log(this.state);
+	
+													var sectionStyle = {
+																	width: "1100px",
+																	height: "800px",
+																	backgroundImage: "url(background_transparent.png)",
+																	align: "center"
+													};
+	
 													return React.createElement(
 																	'div',
-																	null,
-																	React.createElement(
-																					'p',
-																					null,
-																					' ',
-																					this.state.token
-																	),
-																	React.createElement('img', { src: 'background_transparent.png', alt: 'birthday party image' })
+																	{ style: sectionStyle },
+																	React.createElement(Center, null),
+																	this.state.token
 													);
 									}
 					}]);
@@ -157,8 +160,41 @@
 					return App;
 	}(React.Component);
 	
-	var GuestApp = function (_React$Component2) {
-					_inherits(GuestApp, _React$Component2);
+	var Center = function (_React$Component2) {
+					_inherits(Center, _React$Component2);
+	
+					function Center() {
+									_classCallCheck(this, Center);
+	
+									return _possibleConstructorReturn(this, (Center.__proto__ || Object.getPrototypeOf(Center)).apply(this, arguments));
+					}
+	
+					_createClass(Center, [{
+									key: 'render',
+									value: function render() {
+													console.log("center");
+													var sectionStyle = {
+																	width: "500px",
+																	height: "500px",
+																	background: "white"
+													};
+													return React.createElement(
+																	'div',
+																	{ style: sectionStyle },
+																	React.createElement(
+																					'p',
+																					null,
+																					' Hello '
+																	)
+													);
+									}
+					}]);
+	
+					return Center;
+	}(React.Component);
+	
+	var GuestApp = function (_React$Component3) {
+					_inherits(GuestApp, _React$Component3);
 	
 					function GuestApp() {
 									_classCallCheck(this, GuestApp);
@@ -170,9 +206,14 @@
 									key: 'render',
 									value: function render() {
 													return React.createElement(
-																	'p',
+																	'div',
 																	null,
-																	'Hello Guest'
+																	React.createElement(
+																					'p',
+																					null,
+																					'Hello Guest'
+																	),
+																	React.createElement('img', { src: 'background_transparent.png', alt: 'birthday party image' })
 													);
 									}
 					}]);
@@ -23396,7 +23437,7 @@
   \***************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
 	/** @author Brian Cavalier */
 	/** @author John Hann */
 	

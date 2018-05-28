@@ -9,7 +9,7 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo"};
+		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo2"};
 		console.log("state: " )
 		console.log(this.state)
 	}
@@ -70,23 +70,52 @@ class App extends React.Component {
 
 	render() {
 		console.log(this.state)
+
+		var sectionStyle = {
+          width: "1100px",
+          height: "800px",
+          backgroundImage: "url(background_transparent.png)",
+          align: "center"
+        };
+
 		return (
-		    <div>
-		        <p> {this.state.token}</p>
-		        <img src="background_transparent.png" alt="birthday party image"/>
+		    <div style={sectionStyle}>
+		        <Center/>
+		        {this.state.token}
 		    </div>
 
 		 )
 	}
 }
 
+class Center extends React.Component{
+
+    render(){
+        console.log("center")
+        var sectionStyle = {
+          width: "500px",
+          height: "500px",
+          background: "white"
+        };
+        return(
+             <div style={sectionStyle}>
+                <p> Hello </p>
+             </div>
+        );
+    }
+}
+
 class GuestApp extends React.Component{
 
 	render() {
-		return ( <p>Hello Guest</p> )
-	}
+		return (
+             <div>
+                <p>Hello Guest</p>
+		        <img src="background_transparent.png" alt="birthday party image"/>
+             </div>
+		 );
+    }
 }
-
 try{
     ReactDOM.render(
         <App  />,
@@ -101,4 +130,3 @@ try {
         document.getElementById('react_guest')
     )
 }catch(e){console.log("not found element: react_guest")}
-
