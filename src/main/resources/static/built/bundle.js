@@ -63,175 +63,252 @@
 	var follow = __webpack_require__(/*! ./follow */ 232);
 	
 	var App = function (_React$Component) {
-					_inherits(App, _React$Component);
+	    _inherits(App, _React$Component);
 	
-					function App(props) {
-									_classCallCheck(this, App);
+	    function App(props) {
+	        _classCallCheck(this, App);
 	
-									var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-									_this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo2" };
-									console.log("state: ");
-									console.log(_this.state);
-									return _this;
-					}
+	        _this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3" };
+	        console.log("state: ");
+	        console.log(_this.state);
+	        return _this;
+	    }
 	
-					_createClass(App, [{
-									key: 'registerMockedUser',
-									value: function registerMockedUser() {
-													var _this2 = this;
+	    _createClass(App, [{
+	        key: 'registerMockedUser',
+	        value: function registerMockedUser() {
+	            var _this2 = this;
 	
-													client({ method: 'POST', path: '/auth/register', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
-																	console.log(response);
-																	_this2.printToken();
-													}, function (response) {
-																	console.log("invalid registering of mocked user");
-																	_this2.printToken(); //we are going to log in anyway
-													});
-									}
-					}, {
-									key: 'printToken',
-									value: function printToken() {
-													var _this3 = this;
+	            client({ method: 'POST', path: '/auth/register', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+	                console.log(response);
+	                _this2.printToken();
+	            }, function (response) {
+	                console.log("invalid registering of mocked user");
+	                _this2.printToken(); //we are going to log in anyway
+	            });
+	        }
+	    }, {
+	        key: 'printToken',
+	        value: function printToken() {
+	            var _this3 = this;
 	
-													client({ method: 'POST', path: '/auth/login', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
-																	console.log(response);
-																	_this3.setState({ token: response.entity.token });
-																	_this3.postWishList(response.entity.token);
-													});
-									}
-					}, {
-									key: 'postWishList',
-									value: function postWishList(token) {
-													var _this4 = this;
+	            client({ method: 'POST', path: '/auth/login', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+	                console.log(response);
+	                _this3.setState({ token: response.entity.token });
+	                _this3.postWishList(response.entity.token);
+	            });
+	        }
+	    }, {
+	        key: 'postWishList',
+	        value: function postWishList(token) {
+	            var _this4 = this;
 	
-													console.log("token: " + token);
-													client({
-																	method: 'POST',
-																	path: '/api/list',
-																	entity: {
-																					listName: "19 urodzinki",
-																					suggestions: true,
-																					inform: false,
-																					color: 'red'
-																	},
-																	headers: {
-																					'Content-Type': 'application/json',
-																					'Authorization': "bearer " + token
-																	}
-													}).done(function (response) {
-																	console.log(response);
-																	_this4.getAllLists(token);
-													});
-									}
-					}, {
-									key: 'getAllLists',
-									value: function getAllLists(token) {
-													client({ method: 'GET', path: '/api/list', headers: { 'Authorization': "bearer " + token } }).done(function (response) {
-																	console.log(response);
-													});
-									}
-					}, {
-									key: 'componentDidMount',
-									value: function componentDidMount() {
-													this.registerMockedUser();
-									}
-					}, {
-									key: 'render',
-									value: function render() {
-													console.log(this.state);
+	            console.log("token: " + token);
+	            client({
+	                method: 'POST',
+	                path: '/api/list',
+	                entity: {
+	                    listName: "19 urodzinki",
+	                    suggestions: true,
+	                    inform: false,
+	                    color: 'red'
+	                },
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                    'Authorization': "bearer " + token
+	                }
+	            }).done(function (response) {
+	                console.log(response);
+	                _this4.getAllLists(token);
+	            });
+	        }
+	    }, {
+	        key: 'getAllLists',
+	        value: function getAllLists(token) {
+	            client({ method: 'GET', path: '/api/list', headers: { 'Authorization': "bearer " + token } }).done(function (response) {
+	                console.log(response);
+	            });
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.registerMockedUser();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            console.log(this.state);
 	
-													var sectionStyle = {
-																	width: "1100px",
-																	height: "800px",
-																	backgroundImage: "url(background_transparent.png)",
-																	align: "center"
-													};
+	            var sectionStyle = {
+	                width: "85%",
+	                height: "100%",
 	
-													return React.createElement(
-																	'div',
-																	{ style: sectionStyle },
-																	React.createElement(Center, null),
-																	this.state.token
-													);
-									}
-					}]);
+	                marginLeft: "auto",
+	                marginRight: "auto",
 	
-					return App;
+	                display: "flex",
+	                justifyContent: "center"
+	            };
+	
+	            return React.createElement(
+	                'div',
+	                { style: sectionStyle },
+	                React.createElement(Header, null),
+	                React.createElement(Center, null)
+	            );
+	        }
+	    }]);
+	
+	    return App;
 	}(React.Component);
 	
-	var Center = function (_React$Component2) {
-					_inherits(Center, _React$Component2);
+	var Header = function (_React$Component2) {
+	    _inherits(Header, _React$Component2);
 	
-					function Center() {
-									_classCallCheck(this, Center);
+	    function Header() {
+	        _classCallCheck(this, Header);
 	
-									return _possibleConstructorReturn(this, (Center.__proto__ || Object.getPrototypeOf(Center)).apply(this, arguments));
-					}
+	        return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).apply(this, arguments));
+	    }
 	
-					_createClass(Center, [{
-									key: 'render',
-									value: function render() {
-													console.log("center");
-													var sectionStyle = {
-																	width: "500px",
-																	height: "500px",
-																	background: "white"
-													};
-													return React.createElement(
-																	'div',
-																	{ style: sectionStyle },
-																	React.createElement(
-																					'p',
-																					null,
-																					' Hello '
-																	)
-													);
-									}
-					}]);
+	    _createClass(Header, [{
+	        key: 'render',
+	        value: function render() {
+	            var sectionStyle = {
+	                position: "absolute",
+	                width: "1200px",
+	                border: "1px solid #0066cc",
+	                height: "50px",
 	
-					return Center;
+	                display: "flex",
+	                flexDirection: "row",
+	                justifyContent: "center",
+	                alignItems: "center"
+	            };
+	            return React.createElement(
+	                'div',
+	                { style: sectionStyle },
+	                React.createElement(
+	                    'button',
+	                    { style: { height: 25 } },
+	                    ' Yoloy '
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Header;
 	}(React.Component);
 	
-	var GuestApp = function (_React$Component3) {
-					_inherits(GuestApp, _React$Component3);
+	var Center = function (_React$Component3) {
+	    _inherits(Center, _React$Component3);
 	
-					function GuestApp() {
-									_classCallCheck(this, GuestApp);
+	    function Center() {
+	        _classCallCheck(this, Center);
 	
-									return _possibleConstructorReturn(this, (GuestApp.__proto__ || Object.getPrototypeOf(GuestApp)).apply(this, arguments));
-					}
+	        return _possibleConstructorReturn(this, (Center.__proto__ || Object.getPrototypeOf(Center)).apply(this, arguments));
+	    }
 	
-					_createClass(GuestApp, [{
-									key: 'render',
-									value: function render() {
-													return React.createElement(
-																	'div',
-																	null,
-																	React.createElement(
-																					'p',
-																					null,
-																					'Hello Guest'
-																	),
-																	React.createElement('img', { src: 'background_transparent.png', alt: 'birthday party image' })
-													);
-									}
-					}]);
+	    _createClass(Center, [{
+	        key: 'render',
+	        value: function render() {
+	            var sectionStyle = {
+	                position: "relative",
+	                width: "1200px",
+	                height: "950px",
+	                backgroundImage: "url(background_transparent.png)",
+	                top: "50px",
 	
-					return GuestApp;
+	                display: "flex",
+	                flexDirection: "row",
+	                justifyContent: "center",
+	                alignItems: "center"
+	            };
+	            return React.createElement(
+	                'div',
+	                { style: sectionStyle },
+	                React.createElement(ListSquare, null)
+	            );
+	        }
+	    }]);
+	
+	    return Center;
+	}(React.Component);
+	
+	var ListSquare = function (_React$Component4) {
+	    _inherits(ListSquare, _React$Component4);
+	
+	    function ListSquare() {
+	        _classCallCheck(this, ListSquare);
+	
+	        return _possibleConstructorReturn(this, (ListSquare.__proto__ || Object.getPrototypeOf(ListSquare)).apply(this, arguments));
+	    }
+	
+	    _createClass(ListSquare, [{
+	        key: 'render',
+	        value: function render() {
+	            var sectionStyle = {
+	                width: "800px",
+	                height: "700px",
+	                background: "white",
+	                opacity: 0.7
+	            };
+	            return React.createElement(
+	                'div',
+	                { style: sectionStyle },
+	                React.createElement(
+	                    'p',
+	                    null,
+	                    ' Hello '
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return ListSquare;
+	}(React.Component);
+	
+	var GuestApp = function (_React$Component5) {
+	    _inherits(GuestApp, _React$Component5);
+	
+	    function GuestApp() {
+	        _classCallCheck(this, GuestApp);
+	
+	        return _possibleConstructorReturn(this, (GuestApp.__proto__ || Object.getPrototypeOf(GuestApp)).apply(this, arguments));
+	    }
+	
+	    _createClass(GuestApp, [{
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    'p',
+	                    null,
+	                    'Hello Guest'
+	                ),
+	                React.createElement('img', { src: 'background_transparent.png', alt: 'birthday party image' })
+	            );
+	        }
+	    }]);
+	
+	    return GuestApp;
 	}(React.Component);
 	
 	try {
-					ReactDOM.render(React.createElement(App, null), document.getElementById('react'));
+	    ReactDOM.render(React.createElement(App, null), document.getElementById('react'));
 	} catch (e) {
-					console.log("not found element: react");
+	    console.log("not found element: react");
 	}
 	
 	try {
 	
-					ReactDOM.render(React.createElement(GuestApp, null), document.getElementById('react_guest'));
+	    ReactDOM.render(React.createElement(GuestApp, null), document.getElementById('react_guest'));
 	} catch (e) {
-					console.log("not found element: react_guest");
+	    console.log("not found element: react_guest");
 	}
 
 /***/ }),

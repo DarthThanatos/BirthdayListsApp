@@ -9,7 +9,7 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo2"};
+		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3"};
 		console.log("state: " )
 		console.log(this.state)
 	}
@@ -72,36 +72,84 @@ class App extends React.Component {
 		console.log(this.state)
 
 		var sectionStyle = {
-          width: "1100px",
-          height: "800px",
-          backgroundImage: "url(background_transparent.png)",
-          align: "center"
-        };
+          width: "85%",
+          height: "100%",
+
+          marginLeft: "auto",
+          marginRight: "auto",
+
+          display: "flex",
+          justifyContent: "center"
+        }
 
 		return (
 		    <div style={sectionStyle}>
+		        <Header/>
 		        <Center/>
-		        {this.state.token}
 		    </div>
 
 		 )
 	}
 }
 
+class Header extends React.Component{
+    render(){
+        var sectionStyle={
+             position:"absolute",
+             width: "1200px",
+             border: "1px solid #0066cc",
+             height: "50px",
+
+             display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
+        }
+        return (
+            <div style={sectionStyle}>
+                <button style={{height:25}}> Yoloy </button>
+            </div>
+        )
+    }
+}
+
 class Center extends React.Component{
 
     render(){
-        console.log("center")
         var sectionStyle = {
-          width: "500px",
-          height: "500px",
-          background: "white"
+            position:"relative",
+            width: "1200px",
+            height: "950px",
+            backgroundImage: "url(background_transparent.png)",
+            top: "50px",
+
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
         };
         return(
              <div style={sectionStyle}>
-                <p> Hello </p>
+                <ListSquare/>
              </div>
         );
+    }
+
+}
+
+class ListSquare extends React.Component{
+    render(){
+        var sectionStyle = {
+            width: "800px",
+            height: "700px",
+            background: "white",
+            opacity: 0.7
+         }
+        return (
+            <div style={sectionStyle}>
+                <p> Hello </p>
+            </div>
+        )
     }
 }
 
@@ -116,9 +164,11 @@ class GuestApp extends React.Component{
 		 );
     }
 }
+
+
 try{
     ReactDOM.render(
-        <App  />,
+        <App />,
         document.getElementById('react')
     )
 }catch(e){ console.log("not found element: react")}
