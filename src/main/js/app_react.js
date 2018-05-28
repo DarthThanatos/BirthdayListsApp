@@ -78,14 +78,13 @@ class App extends React.Component {
           marginLeft: "auto",
           marginRight: "auto",
 
-          display: "flex",
-          justifyContent: "center"
         }
 
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
 		        <Center/>
+		        <Footer/>
 		    </div>
 
 		 )
@@ -95,19 +94,38 @@ class App extends React.Component {
 class Header extends React.Component{
     render(){
         var sectionStyle={
-             position:"absolute",
              width: "1200px",
-             border: "1px solid #0066cc",
+             border: ".1px solid #0066cc",
              height: "50px",
 
-             display: "flex",
+            display: "flex",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center"
         }
         return (
             <div style={sectionStyle}>
-                <button style={{height:25}}> Yoloy </button>
+            
+            </div>
+        )
+    }
+}
+
+class Footer extends React.Component{
+    render(){
+        var sectionStyle={
+             width: "1200px",
+             border: ".1px solid #0066cc",
+             height: "150px",
+
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
+        }
+        return (
+            <div style={sectionStyle}>
+
             </div>
         )
     }
@@ -121,7 +139,6 @@ class Center extends React.Component{
             width: "1200px",
             height: "950px",
             backgroundImage: "url(background_transparent.png)",
-            top: "50px",
 
             display: "flex",
             flexDirection: "row",
@@ -140,8 +157,8 @@ class Center extends React.Component{
 class ListSquare extends React.Component{
     render(){
         var sectionStyle = {
-            width: "800px",
-            height: "700px",
+            width: "1000px",
+            height: "800px",
             background: "white",
             opacity: 0.7
          }

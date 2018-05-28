@@ -146,17 +146,16 @@
 	                height: "100%",
 	
 	                marginLeft: "auto",
-	                marginRight: "auto",
+	                marginRight: "auto"
 	
-	                display: "flex",
-	                justifyContent: "center"
 	            };
 	
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
 	                React.createElement(Header, null),
-	                React.createElement(Center, null)
+	                React.createElement(Center, null),
+	                React.createElement(Footer, null)
 	            );
 	        }
 	    }]);
@@ -177,9 +176,8 @@
 	        key: 'render',
 	        value: function render() {
 	            var sectionStyle = {
-	                position: "absolute",
 	                width: "1200px",
-	                border: "1px solid #0066cc",
+	                border: ".1px solid #0066cc",
 	                height: "50px",
 	
 	                display: "flex",
@@ -187,23 +185,44 @@
 	                justifyContent: "center",
 	                alignItems: "center"
 	            };
-	            return React.createElement(
-	                'div',
-	                { style: sectionStyle },
-	                React.createElement(
-	                    'button',
-	                    { style: { height: 25 } },
-	                    ' Yoloy '
-	                )
-	            );
+	            return React.createElement('div', { style: sectionStyle });
 	        }
 	    }]);
 	
 	    return Header;
 	}(React.Component);
 	
-	var Center = function (_React$Component3) {
-	    _inherits(Center, _React$Component3);
+	var Footer = function (_React$Component3) {
+	    _inherits(Footer, _React$Component3);
+	
+	    function Footer() {
+	        _classCallCheck(this, Footer);
+	
+	        return _possibleConstructorReturn(this, (Footer.__proto__ || Object.getPrototypeOf(Footer)).apply(this, arguments));
+	    }
+	
+	    _createClass(Footer, [{
+	        key: 'render',
+	        value: function render() {
+	            var sectionStyle = {
+	                width: "1200px",
+	                border: ".1px solid #0066cc",
+	                height: "150px",
+	
+	                display: "flex",
+	                flexDirection: "row",
+	                justifyContent: "center",
+	                alignItems: "center"
+	            };
+	            return React.createElement('div', { style: sectionStyle });
+	        }
+	    }]);
+	
+	    return Footer;
+	}(React.Component);
+	
+	var Center = function (_React$Component4) {
+	    _inherits(Center, _React$Component4);
 	
 	    function Center() {
 	        _classCallCheck(this, Center);
@@ -219,7 +238,6 @@
 	                width: "1200px",
 	                height: "950px",
 	                backgroundImage: "url(background_transparent.png)",
-	                top: "50px",
 	
 	                display: "flex",
 	                flexDirection: "row",
@@ -237,8 +255,8 @@
 	    return Center;
 	}(React.Component);
 	
-	var ListSquare = function (_React$Component4) {
-	    _inherits(ListSquare, _React$Component4);
+	var ListSquare = function (_React$Component5) {
+	    _inherits(ListSquare, _React$Component5);
 	
 	    function ListSquare() {
 	        _classCallCheck(this, ListSquare);
@@ -250,8 +268,8 @@
 	        key: 'render',
 	        value: function render() {
 	            var sectionStyle = {
-	                width: "800px",
-	                height: "700px",
+	                width: "1000px",
+	                height: "800px",
 	                background: "white",
 	                opacity: 0.7
 	            };
@@ -270,8 +288,8 @@
 	    return ListSquare;
 	}(React.Component);
 	
-	var GuestApp = function (_React$Component5) {
-	    _inherits(GuestApp, _React$Component5);
+	var GuestApp = function (_React$Component6) {
+	    _inherits(GuestApp, _React$Component6);
 	
 	    function GuestApp() {
 	        _classCallCheck(this, GuestApp);
