@@ -141,10 +141,15 @@
 									value: function render() {
 													console.log(this.state);
 													return React.createElement(
-																	'p',
+																	'div',
 																	null,
-																	' ',
-																	this.state.token
+																	React.createElement(
+																					'p',
+																					null,
+																					' ',
+																					this.state.token
+																	),
+																	React.createElement('img', { src: 'background_transparent.png', alt: 'birthday party image' })
 													);
 									}
 					}]);

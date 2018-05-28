@@ -70,7 +70,13 @@ class App extends React.Component {
 
 	render() {
 		console.log(this.state)
-		return ( <p> {this.state.token}</p> )
+		return (
+		    <div>
+		        <p> {this.state.token}</p>
+		        <img src="background_transparent.png" alt="birthday party image"/>
+		    </div>
+
+		 )
 	}
 }
 
@@ -83,7 +89,7 @@ class GuestApp extends React.Component{
 
 try{
     ReactDOM.render(
-        <App />,
+        <App  />,
         document.getElementById('react')
     )
 }catch(e){ console.log("not found element: react")}
