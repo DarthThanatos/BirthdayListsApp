@@ -144,7 +144,6 @@
 	            var sectionStyle = {
 	                width: "85%",
 	                height: "100%",
-	
 	                marginLeft: "auto",
 	                marginRight: "auto"
 	
@@ -182,10 +181,28 @@
 	
 	                display: "flex",
 	                flexDirection: "row",
-	                justifyContent: "center",
 	                alignItems: "center"
 	            };
-	            return React.createElement('div', { style: sectionStyle });
+	            return React.createElement(
+	                'div',
+	                { style: sectionStyle },
+	                React.createElement('img', { src: 'cake.png', style: { marginLeft: "25px" } }),
+	                React.createElement(
+	                    'div',
+	                    { style: { marginLeft: "25px", fontWeight: "bold", fontFamily: 'Cochin', fontSize: "22px" } },
+	                    'Prezenty'
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { style: { marginLeft: "25px", fontFamily: 'Cochin', fontSize: "17px" } },
+	                    'Rezerwacje'
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { style: { fontFamily: 'Cochin', fontSize: "17px", border: ".1px solid #0066cc", marginLeft: "800px" } },
+	                    'Wyloguj'
+	                )
+	            );
 	        }
 	    }]);
 	
@@ -202,19 +219,37 @@
 	    }
 	
 	    _createClass(Footer, [{
+	        key: 'fbClicked',
+	        value: function fbClicked() {
+	            console.log("Fb was clicked");
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var sectionStyle = {
 	                width: "1200px",
 	                border: ".1px solid #0066cc",
 	                height: "150px",
-	
 	                display: "flex",
 	                flexDirection: "row",
 	                justifyContent: "center",
 	                alignItems: "center"
 	            };
-	            return React.createElement('div', { style: sectionStyle });
+	            return React.createElement(
+	                'div',
+	                { style: sectionStyle },
+	                React.createElement(
+	                    'button',
+	                    { style: { borderRadius: "12px", display: "flex", flexDirection: "row", alignItems: "center", height: "75px" }, onClick: this.fbClicked },
+	                    ' ',
+	                    React.createElement('img', { src: 'fb.png', style: { marginLeft: "15px", marginRight: "15px" } }),
+	                    ' '
+	                ),
+	                React.createElement('img', { src: 'service.png', style: { marginLeft: "15px", marginRight: "15px" } }),
+	                React.createElement('img', { src: 'google.png', style: { marginLeft: "15px", marginRight: "15px" } }),
+	                React.createElement('img', { src: 'pinterest.png', style: { marginLeft: "15px", marginRight: "15px" } }),
+	                React.createElement('img', { src: 'twitter.png', style: { marginLeft: "15px", marginRight: "15px" } })
+	            );
 	        }
 	    }]);
 	
@@ -23532,7 +23567,7 @@
   \***************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
 	/** @author Brian Cavalier */
 	/** @author John Hann */
 	
