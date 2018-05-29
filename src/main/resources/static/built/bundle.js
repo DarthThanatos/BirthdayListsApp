@@ -556,12 +556,19 @@
 	    _createClass(ListSquareMainBody, [{
 	        key: 'render',
 	        value: function render() {
-	            console.log("List sqaure main body rendering presents: ");
+	            console.log("List sqaure main body rendering presents: " + (typeof this.props.presents != "undefined"));
 	            console.log(this.props.presents);
+	
+	            var presentComponents = this.props.presents;
+	            presentComponents = typeof presentComponents != "undefined" ? presentComponents.map(function (present) {
+	                return React.createElement(PresentComponent, { key: present.presentId, present: present });
+	            }) : [];
+	
 	            return React.createElement(
 	                _reactGridLayout2.default,
-	                { className: 'layout', cols: 3, rowHeight: 150, width: 800, style: { marginLeft: "100px", marginRight: "100px" } },
-	                React.createElement(SuggestComponent, { key: 'sugg' })
+	                { width: 800, style: { marginLeft: "100px", marginRight: "100px" } },
+	                React.createElement(SuggestComponent, { key: 'sugg' }),
+	                presentComponents
 	            );
 	        }
 	    }]);
@@ -587,10 +594,11 @@
 	        key: 'render',
 	        value: function render() {
 	            var sectionStyle = {
-	                width: "175px",
+	                width: "250px",
 	                height: "150px",
 	                border: ".1px solid #0066cc",
 	                background: "#00DBFF",
+	                marginLeft: "15px",
 	                marginTop: "15px"
 	            };
 	            return React.createElement(
@@ -612,6 +620,31 @@
 	
 	        return _possibleConstructorReturn(this, (PresentComponent.__proto__ || Object.getPrototypeOf(PresentComponent)).apply(this, arguments));
 	    }
+	
+	    _createClass(PresentComponent, [{
+	        key: 'viewDetails',
+	        value: function viewDetails() {
+	            console.log("view details");
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var sectionStyle = {
+	                width: "250px",
+	                height: "150px",
+	                border: ".1px solid #0066cc",
+	                background: "#FF8C2F",
+	                marginLeft: "15px",
+	                marginTop: "15px"
+	            };
+	            return React.createElement(
+	                'button',
+	                { style: sectionStyle, onClick: this.viewDetails },
+	                'Present ',
+	                this.props.present.presentId
+	            );
+	        }
+	    }]);
 	
 	    return PresentComponent;
 	}(React.Component);

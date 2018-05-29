@@ -314,11 +314,21 @@ class ListSquareNavigationButtons extends React.Component{
 
 class ListSquareMainBody extends React.Component{
     render(){
-        console.log("List sqaure main body rendering presents: ")
+        console.log("List sqaure main body rendering presents: " + (typeof this.props.presents != "undefined"))
         console.log(this.props.presents)
+
+        var presentComponents = this.props.presents;
+        presentComponents = typeof presentComponents != "undefined" ? presentComponents.map(
+            (present) => {
+                return (<PresentComponent key={present.presentId} present={present}/>)
+            }
+        ) : [];
+
+
         return(
-            <GridLayout className="layout" cols={3} rowHeight={150} width={800} style={{marginLeft:"100px", marginRight: "100px"}}>
+            <GridLayout width={800} style={{marginLeft:"100px", marginRight: "100px"}}>
                 <SuggestComponent  key="sugg"/>
+                {presentComponents}
             </GridLayout>
         )
     }
@@ -332,10 +342,11 @@ class SuggestComponent extends React.Component{
 
     render(){
         var sectionStyle = {
-            width: "175px",
+            width: "250px",
             height: "150px",
             border: ".1px solid #0066cc",
             background: "#00DBFF",
+            marginLeft: "15px",
             marginTop: "15px"
         }
         return(
@@ -348,6 +359,25 @@ class SuggestComponent extends React.Component{
 
 class PresentComponent extends React.Component{
 
+    viewDetails(){
+        console.log("view details")
+    }
+
+    render(){
+        var sectionStyle = {
+            width: "250px",
+            height: "150px",
+            border: ".1px solid #0066cc",
+            background: "#FF8C2F",
+            marginLeft: "15px",
+            marginTop: "15px"
+        }
+        return(
+            <button style={sectionStyle}  onClick={this.viewDetails}>
+                Present {this.props.present.presentId}
+            </button>
+        )
+    }
 }
 
 class GuestApp extends React.Component{
