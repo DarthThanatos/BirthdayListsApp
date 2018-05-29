@@ -149,7 +149,7 @@
 	            var _this6 = this;
 	
 	            console.log("posting default presents as birthday guy to list with the key: " + listKey);
-	            this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" }).then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).done(function (response) {
+	            this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" }).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).done(function (response) {
 	                return _this6.getPresentsFromList(listKey);
 	            });
 	        }
@@ -560,14 +560,22 @@
 	            console.log(this.props.presents);
 	
 	            var presentComponents = this.props.presents;
-	            presentComponents = typeof presentComponents != "undefined" ? presentComponents.map(function (present) {
-	                return React.createElement(PresentComponent, { key: present.presentId, present: present });
+	            presentComponents = typeof presentComponents != "undefined" ? presentComponents.map(function (present, i) {
+	                return React.createElement(
+	                    'div',
+	                    { key: present.presentId, 'data-grid': { x: (i + 1) % 3, y: Math.floor((i + 1) / 3), w: 1, h: 1, static: true }, style: { border: ".1px solid #0066cc" } },
+	                    React.createElement(PresentComponent, { present: present })
+	                );
 	            }) : [];
 	
 	            return React.createElement(
 	                _reactGridLayout2.default,
-	                { width: 800, style: { marginLeft: "100px", marginRight: "100px" } },
-	                React.createElement(SuggestComponent, { key: 'sugg' }),
+	                { className: 'layout', width: 800, rowHeight: 250, cols: 3, style: { height: "600px", marginLeft: "100px", marginRight: "100px" } },
+	                React.createElement(
+	                    'div',
+	                    { key: 'sugg', 'data-grid': { x: 0, y: 0, w: 1, h: 1, static: true } },
+	                    React.createElement(SuggestComponent, null)
+	                ),
 	                presentComponents
 	            );
 	        }
@@ -594,17 +602,15 @@
 	        key: 'render',
 	        value: function render() {
 	            var sectionStyle = {
-	                width: "250px",
-	                height: "150px",
+	                width: "100%", height: "100%",
 	                border: ".1px solid #0066cc",
 	                background: "#00DBFF",
-	                marginLeft: "15px",
-	                marginTop: "15px"
+	                fontSize: "35px"
 	            };
 	            return React.createElement(
 	                'button',
 	                { style: sectionStyle, onClick: this.suggest },
-	                'Zaproponuj'
+	                ' Zaproponuj '
 	            );
 	        }
 	    }]);
@@ -629,19 +635,54 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var sectionStyle = {
-	                width: "250px",
-	                height: "150px",
-	                border: ".1px solid #0066cc",
-	                background: "#FF8C2F",
-	                marginLeft: "15px",
-	                marginTop: "15px"
-	            };
 	            return React.createElement(
-	                'button',
-	                { style: sectionStyle, onClick: this.viewDetails },
-	                'Present ',
-	                this.props.present.presentId
+	                'div',
+	                null,
+	                React.createElement(
+	                    'div',
+	                    { style: { background: "#FF8C2F", width: "100%", height: "30px", display: "flex", flexDirection: "row", alignItems: "center" } },
+	                    React.createElement(
+	                        'div',
+	                        { style: { width: "50px", marginLeft: "10px", fontSize: "20px" } },
+	                        this.props.present.name
+	                    ),
+	                    React.createElement(
+	                        'button',
+	                        { style: { width: "100px", marginLeft: "80px" } },
+	                        'Rezerwuj'
+	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { style: { width: "100%", height: "160px", display: "flex", flexDirection: "row", alignItems: "center" } },
+	                    React.createElement('img', { src: this.props.present.imageUrl, alt: this.props.present.imageUrl, style: { width: "100px", marginLeft: "5px" } }),
+	                    React.createElement(
+	                        'div',
+	                        { style: { width: "120px", textAlign: "center", fontSize: "13px", marginRight: "5px" } },
+	                        ' ',
+	                        this.props.present.description
+	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { style: { width: "100%", height: "30px", display: "flex", flexDirection: "row", justifyContent: "center" } },
+	                    React.createElement(
+	                        'a',
+	                        { href: this.props.present.shopLink },
+	                        ' ',
+	                        this.props.present.shopLink,
+	                        ' '
+	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { style: { width: "100%", height: "30px", display: "flex", justifyContent: "center" } },
+	                    React.createElement(
+	                        'button',
+	                        { style: { height: "20px", display: "flex", flexDirection: "row", alignItems: "center" } },
+	                        ' Poka\u017C wi\u0119cej '
+	                    )
+	                )
 	            );
 	        }
 	    }]);
@@ -49006,7 +49047,7 @@
   \***************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
 	/** @author Brian Cavalier */
 	/** @author John Hann */
 	

@@ -70,12 +70,11 @@ class App extends React.Component {
 
     postDefaultPresents(listKey){
         console.log("posting default presents as birthday guy to list with the key: " + listKey)
-        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
         .done(response => this.getPresentsFromList(listKey))
 
     }
@@ -319,15 +318,19 @@ class ListSquareMainBody extends React.Component{
 
         var presentComponents = this.props.presents;
         presentComponents = typeof presentComponents != "undefined" ? presentComponents.map(
-            (present) => {
-                return (<PresentComponent key={present.presentId} present={present}/>)
+            (present, i) => {
+                return(
+                    <div key={present.presentId} data-grid={{x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true}} style={{border: ".1px solid #0066cc"}}>
+                        <PresentComponent present={present}  />
+                    </div>)
             }
         ) : [];
 
-
         return(
-            <GridLayout width={800} style={{marginLeft:"100px", marginRight: "100px"}}>
-                <SuggestComponent  key="sugg"/>
+            <GridLayout className="layout" width={800}  rowHeight={250} cols={3} style={{ height: "600px", marginLeft:"100px", marginRight: "100px"}}>
+                <div key="sugg" data-grid={{x: 0, y: 0, w:1, h:1, static:true}}>
+                    <SuggestComponent />
+                </div>
                 {presentComponents}
             </GridLayout>
         )
@@ -342,17 +345,13 @@ class SuggestComponent extends React.Component{
 
     render(){
         var sectionStyle = {
-            width: "250px",
-            height: "150px",
+            width:"100%", height: "100%",
             border: ".1px solid #0066cc",
             background: "#00DBFF",
-            marginLeft: "15px",
-            marginTop: "15px"
+            fontSize: "35px"
         }
         return(
-            <button style={sectionStyle}  onClick={this.suggest}>
-                Zaproponuj
-            </button>
+            <button style={sectionStyle} onClick={this.suggest}> Zaproponuj </button>
         )
     }
 }
@@ -364,18 +363,24 @@ class PresentComponent extends React.Component{
     }
 
     render(){
-        var sectionStyle = {
-            width: "250px",
-            height: "150px",
-            border: ".1px solid #0066cc",
-            background: "#FF8C2F",
-            marginLeft: "15px",
-            marginTop: "15px"
-        }
         return(
-            <button style={sectionStyle}  onClick={this.viewDetails}>
-                Present {this.props.present.presentId}
-            </button>
+            <div >
+                <div style={{background: "#FF8C2F",  width:"100%", height:"30px", display: "flex", flexDirection:"row", alignItems:"center"}}>
+                    <div style={{width:"50px", marginLeft:"10px", fontSize:"20px"}}>{this.props.present.name}</div>
+                    <button style={{width:"100px", marginLeft:"80px"}}>Rezerwuj</button>
+                </div>
+
+                <div style={{width:"100%", height:"160px", display: "flex", flexDirection:"row", alignItems: "center"}}>
+                    <img src={this.props.present.imageUrl} alt={this.props.present.imageUrl} style={{width: "100px", marginLeft:"5px"}}/>
+                    <div style={{width: "120px", textAlign:"center", fontSize:"13px", marginRight:"5px"}}> {this.props.present.description}</div>
+                </div>
+                <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center"}}>
+                    <a href={this.props.present.shopLink}> {this.props.present.shopLink} </a>
+                </div>
+                <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center"}}>
+                    <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}}> Pokaż więcej </button>
+                </div>
+            </div>
         )
     }
 }
