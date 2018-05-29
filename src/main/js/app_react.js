@@ -1,10 +1,12 @@
 'use strict';
 import SearchBar from 'material-ui-search-bar'
+import GridLayout from 'react-grid-layout'
 
 const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('./client_react');
 const follow = require('./follow');
+
 
 class App extends React.Component {
 
@@ -69,28 +71,24 @@ class App extends React.Component {
     postDefaultPresents(listKey){
         console.log("posting default presents as birthday guy to list with the key: " + listKey)
         this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .done(response => this.getPresentsFromList(listKey))
+
     }
 
     postDefaultPresent(listKey, present){
-
-		client({
+		return client({
 		    method: 'POST',
 		    path: '/api/list/key/' + listKey + '/present/add',
 		    entity: present,
 		    headers: {
-		    'Content-Type': 'application/json'
+		        'Content-Type': 'application/json'
 		    }
 		 })
-		.done(response => {
-		    console.log("posted present: ")
-		    console.log(response)
-
-		})
     }
 
     getPresentsFromList(listKey){
@@ -99,6 +97,7 @@ class App extends React.Component {
 		client({method: 'GET', path: '/api/list/key/' + listKey + '/present',headers: {'Content-Type': 'application/json'}}).done(response => {
 		    console.log("got list of presents from existing wishlist: ")
 		    console.log(response)
+		    this.setState({presents: response.entity})
 		});
     }
 
@@ -117,7 +116,7 @@ class App extends React.Component {
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
-		        <Center/>
+		        <Center presents={this.state.presents}/>
 		        <Footer/>
 		    </div>
 
@@ -215,7 +214,7 @@ class Center extends React.Component{
         };
         return(
              <div style={sectionStyle}>
-                <ListSquare/>
+                <ListSquare presents={this.props.presents}/>
              </div>
         );
     }
@@ -233,7 +232,7 @@ class ListSquare extends React.Component{
         return (
             <div style={sectionStyle}>
                 <ListSquareHeader/>
-                <ListSquareMainBody/>
+                <ListSquareMainBody presents={this.props.presents}/>
             </div>
         )
     }
@@ -315,15 +314,40 @@ class ListSquareNavigationButtons extends React.Component{
 
 class ListSquareMainBody extends React.Component{
     render(){
-        var sectionStyle = {
-             width: "1000px",
-             border: ".1px solid #0066cc",
-             height: "600px"
-        }
+        console.log("List sqaure main body rendering presents: ")
+        console.log(this.props.presents)
         return(
-            <div style={sectionStyle}></div>
+            <GridLayout className="layout" cols={3} rowHeight={150} width={800} style={{marginLeft:"100px", marginRight: "100px"}}>
+                <SuggestComponent  key="sugg"/>
+            </GridLayout>
         )
     }
+}
+
+class SuggestComponent extends React.Component{
+
+    suggest(){
+        console.log("suggest present")
+    }
+
+    render(){
+        var sectionStyle = {
+            width: "175px",
+            height: "150px",
+            border: ".1px solid #0066cc",
+            background: "#00DBFF",
+            marginTop: "15px"
+        }
+        return(
+            <button style={sectionStyle}  onClick={this.suggest}>
+                Zaproponuj
+            </button>
+        )
+    }
+}
+
+class PresentComponent extends React.Component{
+
 }
 
 class GuestApp extends React.Component{
