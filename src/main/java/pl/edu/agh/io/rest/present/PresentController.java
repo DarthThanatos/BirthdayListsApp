@@ -38,7 +38,7 @@ public class PresentController {
     }
 
     @GetMapping
-    public List<PresentInfoResponse> getPresents(@PathVariable String key) {
+    public List<PresentInfoResponse> getPresents(@PathVariable("key") String key) {
         Long listId = wishListService.getByKey(key).getWishListId();
         List<Present> presents = wishListService.getPresents(listId);
         List<Present> reservedPresents = reservationService.findAllByListId(listId)
@@ -50,6 +50,9 @@ public class PresentController {
             presentInfoResponse.setDescription(present.getDescription());
             presentInfoResponse.setName(present.getName());
             presentInfoResponse.setPresentId(present.getPresentId());
+            presentInfoResponse.setCategory(present.getCategory());
+            presentInfoResponse.setShopLink(present.getShopLink());
+            presentInfoResponse.setImageUrl(present.getImageUrl());
             presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
             return presentInfoResponse;
         }).collect(Collectors.toList());
@@ -61,7 +64,7 @@ public class PresentController {
     }
 
     @PostMapping("/add")
-    public Present addPresent(@RequestBody Present present, @PathVariable String key) {
+    public Present addPresent(@RequestBody Present present, @PathVariable("key") String key) {
         Long listId = wishListService.getByKey(key).getWishListId();
         return wishListService.addPresent(listId, present);
     }

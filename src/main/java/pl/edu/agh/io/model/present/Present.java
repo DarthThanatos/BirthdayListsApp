@@ -14,6 +14,9 @@ public class Present {
 
     private String name;
     private String description;
+    private String category;
+    private String shopLink;
+    private String imageUrl;
 
     public Present() {
     }
@@ -45,5 +48,29 @@ public class Present {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getShopLink() {
+        return shopLink;
+    }
+
+    public void setShopLink(String shopLink) {
+        this.shopLink = shopLink;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

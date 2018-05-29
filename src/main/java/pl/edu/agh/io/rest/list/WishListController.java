@@ -44,9 +44,13 @@ public class WishListController {
 
     @PostMapping
     public WishList saveList(@Valid @RequestBody ListCreationRequest listCreationRequest, HttpServletRequest request) {
-
         User user = authenticate(request);
         return wishListService.createList(listCreationRequest, user);
+    }
+
+    @GetMapping("/key/{key}")
+    public WishList getListByKey(@PathVariable("key") String key){
+        return wishListService.getByKey(key);
     }
 
     @DeleteMapping("/{id}")

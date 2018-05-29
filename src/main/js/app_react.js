@@ -19,25 +19,33 @@ class App extends React.Component {
 		client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}).done(
             response => {
                 console.log(response);
-                this.printToken();
+                this.login();
             },
             response => {
                 console.log("invalid registering of mocked user")
-                this.printToken(); //we are going to log in anyway
+                this.login(); //we are going to log in anyway
             }
 		);
 	}
 
-    printToken(){
+    login(){
 		client({method: 'POST', path: '/auth/login', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}).done(response => {
-		    console.log(response)
+		    console.log("login:" + response)
 			this.setState({token: response.entity.token});
-			this.postWishList(response.entity.token)
+			this.postWishListIfNotExist(response.entity.token)
 		});
     }
 
-    postWishList(token){
-        console.log("token: " + token)
+    postWishListIfNotExist(token){
+		client({method: 'GET', path: '/api/list', headers: {'Authorization': "bearer " + token}}).done(response => {
+		    console.log(response)
+		    if(response.entity.length == 0) this.postDefaultWishList(token);
+		    else this.getPresentsFromList(response.entity[0].key)
+		})
+
+    }
+
+    postDefaultWishList(token){
 		client({
 		    method: 'POST',
 		    path: '/api/list',
@@ -53,16 +61,45 @@ class App extends React.Component {
 		    }
 		 })
 		.done(response => {
-            console.log(response)
-            this.getAllLists(token)
+		    console.log("posting default wishlist")
+            this.postDefaultPresents(response.entity.key)
 		})
     }
 
-    getAllLists(token){
-		client({method: 'GET', path: '/api/list', headers: {'Authorization': "bearer " + token}}).done(response => {
-		    console.log(response)
-		})
+    postDefaultPresents(listKey){
+        console.log("posting default presents as birthday guy to list with the key: " + listKey)
+        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+    }
 
+    postDefaultPresent(listKey, present){
+
+		client({
+		    method: 'POST',
+		    path: '/api/list/key/' + listKey + '/present/add',
+		    entity: present,
+		    headers: {
+		    'Content-Type': 'application/json'
+		    }
+		 })
+		.done(response => {
+		    console.log("posted present: ")
+		    console.log(response)
+
+		})
+    }
+
+    getPresentsFromList(listKey){
+        console.log("getting presents from existing list: " + listKey)
+
+		client({method: 'GET', path: '/api/list/key/' + listKey + '/present',headers: {'Content-Type': 'application/json'}}).done(response => {
+		    console.log("got list of presents from existing wishlist: ")
+		    console.log(response)
+		});
     }
 
 	componentDidMount() {
@@ -316,3 +353,4 @@ try {
         document.getElementById('react_guest')
     )
 }catch(e){console.log("not found element: react_guest")}
+

@@ -89,29 +89,38 @@
 	
 	            client({ method: 'POST', path: '/auth/register', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
 	                console.log(response);
-	                _this2.printToken();
+	                _this2.login();
 	            }, function (response) {
 	                console.log("invalid registering of mocked user");
-	                _this2.printToken(); //we are going to log in anyway
+	                _this2.login(); //we are going to log in anyway
 	            });
 	        }
 	    }, {
-	        key: 'printToken',
-	        value: function printToken() {
+	        key: 'login',
+	        value: function login() {
 	            var _this3 = this;
 	
 	            client({ method: 'POST', path: '/auth/login', entity: { email: "bielas.robert95@gmail.com", password: 'user' }, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
-	                console.log(response);
+	                console.log("login:" + response);
 	                _this3.setState({ token: response.entity.token });
-	                _this3.postWishList(response.entity.token);
+	                _this3.postWishListIfNotExist(response.entity.token);
 	            });
 	        }
 	    }, {
-	        key: 'postWishList',
-	        value: function postWishList(token) {
+	        key: 'postWishListIfNotExist',
+	        value: function postWishListIfNotExist(token) {
 	            var _this4 = this;
 	
-	            console.log("token: " + token);
+	            client({ method: 'GET', path: '/api/list', headers: { 'Authorization': "bearer " + token } }).done(function (response) {
+	                console.log(response);
+	                if (response.entity.length == 0) _this4.postDefaultWishList(token);else _this4.getPresentsFromList(response.entity[0].key);
+	            });
+	        }
+	    }, {
+	        key: 'postDefaultWishList',
+	        value: function postDefaultWishList(token) {
+	            var _this5 = this;
+	
 	            client({
 	                method: 'POST',
 	                path: '/api/list',
@@ -126,14 +135,44 @@
 	                    'Authorization': "bearer " + token
 	                }
 	            }).done(function (response) {
-	                console.log(response);
-	                _this4.getAllLists(token);
+	                console.log("posting default wishlist");
+	                _this5.postDefaultPresents(response.entity.key);
 	            });
 	        }
 	    }, {
-	        key: 'getAllLists',
-	        value: function getAllLists(token) {
-	            client({ method: 'GET', path: '/api/list', headers: { 'Authorization': "bearer " + token } }).done(function (response) {
+	        key: 'postDefaultPresents',
+	        value: function postDefaultPresents(listKey) {
+	            console.log("posting default presents as birthday guy to list with the key: " + listKey);
+	            this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" });
+	            this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" });
+	            this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" });
+	            this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" });
+	            this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" });
+	            this.postDefaultPresent(listKey, { name: "kask", description: "Chce kask", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" });
+	        }
+	    }, {
+	        key: 'postDefaultPresent',
+	        value: function postDefaultPresent(listKey, present) {
+	
+	            client({
+	                method: 'POST',
+	                path: '/api/list/key/' + listKey + '/present/add',
+	                entity: present,
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                }
+	            }).done(function (response) {
+	                console.log("posted present: ");
+	                console.log(response);
+	            });
+	        }
+	    }, {
+	        key: 'getPresentsFromList',
+	        value: function getPresentsFromList(listKey) {
+	            console.log("getting presents from existing list: " + listKey);
+	
+	            client({ method: 'GET', path: '/api/list/key/' + listKey + '/present', headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+	                console.log("got list of presents from existing wishlist: ");
 	                console.log(response);
 	            });
 	        }
@@ -41677,7 +41716,7 @@
   \***************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
 	/** @author Brian Cavalier */
 	/** @author John Hann */
 	
