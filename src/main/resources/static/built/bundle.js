@@ -97,6 +97,8 @@
 	        _this.handleCloseMailModal = _this.handleCloseMailModal.bind(_this);
 	        _this.handleReservation = _this.handleReservation.bind(_this);
 	        _this.changeMode = _this.changeMode.bind(_this);
+	        _this.synchPresentsStates = _this.synchPresentsStates.bind(_this);
+	        _this.onAfterSynch = _this.onAfterSynch.bind(_this);
 	        return _this;
 	    }
 	
@@ -215,12 +217,16 @@
 	    }, {
 	        key: 'onPageLoaded',
 	        value: function onPageLoaded(response) {
+	            var _this9 = this;
+	
 	            var page = this.state.page;
 	            var presents = this.state.presents;
 	            var uniquePresents = this.mergeToFirstById(presents, response.entity);
 	            this.setState({ presents: uniquePresents });
 	            this.setState({ page: response.entity.length < 5 ? page : page + 1 });
-	            this.forceUpdate();
+	            this.synchPresentsStates(function () {
+	                _this9.forceUpdate();
+	            });
 	        }
 	    }, {
 	        key: 'mergeToFirstById',
@@ -249,7 +255,7 @@
 	    }, {
 	        key: 'handleReservation',
 	        value: function handleReservation(present, email) {
-	            var _this9 = this;
+	            var _this10 = this;
 	
 	            document.getElementById("emailCancel").hidden = true;
 	            document.getElementById("emailSubmit").hidden = true;
@@ -267,17 +273,44 @@
 	                },
 	                headers: { 'Content-Type': 'application/json' }
 	            }).done(function (response) {
-	                _this9.state.presents.filter(function (present_) {
-	                    return present.presentId == present_.presentId;
-	                }).forEach(function (present) {
-	                    return present.boughtOrReserved = true;
+	                _this10.synchPresentsStates(function () {
+	                    _this10.turnOffMailModal();
 	                });
-	                document.getElementById("emailCancel").hidden = false;
-	                document.getElementById("emailSubmit").hidden = false;
-	                document.getElementById("emailInput").hidden = false;
-	                document.getElementById("emailWaitInfo").innerHTML = "";
-	                _this9.setState({ showModal: false });
 	            });
+	        }
+	    }, {
+	        key: 'synchPresentsStates',
+	        value: function synchPresentsStates(atEnd) {
+	            var _this11 = this;
+	
+	            var listKey = this.state.listKey;
+	            var entity = { ids: this.state.presents.map(function (present_) {
+	                    return present_.presentId;
+	                }) };
+	            client({ method: 'POST', path: '/api/list/key/' + listKey + '/present/reservationStatus', entity: entity, headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+	
+	                console.log(response);
+	
+	                for (var i = 0; i < _this11.state.presents.length; i++) {
+	                    _this11.state.presents[i].boughtOrReserved = response.entity[i];
+	                }
+	
+	                _this11.onAfterSynch(atEnd);
+	            });
+	        }
+	    }, {
+	        key: 'onAfterSynch',
+	        value: function onAfterSynch(atEnd) {
+	            atEnd();
+	        }
+	    }, {
+	        key: 'turnOffMailModal',
+	        value: function turnOffMailModal() {
+	            document.getElementById("emailCancel").hidden = false;
+	            document.getElementById("emailSubmit").hidden = false;
+	            document.getElementById("emailInput").hidden = false;
+	            document.getElementById("emailWaitInfo").innerHTML = "";
+	            this.setState({ showModal: false });
 	        }
 	    }, {
 	        key: 'handleCloseMailModal',
@@ -331,7 +364,7 @@
 	    _createClass(MailModal, [{
 	        key: 'render',
 	        value: function render() {
-	            var _this11 = this;
+	            var _this13 = this;
 	
 	            var sectionStyle = {
 	                width: 300,
@@ -361,7 +394,7 @@
 	                    React.createElement(
 	                        'button',
 	                        { id: 'emailSubmit', style: { width: 100, height: 20 }, onClick: function onClick() {
-	                                return _this11.props.handleReservation(_this11.props.presentToReserve, document.getElementById("emailInput").value);
+	                                return _this13.props.handleReservation(_this13.props.presentToReserve, document.getElementById("emailInput").value);
 	                            } },
 	                        'Potwierd\u017A'
 	                    ),
@@ -662,12 +695,12 @@
 	    function ListSquareNavigationButtons(props) {
 	        _classCallCheck(this, ListSquareNavigationButtons);
 	
-	        var _this19 = _possibleConstructorReturn(this, (ListSquareNavigationButtons.__proto__ || Object.getPrototypeOf(ListSquareNavigationButtons)).call(this, props));
+	        var _this21 = _possibleConstructorReturn(this, (ListSquareNavigationButtons.__proto__ || Object.getPrototypeOf(ListSquareNavigationButtons)).call(this, props));
 	
-	        _this19.all = _this19.all.bind(_this19);
-	        _this19.reserved = _this19.reserved.bind(_this19);
-	        _this19.notReserved = _this19.notReserved.bind(_this19);
-	        return _this19;
+	        _this21.all = _this21.all.bind(_this21);
+	        _this21.reserved = _this21.reserved.bind(_this21);
+	        _this21.notReserved = _this21.notReserved.bind(_this21);
+	        return _this21;
 	    }
 	
 	    _createClass(ListSquareNavigationButtons, [{
@@ -749,18 +782,18 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this21 = this;
+	            var _this23 = this;
 	
 	            var layout = [];
 	            var presentComponents = this.props.presents;
 	            presentComponents = typeof presentComponents != "undefined" ? presentComponents.filter(function (present) {
-	                return _this21.shouldShowPresent(present);
+	                return _this23.shouldShowPresent(present);
 	            }).map(function (present, i) {
 	                layout.push({ i: present.presentId.toString(), x: (i + 1) % 3, y: Math.floor((i + 1) / 3), w: 1, h: 1, static: true });
 	                return React.createElement(
 	                    'div',
 	                    { id: "present" + present.presentId, key: present.presentId, 'data-grid': { x: (i + 1) % 3, y: Math.floor((i + 1) / 3), w: 1, h: 1, static: true }, style: { border: ".1px solid #0066cc" } },
-	                    React.createElement(PresentComponent, { present: present, handleOpenMailModal: _this21.props.handleOpenMailModal })
+	                    React.createElement(PresentComponent, { present: present, handleOpenMailModal: _this23.props.handleOpenMailModal })
 	                );
 	            }) : [];
 	            return React.createElement(
@@ -790,10 +823,10 @@
 	    function ShowMorePagesButton(props) {
 	        _classCallCheck(this, ShowMorePagesButton);
 	
-	        var _this22 = _possibleConstructorReturn(this, (ShowMorePagesButton.__proto__ || Object.getPrototypeOf(ShowMorePagesButton)).call(this, props));
+	        var _this24 = _possibleConstructorReturn(this, (ShowMorePagesButton.__proto__ || Object.getPrototypeOf(ShowMorePagesButton)).call(this, props));
 	
-	        _this22.moreItems = _this22.moreItems.bind(_this22);
-	        return _this22;
+	        _this24.moreItems = _this24.moreItems.bind(_this24);
+	        return _this24;
 	    }
 	
 	    _createClass(ShowMorePagesButton, [{
@@ -870,9 +903,11 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this25 = this;
+	            var _this27 = this;
 	
 	            var reserveButtonHidden = this.props.present.boughtOrReserved;
+	            var presentDescription = this.props.present.description;
+	            presentDescription = presentDescription.length > 135 ? presentDescription.substring(0, 135) + "\n(...)" : presentDescription;
 	            return React.createElement(
 	                'div',
 	                null,
@@ -887,7 +922,7 @@
 	                    React.createElement(
 	                        'button',
 	                        { hidden: reserveButtonHidden, style: { width: "100px", marginLeft: "80px" }, onClick: function onClick() {
-	                                return _this25.props.handleOpenMailModal(_this25.props.present);
+	                                return _this27.props.handleOpenMailModal(_this27.props.present);
 	                            } },
 	                        'Rezerwuj'
 	                    )
@@ -900,7 +935,7 @@
 	                        'div',
 	                        { style: { width: "120px", textAlign: "center", fontSize: "13px", marginRight: "5px" } },
 	                        ' ',
-	                        this.props.present.description
+	                        presentDescription
 	                    )
 	                ),
 	                React.createElement(

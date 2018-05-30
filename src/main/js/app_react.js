@@ -25,6 +25,8 @@ class App extends React.Component {
         this.handleCloseMailModal = this.handleCloseMailModal.bind(this);
         this.handleReservation = this.handleReservation.bind(this);
         this.changeMode = this.changeMode.bind(this);
+        this.synchPresentsStates = this.synchPresentsStates.bind(this)
+        this.onAfterSynch = this.onAfterSynch.bind(this);
 	}
 
 
@@ -135,7 +137,7 @@ class App extends React.Component {
         const uniquePresents = this.mergeToFirstById(presents, response.entity)
         this.setState({presents: uniquePresents})
         this.setState({page: response.entity.length < 5 ? page : page + 1})
-        this.forceUpdate()
+        this.synchPresentsStates(() => {this.forceUpdate()})
     }
 
     mergeToFirstById(arrayOne, arrayTwo){
@@ -179,15 +181,39 @@ class App extends React.Component {
 		    headers: {'Content-Type': 'application/json'}
         })
         .done(response => {
-            this.state.presents.filter((present_) => present.presentId == present_.presentId).forEach((present)=> present.boughtOrReserved=true)
-            document.getElementById("emailCancel").hidden = false
-            document.getElementById("emailSubmit").hidden = false
-            document.getElementById("emailInput").hidden = false
-            document.getElementById("emailWaitInfo").innerHTML = ""
-            this.setState({ showModal: false });
+            this.synchPresentsStates( () => {this.turnOffMailModal ()} )
 		})
 
      }
+
+     synchPresentsStates(atEnd){
+        const listKey=this.state.listKey
+        const entity= {ids: this.state.presents.map(present_ => present_.presentId)}
+        client({method: 'POST', path: '/api/list/key/' + listKey + '/present/reservationStatus', entity: entity, headers: {'Content-Type': 'application/json'}}).done(
+            response => {
+
+                console.log(response)
+
+                for(var i = 0; i < this.state.presents.length; i++){
+                    this.state.presents[i].boughtOrReserved = response.entity[i];
+                }
+
+                this.onAfterSynch(atEnd)
+            }
+        );
+     }
+
+    onAfterSynch(atEnd){
+        atEnd()
+    }
+
+    turnOffMailModal(){
+        document.getElementById("emailCancel").hidden = false
+        document.getElementById("emailSubmit").hidden = false
+        document.getElementById("emailInput").hidden = false
+        document.getElementById("emailWaitInfo").innerHTML = ""
+        this.setState({ showModal: false });
+    }
 
      handleCloseMailModal () {
         this.setState({ showModal: false });
@@ -538,6 +564,8 @@ class PresentComponent extends React.Component{
 
     render(){
         var reserveButtonHidden = this.props.present.boughtOrReserved
+        var presentDescription = this.props.present.description
+        presentDescription = presentDescription.length > 135 ? presentDescription.substring(0, 135) + ("\n(...)") : presentDescription
         return(
             <div >
                 <div style={{background: "#FF8C2F",  width:"100%", height:"30px", display: "flex", flexDirection:"row", alignItems:"center"}}>
@@ -547,7 +575,7 @@ class PresentComponent extends React.Component{
 
                 <div style={{width:"100%", height:"160px", display: "flex", flexDirection:"row", alignItems: "center"}}>
                     <img src={this.props.present.imageUrl} alt={this.props.present.imageUrl} style={{width: "100px", marginLeft:"5px"}}/>
-                    <div style={{width: "120px", textAlign:"center", fontSize:"13px", marginRight:"5px"}}> {this.props.present.description}</div>
+                    <div style={{width: "120px", textAlign:"center", fontSize:"13px", marginRight:"5px"}}> {presentDescription}</div>
                 </div>
                 <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center"}}>
                     <a href={this.props.present.shopLink}> {this.props.present.shopLink} </a>

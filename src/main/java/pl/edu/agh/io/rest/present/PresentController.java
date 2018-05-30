@@ -131,8 +131,9 @@ public class PresentController {
         return res;
     }
 
-    @GetMapping("/resrvationStatus")
-    public List<Boolean> getReservationStatuses(List<Long> ids, @PathVariable("key") String key){
+
+    @PostMapping("/reservationStatus")
+    public List<Boolean> getReservationStatuses(@RequestBody PresentsIds ids, @PathVariable("key") String key){
         Long listId = wishListService.getByKey(key).getWishListId();
 
         List<Present> reservedPresents = reservationService.findAllByListId(listId)
@@ -140,6 +141,11 @@ public class PresentController {
                 .map(r -> r.getMapping().getPresent())
                 .collect(Collectors.toList());
 
-        return ids.stream().map(presentService::findByPresentId).map(reservedPresents::contains).collect(Collectors.toList());
+        return ids
+                .getIds()
+                .stream()
+                .map(presentService::findByPresentId)
+                .map(reservedPresents::contains)
+                .collect(Collectors.toList());
     }
 }

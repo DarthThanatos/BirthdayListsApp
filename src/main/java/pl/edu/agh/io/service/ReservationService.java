@@ -37,13 +37,13 @@ public class ReservationService {
         PresentReservation presentReservation = new PresentReservation(mapping, reservationRequest.getBuyerName(), reservationRequest.getBuyerEmail(),
                 LocalDateTime.now(), reservationRequest.getPresentId());
         String key = UUID.randomUUID().toString();
-        sendUnreservationLink(presentReservation.getBuyerEmail(), key);
+        if(!sendUnreservationLink(presentReservation.getBuyerEmail(), key)) return null;
         presentReservation.setKey(key);
         return reservationRepository.save(presentReservation);
     }
 
-    private void sendUnreservationLink(String buyerEmail, String key) {
-        emailService.sendSimpleMessage(buyerEmail, "Reservation",  "localhost:8080/api/reservation/resign/" + key);
+    private boolean sendUnreservationLink(String buyerEmail, String key) {
+        return emailService.sendSimpleMessage(buyerEmail, "Reservation",  "Kliknij w poniższy link by zrezygnować z rezerwacji:\nlocalhost:8080/api/reservation/resign/" + key);
     }
 
     public PresentReservation save(PresentReservation presentReservation) {

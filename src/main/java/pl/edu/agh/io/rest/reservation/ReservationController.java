@@ -51,6 +51,7 @@ public class ReservationController {
     }
 
     @GetMapping("/resign/{key}")
+    @Transactional
     public void resign(@PathVariable("key") String key){
         reservationService.deleteByKey(key);
     }
