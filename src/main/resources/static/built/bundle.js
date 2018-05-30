@@ -59,7 +59,11 @@
 	
 	var _reactGridLayout2 = _interopRequireDefault(_reactGridLayout);
 	
-	var _reactCustomScrollbars = __webpack_require__(/*! react-custom-scrollbars */ 508);
+	var _reactModal = __webpack_require__(/*! react-modal */ 508);
+	
+	var _reactModal2 = _interopRequireDefault(_reactModal);
+	
+	var _reactCustomScrollbars = __webpack_require__(/*! react-custom-scrollbars */ 518);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -71,8 +75,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 257);
-	var client = __webpack_require__(/*! ./client_react */ 525);
-	var follow = __webpack_require__(/*! ./follow */ 573);
+	var client = __webpack_require__(/*! ./client_react */ 535);
+	var follow = __webpack_require__(/*! ./follow */ 583);
 	
 	var App = function (_React$Component) {
 	    _inherits(App, _React$Component);
@@ -82,8 +86,12 @@
 	
 	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-	        _this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3" };
+	        _this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showModal: false };
 	        _this.loadNewPage = _this.loadNewPage.bind(_this);
+	
+	        _this.handleOpenMailModal = _this.handleOpenMailModal.bind(_this);
+	        _this.handleCloseMailModal = _this.handleCloseMailModal.bind(_this);
+	        _this.handleReservation = _this.handleReservation.bind(_this);
 	        return _this;
 	    }
 	
@@ -177,8 +185,8 @@
 	                console.log("got list of presents from existing wishlist: ");
 	                console.log(response);
 	                _this7.setState({ listKey: listKey });
-	                _this7.setState({ presents: response.entity.content });
-	                _this7.setState({ page: response.entity.content.length < 5 ? 0 : 1 });
+	                _this7.setState({ presents: response.entity });
+	                _this7.setState({ page: response.entity.length < 5 ? 0 : 1 });
 	            });
 	        }
 	    }, {
@@ -204,9 +212,9 @@
 	        value: function onPageLoaded(response) {
 	            var page = this.state.page;
 	            var presents = this.state.presents;
-	            var uniquePresents = this.mergeToFirstById(presents, response.entity.content);
+	            var uniquePresents = this.mergeToFirstById(presents, response.entity);
 	            this.setState({ presents: uniquePresents });
-	            this.setState({ page: response.entity.content.length < 5 ? page : page + 1 });
+	            this.setState({ page: response.entity.length < 5 ? page : page + 1 });
 	            this.forceUpdate();
 	        }
 	    }, {
@@ -228,6 +236,60 @@
 	            return res;
 	        }
 	    }, {
+	        key: 'handleOpenMailModal',
+	        value: function handleOpenMailModal(present) {
+	            console.log("Opening mail modal for: ");
+	            console.log(present);
+	            this.setState({ presentToReserve: present });
+	            this.setState({ showModal: true });
+	        }
+	    }, {
+	        key: 'handleReservation',
+	        value: function handleReservation(present, email) {
+	            var _this9 = this;
+	
+	            console.log("Sending reservation post on email: " + email);
+	            console.log(present);
+	
+	            document.getElementById("emailCancel").hidden = true;
+	            document.getElementById("emailSubmit").hidden = true;
+	            document.getElementById("emailInput").hidden = true;
+	            document.getElementById("emailInfo").innerHTML = "";
+	            document.getElementById("emailWaitInfo").innerHTML = "Czekaj, rezerwacja w trakcie ...";
+	
+	            client({
+	                method: 'POST',
+	                path: '/api/reservation',
+	                entity: {
+	                    buyerName: "anonim",
+	                    buyerEmail: email,
+	                    presentId: present.presentId
+	                },
+	                headers: { 'Content-Type': 'application/json' }
+	            }).done(function (response) {
+	                _this9.state.presents.filter(function (present_) {
+	                    return present.presentId == present_.presentId;
+	                }).forEach(function (present) {
+	                    return present.boughtOrReserved = true;
+	                });
+	                console.log("email response: " + present.presentId + " reserved -> true");
+	                console.log(_this9.state.presents);
+	
+	                document.getElementById("emailCancel").hidden = false;
+	                document.getElementById("emailSubmit").hidden = false;
+	                document.getElementById("emailInput").hidden = false;
+	                document.getElementById("emailWaitInfo").innerHTML = "";
+	
+	                _this9.setState({ showModal: false });
+	            });
+	        }
+	    }, {
+	        key: 'handleCloseMailModal',
+	        value: function handleCloseMailModal() {
+	            console.log("Closing mail modal");
+	            this.setState({ showModal: false });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var sectionStyle = {
@@ -237,12 +299,19 @@
 	                marginRight: "auto"
 	
 	            };
+	
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
 	                React.createElement(Header, null),
-	                React.createElement(Center, { presents: this.state.presents, loadNewPage: this.loadNewPage }),
-	                React.createElement(Footer, null)
+	                React.createElement(Center, { presents: this.state.presents, loadNewPage: this.loadNewPage, handleOpenMailModal: this.handleOpenMailModal }),
+	                React.createElement(Footer, null),
+	                React.createElement(
+	                    _reactModal2.default,
+	                    { ref: 'MailModal', style: { content: { top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)' } },
+	                        isOpen: this.state.showModal, contentLabel: 'Type your mail' },
+	                    React.createElement(MailModal, { ref: 'MailModalContent', handleReservation: this.handleReservation, handleCloseMailModal: this.handleCloseMailModal, presentToReserve: this.state.presentToReserve })
+	                )
 	            );
 	        }
 	    }]);
@@ -250,8 +319,67 @@
 	    return App;
 	}(React.Component);
 	
-	var Header = function (_React$Component2) {
-	    _inherits(Header, _React$Component2);
+	var MailModal = function (_React$Component2) {
+	    _inherits(MailModal, _React$Component2);
+	
+	    function MailModal() {
+	        _classCallCheck(this, MailModal);
+	
+	        return _possibleConstructorReturn(this, (MailModal.__proto__ || Object.getPrototypeOf(MailModal)).apply(this, arguments));
+	    }
+	
+	    _createClass(MailModal, [{
+	        key: 'render',
+	        value: function render() {
+	            var _this11 = this;
+	
+	            var sectionStyle = {
+	                width: 300,
+	                height: 150,
+	                background: "#666666"
+	            };
+	
+	            var infoText = typeof this.props.presentToReserve != "undefined" ? "Podaj swój mail by zarezerwować: " + this.props.presentToReserve.name : "Podaj swój mail";
+	
+	            return React.createElement(
+	                'div',
+	                { ref: 'MailModalDiv', style: sectionStyle },
+	                React.createElement(
+	                    'div',
+	                    { id: 'emailInfo', ref: 'MailInfo', style: { width: 300, height: 30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color: "#FFFFFF" } },
+	                    infoText
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { style: { width: 300, height: 30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" } },
+	                    React.createElement('input', { id: 'emailInput', type: 'text', placeholder: 'imie.nazwisko@domena' })
+	                ),
+	                React.createElement('div', { id: 'emailWaitInfo', ref: 'MailWaitInfo', style: { width: 300, height: 30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color: "#FFFFFF" } }),
+	                React.createElement(
+	                    'div',
+	                    { style: { width: 300, height: 30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" } },
+	                    React.createElement(
+	                        'button',
+	                        { id: 'emailSubmit', style: { width: 100, height: 20 }, onClick: function onClick() {
+	                                return _this11.props.handleReservation(_this11.props.presentToReserve, document.getElementById("emailInput").value);
+	                            } },
+	                        'Potwierd\u017A'
+	                    ),
+	                    React.createElement(
+	                        'button',
+	                        { id: 'emailCancel', style: { width: 100, height: 20, marginLeft: 10 }, onClick: this.props.handleCloseMailModal },
+	                        'Anuluj'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return MailModal;
+	}(React.Component);
+	
+	var Header = function (_React$Component3) {
+	    _inherits(Header, _React$Component3);
 	
 	    function Header() {
 	        _classCallCheck(this, Header);
@@ -297,8 +425,8 @@
 	    return Header;
 	}(React.Component);
 	
-	var Footer = function (_React$Component3) {
-	    _inherits(Footer, _React$Component3);
+	var Footer = function (_React$Component4) {
+	    _inherits(Footer, _React$Component4);
 	
 	    function Footer() {
 	        _classCallCheck(this, Footer);
@@ -343,8 +471,8 @@
 	    return Footer;
 	}(React.Component);
 	
-	var ServicesIcons = function (_React$Component4) {
-	    _inherits(ServicesIcons, _React$Component4);
+	var ServicesIcons = function (_React$Component5) {
+	    _inherits(ServicesIcons, _React$Component5);
 	
 	    function ServicesIcons() {
 	        _classCallCheck(this, ServicesIcons);
@@ -385,8 +513,8 @@
 	    return ServicesIcons;
 	}(React.Component);
 	
-	var Center = function (_React$Component5) {
-	    _inherits(Center, _React$Component5);
+	var Center = function (_React$Component6) {
+	    _inherits(Center, _React$Component6);
 	
 	    function Center() {
 	        _classCallCheck(this, Center);
@@ -411,7 +539,7 @@
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
-	                React.createElement(ListSquare, { presents: this.props.presents, loadNewPage: this.props.loadNewPage })
+	                React.createElement(ListSquare, { presents: this.props.presents, loadNewPage: this.props.loadNewPage, handleOpenMailModal: this.props.handleOpenMailModal })
 	            );
 	        }
 	    }]);
@@ -419,8 +547,8 @@
 	    return Center;
 	}(React.Component);
 	
-	var ListSquare = function (_React$Component6) {
-	    _inherits(ListSquare, _React$Component6);
+	var ListSquare = function (_React$Component7) {
+	    _inherits(ListSquare, _React$Component7);
 	
 	    function ListSquare() {
 	        _classCallCheck(this, ListSquare);
@@ -442,7 +570,7 @@
 	                'div',
 	                { style: sectionStyle },
 	                React.createElement(ListSquareHeader, null),
-	                React.createElement(ListSquareMainBody, { presents: this.props.presents, loadNewPage: this.props.loadNewPage })
+	                React.createElement(ListSquareMainBody, { presents: this.props.presents, loadNewPage: this.props.loadNewPage, handleOpenMailModal: this.props.handleOpenMailModal })
 	            );
 	        }
 	    }]);
@@ -450,8 +578,8 @@
 	    return ListSquare;
 	}(React.Component);
 	
-	var ListSquareHeader = function (_React$Component7) {
-	    _inherits(ListSquareHeader, _React$Component7);
+	var ListSquareHeader = function (_React$Component8) {
+	    _inherits(ListSquareHeader, _React$Component8);
 	
 	    function ListSquareHeader() {
 	        _classCallCheck(this, ListSquareHeader);
@@ -490,8 +618,8 @@
 	    return ListSquareHeader;
 	}(React.Component);
 	
-	var SearchBarComponent = function (_React$Component8) {
-	    _inherits(SearchBarComponent, _React$Component8);
+	var SearchBarComponent = function (_React$Component9) {
+	    _inherits(SearchBarComponent, _React$Component9);
 	
 	    function SearchBarComponent() {
 	        _classCallCheck(this, SearchBarComponent);
@@ -529,8 +657,8 @@
 	    return SearchBarComponent;
 	}(React.Component);
 	
-	var ListSquareNavigationButtons = function (_React$Component9) {
-	    _inherits(ListSquareNavigationButtons, _React$Component9);
+	var ListSquareNavigationButtons = function (_React$Component10) {
+	    _inherits(ListSquareNavigationButtons, _React$Component10);
 	
 	    function ListSquareNavigationButtons() {
 	        _classCallCheck(this, ListSquareNavigationButtons);
@@ -589,8 +717,8 @@
 	    return ListSquareNavigationButtons;
 	}(React.Component);
 	
-	var ListSquareMainBody = function (_React$Component10) {
-	    _inherits(ListSquareMainBody, _React$Component10);
+	var ListSquareMainBody = function (_React$Component11) {
+	    _inherits(ListSquareMainBody, _React$Component11);
 	
 	    function ListSquareMainBody() {
 	        _classCallCheck(this, ListSquareMainBody);
@@ -601,6 +729,8 @@
 	    _createClass(ListSquareMainBody, [{
 	        key: 'render',
 	        value: function render() {
+	            var _this21 = this;
+	
 	            console.log("List sqaure main body rendering presents: " + (typeof this.props.presents != "undefined"));
 	            console.log(this.props.presents);
 	
@@ -609,7 +739,7 @@
 	                return React.createElement(
 	                    'div',
 	                    { key: present.presentId, 'data-grid': { x: (i + 1) % 3, y: Math.floor((i + 1) / 3), w: 1, h: 1, static: true }, style: { border: ".1px solid #0066cc" } },
-	                    React.createElement(PresentComponent, { present: present })
+	                    React.createElement(PresentComponent, { present: present, handleOpenMailModal: _this21.props.handleOpenMailModal })
 	                );
 	            }) : [];
 	
@@ -634,16 +764,16 @@
 	    return ListSquareMainBody;
 	}(React.Component);
 	
-	var ShowMorePagesButton = function (_React$Component11) {
-	    _inherits(ShowMorePagesButton, _React$Component11);
+	var ShowMorePagesButton = function (_React$Component12) {
+	    _inherits(ShowMorePagesButton, _React$Component12);
 	
 	    function ShowMorePagesButton(props) {
 	        _classCallCheck(this, ShowMorePagesButton);
 	
-	        var _this18 = _possibleConstructorReturn(this, (ShowMorePagesButton.__proto__ || Object.getPrototypeOf(ShowMorePagesButton)).call(this, props));
+	        var _this22 = _possibleConstructorReturn(this, (ShowMorePagesButton.__proto__ || Object.getPrototypeOf(ShowMorePagesButton)).call(this, props));
 	
-	        _this18.moreItems = _this18.moreItems.bind(_this18);
-	        return _this18;
+	        _this22.moreItems = _this22.moreItems.bind(_this22);
+	        return _this22;
 	    }
 	
 	    _createClass(ShowMorePagesButton, [{
@@ -669,8 +799,8 @@
 	    return ShowMorePagesButton;
 	}(React.Component);
 	
-	var SuggestComponent = function (_React$Component12) {
-	    _inherits(SuggestComponent, _React$Component12);
+	var SuggestComponent = function (_React$Component13) {
+	    _inherits(SuggestComponent, _React$Component13);
 	
 	    function SuggestComponent() {
 	        _classCallCheck(this, SuggestComponent);
@@ -703,8 +833,8 @@
 	    return SuggestComponent;
 	}(React.Component);
 	
-	var PresentComponent = function (_React$Component13) {
-	    _inherits(PresentComponent, _React$Component13);
+	var PresentComponent = function (_React$Component14) {
+	    _inherits(PresentComponent, _React$Component14);
 	
 	    function PresentComponent() {
 	        _classCallCheck(this, PresentComponent);
@@ -720,6 +850,8 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this25 = this;
+	
 	            return React.createElement(
 	                'div',
 	                null,
@@ -733,7 +865,9 @@
 	                    ),
 	                    React.createElement(
 	                        'button',
-	                        { style: { width: "100px", marginLeft: "80px" } },
+	                        { style: { width: "100px", marginLeft: "80px" }, onClick: function onClick() {
+	                                return _this25.props.handleOpenMailModal(_this25.props.present);
+	                            } },
 	                        'Rezerwuj'
 	                    )
 	                ),
@@ -775,8 +909,8 @@
 	    return PresentComponent;
 	}(React.Component);
 	
-	var GuestApp = function (_React$Component14) {
-	    _inherits(GuestApp, _React$Component14);
+	var GuestApp = function (_React$Component15) {
+	    _inherits(GuestApp, _React$Component15);
 	
 	    function GuestApp() {
 	        _classCallCheck(this, GuestApp);
@@ -805,6 +939,7 @@
 	
 	try {
 	    ReactDOM.render(React.createElement(App, null), document.getElementById('react'));
+	    _reactModal2.default.setAppElement('#react');
 	} catch (e) {
 	    console.log("not found element: react");
 	}
@@ -48347,6 +48482,1225 @@
 
 /***/ }),
 /* 508 */
+/*!************************************!*\
+  !*** ./~/react-modal/lib/index.js ***!
+  \************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _Modal = __webpack_require__(/*! ./components/Modal */ 509);
+	
+	var _Modal2 = _interopRequireDefault(_Modal);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = _Modal2.default;
+	module.exports = exports["default"];
+
+/***/ }),
+/* 509 */
+/*!***********************************************!*\
+  !*** ./~/react-modal/lib/components/Modal.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.bodyOpenClassName = exports.portalClassName = undefined;
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 257);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _propTypes = __webpack_require__(/*! prop-types */ 40);
+	
+	var _propTypes2 = _interopRequireDefault(_propTypes);
+	
+	var _ModalPortal = __webpack_require__(/*! ./ModalPortal */ 510);
+	
+	var _ModalPortal2 = _interopRequireDefault(_ModalPortal);
+	
+	var _ariaAppHider = __webpack_require__(/*! ../helpers/ariaAppHider */ 514);
+	
+	var ariaAppHider = _interopRequireWildcard(_ariaAppHider);
+	
+	var _safeHTMLElement = __webpack_require__(/*! ../helpers/safeHTMLElement */ 516);
+	
+	var _safeHTMLElement2 = _interopRequireDefault(_safeHTMLElement);
+	
+	var _reactLifecyclesCompat = __webpack_require__(/*! react-lifecycles-compat */ 405);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var portalClassName = exports.portalClassName = "ReactModalPortal";
+	var bodyOpenClassName = exports.bodyOpenClassName = "ReactModal__Body--open";
+	
+	var isReact16 = _reactDom2.default.createPortal !== undefined;
+	var createPortal = isReact16 ? _reactDom2.default.createPortal : _reactDom2.default.unstable_renderSubtreeIntoContainer;
+	
+	function getParentElement(parentSelector) {
+	  return parentSelector();
+	}
+	
+	var Modal = function (_Component) {
+	  _inherits(Modal, _Component);
+	
+	  function Modal() {
+	    var _ref;
+	
+	    var _temp, _this, _ret;
+	
+	    _classCallCheck(this, Modal);
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Modal.__proto__ || Object.getPrototypeOf(Modal)).call.apply(_ref, [this].concat(args))), _this), _this.removePortal = function () {
+	      !isReact16 && _reactDom2.default.unmountComponentAtNode(_this.node);
+	      var parent = getParentElement(_this.props.parentSelector);
+	      parent.removeChild(_this.node);
+	    }, _this.portalRef = function (ref) {
+	      _this.portal = ref;
+	    }, _this.renderPortal = function (props) {
+	      var portal = createPortal(_this, _react2.default.createElement(_ModalPortal2.default, _extends({ defaultStyles: Modal.defaultStyles }, props)), _this.node);
+	      _this.portalRef(portal);
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+	
+	  _createClass(Modal, [{
+	    key: "componentDidMount",
+	    value: function componentDidMount() {
+	      if (!_safeHTMLElement.canUseDOM) return;
+	
+	      if (!isReact16) {
+	        this.node = document.createElement("div");
+	      }
+	      this.node.className = this.props.portalClassName;
+	
+	      var parent = getParentElement(this.props.parentSelector);
+	      parent.appendChild(this.node);
+	
+	      !isReact16 && this.renderPortal(this.props);
+	    }
+	  }, {
+	    key: "getSnapshotBeforeUpdate",
+	    value: function getSnapshotBeforeUpdate(prevProps) {
+	      var prevParent = getParentElement(prevProps.parentSelector);
+	      var nextParent = getParentElement(this.props.parentSelector);
+	      return { prevParent: prevParent, nextParent: nextParent };
+	    }
+	  }, {
+	    key: "componentDidUpdate",
+	    value: function componentDidUpdate(prevProps, _, snapshot) {
+	      if (!_safeHTMLElement.canUseDOM) return;
+	      var _props = this.props,
+	          isOpen = _props.isOpen,
+	          portalClassName = _props.portalClassName;
+	
+	
+	      if (prevProps.portalClassName !== portalClassName) {
+	        this.node.className = portalClassName;
+	      }
+	
+	      // Stop unnecessary renders if modal is remaining closed
+	      if (!prevProps.isOpen && !isOpen) return;
+	
+	      var prevParent = snapshot.prevParent,
+	          nextParent = snapshot.nextParent;
+	
+	      if (nextParent !== prevParent) {
+	        prevParent.removeChild(this.node);
+	        nextParent.appendChild(this.node);
+	      }
+	
+	      !isReact16 && this.renderPortal(this.props);
+	    }
+	  }, {
+	    key: "componentWillUnmount",
+	    value: function componentWillUnmount() {
+	      if (!_safeHTMLElement.canUseDOM || !this.node || !this.portal) return;
+	
+	      var state = this.portal.state;
+	      var now = Date.now();
+	      var closesAt = state.isOpen && this.props.closeTimeoutMS && (state.closesAt || now + this.props.closeTimeoutMS);
+	
+	      if (closesAt) {
+	        if (!state.beforeClose) {
+	          this.portal.closeWithTimeout();
+	        }
+	
+	        setTimeout(this.removePortal, closesAt - now);
+	      } else {
+	        this.removePortal();
+	      }
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      if (!_safeHTMLElement.canUseDOM || !isReact16) {
+	        return null;
+	      }
+	
+	      if (!this.node && isReact16) {
+	        this.node = document.createElement("div");
+	      }
+	
+	      return createPortal(_react2.default.createElement(_ModalPortal2.default, _extends({
+	        ref: this.portalRef,
+	        defaultStyles: Modal.defaultStyles
+	      }, this.props)), this.node);
+	    }
+	  }], [{
+	    key: "setAppElement",
+	    value: function setAppElement(element) {
+	      ariaAppHider.setElement(element);
+	    }
+	
+	    /* eslint-disable react/no-unused-prop-types */
+	
+	    /* eslint-enable react/no-unused-prop-types */
+	
+	  }]);
+	
+	  return Modal;
+	}(_react.Component);
+	
+	Modal.propTypes = {
+	  isOpen: _propTypes2.default.bool.isRequired,
+	  style: _propTypes2.default.shape({
+	    content: _propTypes2.default.object,
+	    overlay: _propTypes2.default.object
+	  }),
+	  portalClassName: _propTypes2.default.string,
+	  bodyOpenClassName: _propTypes2.default.string,
+	  htmlOpenClassName: _propTypes2.default.string,
+	  className: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.shape({
+	    base: _propTypes2.default.string.isRequired,
+	    afterOpen: _propTypes2.default.string.isRequired,
+	    beforeClose: _propTypes2.default.string.isRequired
+	  })]),
+	  overlayClassName: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.shape({
+	    base: _propTypes2.default.string.isRequired,
+	    afterOpen: _propTypes2.default.string.isRequired,
+	    beforeClose: _propTypes2.default.string.isRequired
+	  })]),
+	  appElement: _propTypes2.default.instanceOf(_safeHTMLElement2.default),
+	  onAfterOpen: _propTypes2.default.func,
+	  onRequestClose: _propTypes2.default.func,
+	  closeTimeoutMS: _propTypes2.default.number,
+	  ariaHideApp: _propTypes2.default.bool,
+	  shouldFocusAfterRender: _propTypes2.default.bool,
+	  shouldCloseOnOverlayClick: _propTypes2.default.bool,
+	  shouldReturnFocusAfterClose: _propTypes2.default.bool,
+	  parentSelector: _propTypes2.default.func,
+	  aria: _propTypes2.default.object,
+	  role: _propTypes2.default.string,
+	  contentLabel: _propTypes2.default.string,
+	  shouldCloseOnEsc: _propTypes2.default.bool,
+	  overlayRef: _propTypes2.default.func,
+	  contentRef: _propTypes2.default.func
+	};
+	Modal.defaultProps = {
+	  isOpen: false,
+	  portalClassName: portalClassName,
+	  bodyOpenClassName: bodyOpenClassName,
+	  ariaHideApp: true,
+	  closeTimeoutMS: 0,
+	  shouldFocusAfterRender: true,
+	  shouldCloseOnEsc: true,
+	  shouldCloseOnOverlayClick: true,
+	  shouldReturnFocusAfterClose: true,
+	  parentSelector: function parentSelector() {
+	    return document.body;
+	  }
+	};
+	Modal.defaultStyles = {
+	  overlay: {
+	    position: "fixed",
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: "rgba(255, 255, 255, 0.75)"
+	  },
+	  content: {
+	    position: "absolute",
+	    top: "40px",
+	    left: "40px",
+	    right: "40px",
+	    bottom: "40px",
+	    border: "1px solid #ccc",
+	    background: "#fff",
+	    overflow: "auto",
+	    WebkitOverflowScrolling: "touch",
+	    borderRadius: "4px",
+	    outline: "none",
+	    padding: "20px"
+	  }
+	};
+	
+	
+	(0, _reactLifecyclesCompat.polyfill)(Modal);
+	
+	exports.default = Modal;
+
+/***/ }),
+/* 510 */
+/*!*****************************************************!*\
+  !*** ./~/react-modal/lib/components/ModalPortal.js ***!
+  \*****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _propTypes = __webpack_require__(/*! prop-types */ 40);
+	
+	var _propTypes2 = _interopRequireDefault(_propTypes);
+	
+	var _focusManager = __webpack_require__(/*! ../helpers/focusManager */ 511);
+	
+	var focusManager = _interopRequireWildcard(_focusManager);
+	
+	var _scopeTab = __webpack_require__(/*! ../helpers/scopeTab */ 513);
+	
+	var _scopeTab2 = _interopRequireDefault(_scopeTab);
+	
+	var _ariaAppHider = __webpack_require__(/*! ../helpers/ariaAppHider */ 514);
+	
+	var ariaAppHider = _interopRequireWildcard(_ariaAppHider);
+	
+	var _classList = __webpack_require__(/*! ../helpers/classList */ 515);
+	
+	var classList = _interopRequireWildcard(_classList);
+	
+	var _safeHTMLElement = __webpack_require__(/*! ../helpers/safeHTMLElement */ 516);
+	
+	var _safeHTMLElement2 = _interopRequireDefault(_safeHTMLElement);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// so that our CSS is statically analyzable
+	var CLASS_NAMES = {
+	  overlay: "ReactModal__Overlay",
+	  content: "ReactModal__Content"
+	};
+	
+	var TAB_KEY = 9;
+	var ESC_KEY = 27;
+	
+	var ariaHiddenInstances = 0;
+	
+	var ModalPortal = function (_Component) {
+	  _inherits(ModalPortal, _Component);
+	
+	  function ModalPortal(props) {
+	    _classCallCheck(this, ModalPortal);
+	
+	    var _this = _possibleConstructorReturn(this, (ModalPortal.__proto__ || Object.getPrototypeOf(ModalPortal)).call(this, props));
+	
+	    _this.setOverlayRef = function (overlay) {
+	      _this.overlay = overlay;
+	      _this.props.overlayRef && _this.props.overlayRef(overlay);
+	    };
+	
+	    _this.setContentRef = function (content) {
+	      _this.content = content;
+	      _this.props.contentRef && _this.props.contentRef(content);
+	    };
+	
+	    _this.afterClose = function () {
+	      var _this$props = _this.props,
+	          appElement = _this$props.appElement,
+	          ariaHideApp = _this$props.ariaHideApp,
+	          htmlOpenClassName = _this$props.htmlOpenClassName,
+	          bodyOpenClassName = _this$props.bodyOpenClassName;
+	
+	      // Remove classes.
+	
+	      classList.remove(document.body, bodyOpenClassName);
+	
+	      htmlOpenClassName && classList.remove(document.getElementsByTagName("html")[0], htmlOpenClassName);
+	
+	      // Reset aria-hidden attribute if all modals have been removed
+	      if (ariaHideApp && ariaHiddenInstances > 0) {
+	        ariaHiddenInstances -= 1;
+	
+	        if (ariaHiddenInstances === 0) {
+	          ariaAppHider.show(appElement);
+	        }
+	      }
+	
+	      if (_this.props.shouldFocusAfterRender) {
+	        if (_this.props.shouldReturnFocusAfterClose) {
+	          focusManager.returnFocus();
+	          focusManager.teardownScopedFocus();
+	        } else {
+	          focusManager.popWithoutFocus();
+	        }
+	      }
+	    };
+	
+	    _this.open = function () {
+	      _this.beforeOpen();
+	      if (_this.state.afterOpen && _this.state.beforeClose) {
+	        clearTimeout(_this.closeTimer);
+	        _this.setState({ beforeClose: false });
+	      } else {
+	        if (_this.props.shouldFocusAfterRender) {
+	          focusManager.setupScopedFocus(_this.node);
+	          focusManager.markForFocusLater();
+	        }
+	
+	        _this.setState({ isOpen: true }, function () {
+	          _this.setState({ afterOpen: true });
+	
+	          if (_this.props.isOpen && _this.props.onAfterOpen) {
+	            _this.props.onAfterOpen();
+	          }
+	        });
+	      }
+	    };
+	
+	    _this.close = function () {
+	      if (_this.props.closeTimeoutMS > 0) {
+	        _this.closeWithTimeout();
+	      } else {
+	        _this.closeWithoutTimeout();
+	      }
+	    };
+	
+	    _this.focusContent = function () {
+	      return _this.content && !_this.contentHasFocus() && _this.content.focus();
+	    };
+	
+	    _this.closeWithTimeout = function () {
+	      var closesAt = Date.now() + _this.props.closeTimeoutMS;
+	      _this.setState({ beforeClose: true, closesAt: closesAt }, function () {
+	        _this.closeTimer = setTimeout(_this.closeWithoutTimeout, _this.state.closesAt - Date.now());
+	      });
+	    };
+	
+	    _this.closeWithoutTimeout = function () {
+	      _this.setState({
+	        beforeClose: false,
+	        isOpen: false,
+	        afterOpen: false,
+	        closesAt: null
+	      }, _this.afterClose);
+	    };
+	
+	    _this.handleKeyDown = function (event) {
+	      if (event.keyCode === TAB_KEY) {
+	        (0, _scopeTab2.default)(_this.content, event);
+	      }
+	
+	      if (_this.props.shouldCloseOnEsc && event.keyCode === ESC_KEY) {
+	        event.stopPropagation();
+	        _this.requestClose(event);
+	      }
+	    };
+	
+	    _this.handleOverlayOnClick = function (event) {
+	      if (_this.shouldClose === null) {
+	        _this.shouldClose = true;
+	      }
+	
+	      if (_this.shouldClose && _this.props.shouldCloseOnOverlayClick) {
+	        if (_this.ownerHandlesClose()) {
+	          _this.requestClose(event);
+	        } else {
+	          _this.focusContent();
+	        }
+	      }
+	      _this.shouldClose = null;
+	    };
+	
+	    _this.handleContentOnMouseUp = function () {
+	      _this.shouldClose = false;
+	    };
+	
+	    _this.handleOverlayOnMouseDown = function (event) {
+	      if (!_this.props.shouldCloseOnOverlayClick && event.target == _this.overlay) {
+	        event.preventDefault();
+	      }
+	    };
+	
+	    _this.handleContentOnClick = function () {
+	      _this.shouldClose = false;
+	    };
+	
+	    _this.handleContentOnMouseDown = function () {
+	      _this.shouldClose = false;
+	    };
+	
+	    _this.requestClose = function (event) {
+	      return _this.ownerHandlesClose() && _this.props.onRequestClose(event);
+	    };
+	
+	    _this.ownerHandlesClose = function () {
+	      return _this.props.onRequestClose;
+	    };
+	
+	    _this.shouldBeClosed = function () {
+	      return !_this.state.isOpen && !_this.state.beforeClose;
+	    };
+	
+	    _this.contentHasFocus = function () {
+	      return document.activeElement === _this.content || _this.content.contains(document.activeElement);
+	    };
+	
+	    _this.buildClassName = function (which, additional) {
+	      var classNames = (typeof additional === "undefined" ? "undefined" : _typeof(additional)) === "object" ? additional : {
+	        base: CLASS_NAMES[which],
+	        afterOpen: CLASS_NAMES[which] + "--after-open",
+	        beforeClose: CLASS_NAMES[which] + "--before-close"
+	      };
+	      var className = classNames.base;
+	      if (_this.state.afterOpen) {
+	        className = className + " " + classNames.afterOpen;
+	      }
+	      if (_this.state.beforeClose) {
+	        className = className + " " + classNames.beforeClose;
+	      }
+	      return typeof additional === "string" && additional ? className + " " + additional : className;
+	    };
+	
+	    _this.ariaAttributes = function (items) {
+	      return Object.keys(items).reduce(function (acc, name) {
+	        acc["aria-" + name] = items[name];
+	        return acc;
+	      }, {});
+	    };
+	
+	    _this.state = {
+	      afterOpen: false,
+	      beforeClose: false
+	    };
+	
+	    _this.shouldClose = null;
+	    _this.moveFromContentToOverlay = null;
+	    return _this;
+	  }
+	
+	  _createClass(ModalPortal, [{
+	    key: "componentDidMount",
+	    value: function componentDidMount() {
+	      if (this.props.isOpen) {
+	        this.open();
+	      }
+	    }
+	  }, {
+	    key: "componentDidUpdate",
+	    value: function componentDidUpdate(prevProps, prevState) {
+	      if (process.env.NODE_ENV !== "production") {
+	        if (prevProps.bodyOpenClassName !== this.props.bodyOpenClassName) {
+	          // eslint-disable-next-line no-console
+	          console.warn('React-Modal: "bodyOpenClassName" prop has been modified. ' + "This may cause unexpected behavior when multiple modals are open.");
+	        }
+	        if (prevProps.htmlOpenClassName !== this.props.htmlOpenClassName) {
+	          // eslint-disable-next-line no-console
+	          console.warn('React-Modal: "htmlOpenClassName" prop has been modified. ' + "This may cause unexpected behavior when multiple modals are open.");
+	        }
+	      }
+	
+	      if (this.props.isOpen && !prevProps.isOpen) {
+	        this.open();
+	      } else if (!this.props.isOpen && prevProps.isOpen) {
+	        this.close();
+	      }
+	
+	      // Focus only needs to be set once when the modal is being opened
+	      if (this.props.shouldFocusAfterRender && this.state.isOpen && !prevState.isOpen) {
+	        this.focusContent();
+	      }
+	    }
+	  }, {
+	    key: "componentWillUnmount",
+	    value: function componentWillUnmount() {
+	      this.afterClose();
+	      clearTimeout(this.closeTimer);
+	    }
+	  }, {
+	    key: "beforeOpen",
+	    value: function beforeOpen() {
+	      var _props = this.props,
+	          appElement = _props.appElement,
+	          ariaHideApp = _props.ariaHideApp,
+	          htmlOpenClassName = _props.htmlOpenClassName,
+	          bodyOpenClassName = _props.bodyOpenClassName;
+	
+	      // Add classes.
+	
+	      classList.add(document.body, bodyOpenClassName);
+	
+	      htmlOpenClassName && classList.add(document.getElementsByTagName("html")[0], htmlOpenClassName);
+	
+	      if (ariaHideApp) {
+	        ariaHiddenInstances += 1;
+	        ariaAppHider.hide(appElement);
+	      }
+	    }
+	
+	    // Don't steal focus from inner elements
+	
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      var _props2 = this.props,
+	          className = _props2.className,
+	          overlayClassName = _props2.overlayClassName,
+	          defaultStyles = _props2.defaultStyles;
+	
+	      var contentStyles = className ? {} : defaultStyles.content;
+	      var overlayStyles = overlayClassName ? {} : defaultStyles.overlay;
+	
+	      return this.shouldBeClosed() ? null : _react2.default.createElement(
+	        "div",
+	        {
+	          ref: this.setOverlayRef,
+	          className: this.buildClassName("overlay", overlayClassName),
+	          style: _extends({}, overlayStyles, this.props.style.overlay),
+	          onClick: this.handleOverlayOnClick,
+	          onMouseDown: this.handleOverlayOnMouseDown,
+	          "aria-modal": "true"
+	        },
+	        _react2.default.createElement(
+	          "div",
+	          _extends({
+	            ref: this.setContentRef,
+	            style: _extends({}, contentStyles, this.props.style.content),
+	            className: this.buildClassName("content", className),
+	            tabIndex: "-1",
+	            onKeyDown: this.handleKeyDown,
+	            onMouseDown: this.handleContentOnMouseDown,
+	            onMouseUp: this.handleContentOnMouseUp,
+	            onClick: this.handleContentOnClick,
+	            role: this.props.role,
+	            "aria-label": this.props.contentLabel
+	          }, this.ariaAttributes(this.props.aria || {}), {
+	            "data-testid": this.props.testId
+	          }),
+	          this.props.children
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return ModalPortal;
+	}(_react.Component);
+	
+	ModalPortal.defaultProps = {
+	  style: {
+	    overlay: {},
+	    content: {}
+	  },
+	  defaultStyles: {}
+	};
+	ModalPortal.propTypes = {
+	  isOpen: _propTypes2.default.bool.isRequired,
+	  defaultStyles: _propTypes2.default.shape({
+	    content: _propTypes2.default.object,
+	    overlay: _propTypes2.default.object
+	  }),
+	  style: _propTypes2.default.shape({
+	    content: _propTypes2.default.object,
+	    overlay: _propTypes2.default.object
+	  }),
+	  className: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.object]),
+	  overlayClassName: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.object]),
+	  bodyOpenClassName: _propTypes2.default.string,
+	  htmlOpenClassName: _propTypes2.default.string,
+	  ariaHideApp: _propTypes2.default.bool,
+	  appElement: _propTypes2.default.instanceOf(_safeHTMLElement2.default),
+	  onAfterOpen: _propTypes2.default.func,
+	  onRequestClose: _propTypes2.default.func,
+	  closeTimeoutMS: _propTypes2.default.number,
+	  shouldFocusAfterRender: _propTypes2.default.bool,
+	  shouldCloseOnOverlayClick: _propTypes2.default.bool,
+	  shouldReturnFocusAfterClose: _propTypes2.default.bool,
+	  role: _propTypes2.default.string,
+	  contentLabel: _propTypes2.default.string,
+	  aria: _propTypes2.default.object,
+	  children: _propTypes2.default.node,
+	  shouldCloseOnEsc: _propTypes2.default.bool,
+	  overlayRef: _propTypes2.default.func,
+	  contentRef: _propTypes2.default.func,
+	  testId: _propTypes2.default.string
+	};
+	exports.default = ModalPortal;
+	module.exports = exports["default"];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../process/browser.js */ 6)))
+
+/***/ }),
+/* 511 */
+/*!***************************************************!*\
+  !*** ./~/react-modal/lib/helpers/focusManager.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.handleBlur = handleBlur;
+	exports.handleFocus = handleFocus;
+	exports.markForFocusLater = markForFocusLater;
+	exports.returnFocus = returnFocus;
+	exports.popWithoutFocus = popWithoutFocus;
+	exports.setupScopedFocus = setupScopedFocus;
+	exports.teardownScopedFocus = teardownScopedFocus;
+	
+	var _tabbable = __webpack_require__(/*! ../helpers/tabbable */ 512);
+	
+	var _tabbable2 = _interopRequireDefault(_tabbable);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var focusLaterElements = [];
+	var modalElement = null;
+	var needToFocus = false;
+	
+	function handleBlur() {
+	  needToFocus = true;
+	}
+	
+	function handleFocus() {
+	  if (needToFocus) {
+	    needToFocus = false;
+	    if (!modalElement) {
+	      return;
+	    }
+	    // need to see how jQuery shims document.on('focusin') so we don't need the
+	    // setTimeout, firefox doesn't support focusin, if it did, we could focus
+	    // the element outside of a setTimeout. Side-effect of this implementation
+	    // is that the document.body gets focus, and then we focus our element right
+	    // after, seems fine.
+	    setTimeout(function () {
+	      if (modalElement.contains(document.activeElement)) {
+	        return;
+	      }
+	      var el = (0, _tabbable2.default)(modalElement)[0] || modalElement;
+	      el.focus();
+	    }, 0);
+	  }
+	}
+	
+	function markForFocusLater() {
+	  focusLaterElements.push(document.activeElement);
+	}
+	
+	/* eslint-disable no-console */
+	function returnFocus() {
+	  var toFocus = null;
+	  try {
+	    if (focusLaterElements.length !== 0) {
+	      toFocus = focusLaterElements.pop();
+	      toFocus.focus();
+	    }
+	    return;
+	  } catch (e) {
+	    console.warn(["You tried to return focus to", toFocus, "but it is not in the DOM anymore"].join(" "));
+	  }
+	}
+	/* eslint-enable no-console */
+	
+	function popWithoutFocus() {
+	  focusLaterElements.length > 0 && focusLaterElements.pop();
+	}
+	
+	function setupScopedFocus(element) {
+	  modalElement = element;
+	
+	  if (window.addEventListener) {
+	    window.addEventListener("blur", handleBlur, false);
+	    document.addEventListener("focus", handleFocus, true);
+	  } else {
+	    window.attachEvent("onBlur", handleBlur);
+	    document.attachEvent("onFocus", handleFocus);
+	  }
+	}
+	
+	function teardownScopedFocus() {
+	  modalElement = null;
+	
+	  if (window.addEventListener) {
+	    window.removeEventListener("blur", handleBlur);
+	    document.removeEventListener("focus", handleFocus);
+	  } else {
+	    window.detachEvent("onBlur", handleBlur);
+	    document.detachEvent("onFocus", handleFocus);
+	  }
+	}
+
+/***/ }),
+/* 512 */
+/*!***********************************************!*\
+  !*** ./~/react-modal/lib/helpers/tabbable.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = findTabbableDescendants;
+	/*!
+	 * Adapted from jQuery UI core
+	 *
+	 * http://jqueryui.com
+	 *
+	 * Copyright 2014 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * http://api.jqueryui.com/category/ui-core/
+	 */
+	
+	var tabbableNode = /input|select|textarea|button|object/;
+	
+	function hidesContents(element) {
+	  var zeroSize = element.offsetWidth <= 0 && element.offsetHeight <= 0;
+	
+	  // If the node is empty, this is good enough
+	  if (zeroSize && !element.innerHTML) return true;
+	
+	  // Otherwise we need to check some styles
+	  var style = window.getComputedStyle(element);
+	  return zeroSize ? style.getPropertyValue("overflow") !== "visible" : style.getPropertyValue("display") == "none";
+	}
+	
+	function visible(element) {
+	  var parentElement = element;
+	  while (parentElement) {
+	    if (parentElement === document.body) break;
+	    if (hidesContents(parentElement)) return false;
+	    parentElement = parentElement.parentNode;
+	  }
+	  return true;
+	}
+	
+	function focusable(element, isTabIndexNotNaN) {
+	  var nodeName = element.nodeName.toLowerCase();
+	  var res = tabbableNode.test(nodeName) && !element.disabled || (nodeName === "a" ? element.href || isTabIndexNotNaN : isTabIndexNotNaN);
+	  return res && visible(element);
+	}
+	
+	function tabbable(element) {
+	  var tabIndex = element.getAttribute("tabindex");
+	  if (tabIndex === null) tabIndex = undefined;
+	  var isTabIndexNaN = isNaN(tabIndex);
+	  return (isTabIndexNaN || tabIndex >= 0) && focusable(element, !isTabIndexNaN);
+	}
+	
+	function findTabbableDescendants(element) {
+	  return [].slice.call(element.querySelectorAll("*"), 0).filter(tabbable);
+	}
+	module.exports = exports["default"];
+
+/***/ }),
+/* 513 */
+/*!***********************************************!*\
+  !*** ./~/react-modal/lib/helpers/scopeTab.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = scopeTab;
+	
+	var _tabbable = __webpack_require__(/*! ./tabbable */ 512);
+	
+	var _tabbable2 = _interopRequireDefault(_tabbable);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function scopeTab(node, event) {
+	  var tabbable = (0, _tabbable2.default)(node);
+	
+	  if (!tabbable.length) {
+	    // Do nothing, since there are no elements that can receive focus.
+	    event.preventDefault();
+	    return;
+	  }
+	
+	  var shiftKey = event.shiftKey;
+	  var head = tabbable[0];
+	  var tail = tabbable[tabbable.length - 1];
+	
+	  // proceed with default browser behavior on tab.
+	  // Focus on last element on shift + tab.
+	  if (node === document.activeElement) {
+	    if (!shiftKey) return;
+	    target = tail;
+	  }
+	
+	  var target;
+	  if (tail === document.activeElement && !shiftKey) {
+	    target = head;
+	  }
+	
+	  if (head === document.activeElement && shiftKey) {
+	    target = tail;
+	  }
+	
+	  if (target) {
+	    event.preventDefault();
+	    target.focus();
+	    return;
+	  }
+	
+	  // Safari radio issue.
+	  //
+	  // Safari does not move the focus to the radio button,
+	  // so we need to force it to really walk through all elements.
+	  //
+	  // This is very error prune, since we are trying to guess
+	  // if it is a safari browser from the first occurence between
+	  // chrome or safari.
+	  //
+	  // The chrome user agent contains the first ocurrence
+	  // as the 'chrome/version' and later the 'safari/version'.
+	  var checkSafari = /(\bChrome\b|\bSafari\b)\//.exec(navigator.userAgent);
+	  var isSafariDesktop = checkSafari != null && checkSafari[1] != "Chrome" && /\biPod\b|\biPad\b/g.exec(navigator.userAgent) == null;
+	
+	  // If we are not in safari desktop, let the browser control
+	  // the focus
+	  if (!isSafariDesktop) return;
+	
+	  var x = tabbable.indexOf(document.activeElement);
+	
+	  if (x > -1) {
+	    x += shiftKey ? -1 : 1;
+	  }
+	
+	  event.preventDefault();
+	
+	  tabbable[x].focus();
+	}
+	module.exports = exports["default"];
+
+/***/ }),
+/* 514 */
+/*!***************************************************!*\
+  !*** ./~/react-modal/lib/helpers/ariaAppHider.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.assertNodeList = assertNodeList;
+	exports.setElement = setElement;
+	exports.validateElement = validateElement;
+	exports.hide = hide;
+	exports.show = show;
+	exports.documentNotReadyOrSSRTesting = documentNotReadyOrSSRTesting;
+	exports.resetForTesting = resetForTesting;
+	
+	var _warning = __webpack_require__(/*! warning */ 178);
+	
+	var _warning2 = _interopRequireDefault(_warning);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var globalElement = null;
+	
+	function assertNodeList(nodeList, selector) {
+	  if (!nodeList || !nodeList.length) {
+	    throw new Error("react-modal: No elements were found for selector " + selector + ".");
+	  }
+	}
+	
+	function setElement(element) {
+	  var useElement = element;
+	  if (typeof useElement === "string") {
+	    var el = document.querySelectorAll(useElement);
+	    assertNodeList(el, useElement);
+	    useElement = "length" in el ? el[0] : el;
+	  }
+	  globalElement = useElement || globalElement;
+	  return globalElement;
+	}
+	
+	function validateElement(appElement) {
+	  if (!appElement && !globalElement) {
+	    (0, _warning2.default)(false, ["react-modal: App element is not defined.", "Please use `Modal.setAppElement(el)` or set `appElement={el}`.", "This is needed so screen readers don't see main content", "when modal is opened. It is not recommended, but you can opt-out", "by setting `ariaHideApp={false}`."].join(" "));
+	
+	    return false;
+	  }
+	
+	  return true;
+	}
+	
+	function hide(appElement) {
+	  if (validateElement(appElement)) {
+	    (appElement || globalElement).setAttribute("aria-hidden", "true");
+	  }
+	}
+	
+	function show(appElement) {
+	  if (validateElement(appElement)) {
+	    (appElement || globalElement).removeAttribute("aria-hidden");
+	  }
+	}
+	
+	function documentNotReadyOrSSRTesting() {
+	  globalElement = null;
+	}
+	
+	function resetForTesting() {
+	  globalElement = null;
+	}
+
+/***/ }),
+/* 515 */
+/*!************************************************!*\
+  !*** ./~/react-modal/lib/helpers/classList.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.dumpClassLists = dumpClassLists;
+	var htmlClassList = {};
+	var docBodyClassList = {};
+	
+	function dumpClassLists() {
+	  if (process.env.NODE_ENV !== "production") {
+	    var classes = document.getElementsByTagName("html")[0].className;
+	    var buffer = "Show tracked classes:\n\n";
+	
+	    buffer += "<html /> (" + classes + "):\n";
+	    for (var x in htmlClassList) {
+	      buffer += "  " + x + " " + htmlClassList[x] + "\n";
+	    }
+	
+	    classes = document.body.className;
+	
+	    // eslint-disable-next-line max-len
+	    buffer += "\n\ndoc.body (" + classes + "):\n";
+	    for (var _x in docBodyClassList) {
+	      buffer += "  " + _x + " " + docBodyClassList[_x] + "\n";
+	    }
+	
+	    buffer += "\n";
+	
+	    // eslint-disable-next-line no-console
+	    console.log(buffer);
+	  }
+	}
+	
+	/**
+	 * Track the number of reference of a class.
+	 * @param {object} poll The poll to receive the reference.
+	 * @param {string} className The class name.
+	 * @return {string}
+	 */
+	var incrementReference = function incrementReference(poll, className) {
+	  if (!poll[className]) {
+	    poll[className] = 0;
+	  }
+	  poll[className] += 1;
+	  return className;
+	};
+	
+	/**
+	 * Drop the reference of a class.
+	 * @param {object} poll The poll to receive the reference.
+	 * @param {string} className The class name.
+	 * @return {string}
+	 */
+	var decrementReference = function decrementReference(poll, className) {
+	  if (poll[className]) {
+	    poll[className] -= 1;
+	  }
+	  return className;
+	};
+	
+	/**
+	 * Track a class and add to the given class list.
+	 * @param {Object} classListRef A class list of an element.
+	 * @param {Object} poll         The poll to be used.
+	 * @param {Array}  classes      The list of classes to be tracked.
+	 */
+	var trackClass = function trackClass(classListRef, poll, classes) {
+	  classes.forEach(function (className) {
+	    incrementReference(poll, className);
+	    classListRef.add(className);
+	  });
+	};
+	
+	/**
+	 * Untrack a class and remove from the given class list if the reference
+	 * reaches 0.
+	 * @param {Object} classListRef A class list of an element.
+	 * @param {Object} poll         The poll to be used.
+	 * @param {Array}  classes      The list of classes to be untracked.
+	 */
+	var untrackClass = function untrackClass(classListRef, poll, classes) {
+	  classes.forEach(function (className) {
+	    decrementReference(poll, className);
+	    poll[className] === 0 && classListRef.remove(className);
+	  });
+	};
+	
+	/**
+	 * Public inferface to add classes to the document.body.
+	 * @param {string} bodyClass The class string to be added.
+	 *                           It may contain more then one class
+	 *                           with ' ' as separator.
+	 */
+	var add = exports.add = function add(element, classString) {
+	  return trackClass(element.classList, element.nodeName.toLowerCase() == "html" ? htmlClassList : docBodyClassList, classString.split(" "));
+	};
+	
+	/**
+	 * Public inferface to remove classes from the document.body.
+	 * @param {string} bodyClass The class string to be added.
+	 *                           It may contain more then one class
+	 *                           with ' ' as separator.
+	 */
+	var remove = exports.remove = function remove(element, classString) {
+	  return untrackClass(element.classList, element.nodeName.toLowerCase() == "html" ? htmlClassList : docBodyClassList, classString.split(" "));
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../process/browser.js */ 6)))
+
+/***/ }),
+/* 516 */
+/*!******************************************************!*\
+  !*** ./~/react-modal/lib/helpers/safeHTMLElement.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.canUseDOM = undefined;
+	
+	var _exenv = __webpack_require__(/*! exenv */ 517);
+	
+	var _exenv2 = _interopRequireDefault(_exenv);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var EE = _exenv2.default;
+	
+	var SafeHTMLElement = EE.canUseDOM ? window.HTMLElement : {};
+	
+	var canUseDOM = exports.canUseDOM = EE.canUseDOM;
+	
+	exports.default = SafeHTMLElement;
+
+/***/ }),
+/* 517 */
+/*!**************************!*\
+  !*** ./~/exenv/index.js ***!
+  \**************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2015 Jed Watson.
+	  Based on code that is Copyright 2013-2015, Facebook, Inc.
+	  All rights reserved.
+	*/
+	/* global define */
+	
+	(function () {
+		'use strict';
+	
+		var canUseDOM = !!(
+			typeof window !== 'undefined' &&
+			window.document &&
+			window.document.createElement
+		);
+	
+		var ExecutionEnvironment = {
+	
+			canUseDOM: canUseDOM,
+	
+			canUseWorkers: typeof Worker !== 'undefined',
+	
+			canUseEventListeners:
+				canUseDOM && !!(window.addEventListener || window.attachEvent),
+	
+			canUseViewport: canUseDOM && !!window.screen
+	
+		};
+	
+		if (true) {
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return ExecutionEnvironment;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (typeof module !== 'undefined' && module.exports) {
+			module.exports = ExecutionEnvironment;
+		} else {
+			window.ExecutionEnvironment = ExecutionEnvironment;
+		}
+	
+	}());
+
+
+/***/ }),
+/* 518 */
 /*!************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/index.js ***!
   \************************************************/
@@ -48359,7 +49713,7 @@
 	});
 	exports.Scrollbars = undefined;
 	
-	var _Scrollbars = __webpack_require__(/*! ./Scrollbars */ 509);
+	var _Scrollbars = __webpack_require__(/*! ./Scrollbars */ 519);
 	
 	var _Scrollbars2 = _interopRequireDefault(_Scrollbars);
 	
@@ -48369,7 +49723,7 @@
 	exports.Scrollbars = _Scrollbars2["default"];
 
 /***/ }),
-/* 509 */
+/* 519 */
 /*!***********************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/Scrollbars/index.js ***!
   \***********************************************************/
@@ -48385,11 +49739,11 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _raf2 = __webpack_require__(/*! raf */ 510);
+	var _raf2 = __webpack_require__(/*! raf */ 520);
 	
 	var _raf3 = _interopRequireDefault(_raf2);
 	
-	var _domCss = __webpack_require__(/*! dom-css */ 512);
+	var _domCss = __webpack_require__(/*! dom-css */ 522);
 	
 	var _domCss2 = _interopRequireDefault(_domCss);
 	
@@ -48399,29 +49753,29 @@
 	
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 	
-	var _isString = __webpack_require__(/*! ../utils/isString */ 518);
+	var _isString = __webpack_require__(/*! ../utils/isString */ 528);
 	
 	var _isString2 = _interopRequireDefault(_isString);
 	
-	var _getScrollbarWidth = __webpack_require__(/*! ../utils/getScrollbarWidth */ 519);
+	var _getScrollbarWidth = __webpack_require__(/*! ../utils/getScrollbarWidth */ 529);
 	
 	var _getScrollbarWidth2 = _interopRequireDefault(_getScrollbarWidth);
 	
-	var _returnFalse = __webpack_require__(/*! ../utils/returnFalse */ 520);
+	var _returnFalse = __webpack_require__(/*! ../utils/returnFalse */ 530);
 	
 	var _returnFalse2 = _interopRequireDefault(_returnFalse);
 	
-	var _getInnerWidth = __webpack_require__(/*! ../utils/getInnerWidth */ 521);
+	var _getInnerWidth = __webpack_require__(/*! ../utils/getInnerWidth */ 531);
 	
 	var _getInnerWidth2 = _interopRequireDefault(_getInnerWidth);
 	
-	var _getInnerHeight = __webpack_require__(/*! ../utils/getInnerHeight */ 522);
+	var _getInnerHeight = __webpack_require__(/*! ../utils/getInnerHeight */ 532);
 	
 	var _getInnerHeight2 = _interopRequireDefault(_getInnerHeight);
 	
-	var _styles = __webpack_require__(/*! ./styles */ 523);
+	var _styles = __webpack_require__(/*! ./styles */ 533);
 	
-	var _defaultRenderElements = __webpack_require__(/*! ./defaultRenderElements */ 524);
+	var _defaultRenderElements = __webpack_require__(/*! ./defaultRenderElements */ 534);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
@@ -49170,13 +50524,13 @@
 	};
 
 /***/ }),
-/* 510 */
+/* 520 */
 /*!************************!*\
   !*** ./~/raf/index.js ***!
   \************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(/*! performance-now */ 511)
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(/*! performance-now */ 521)
 	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
@@ -49255,7 +50609,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 511 */
+/* 521 */
 /*!**************************************************!*\
   !*** ./~/performance-now/lib/performance-now.js ***!
   \**************************************************/
@@ -49301,16 +50655,16 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ }),
-/* 512 */
+/* 522 */
 /*!****************************!*\
   !*** ./~/dom-css/index.js ***!
   \****************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	var prefix = __webpack_require__(/*! prefix-style */ 513)
-	var toCamelCase = __webpack_require__(/*! to-camel-case */ 514)
+	var prefix = __webpack_require__(/*! prefix-style */ 523)
+	var toCamelCase = __webpack_require__(/*! to-camel-case */ 524)
 	var cache = { 'float': 'cssFloat' }
-	var addPxToStyle = __webpack_require__(/*! add-px-to-style */ 517)
+	var addPxToStyle = __webpack_require__(/*! add-px-to-style */ 527)
 	
 	function style (element, property, value) {
 	  var camel = cache[property]
@@ -49371,7 +50725,7 @@
 
 
 /***/ }),
-/* 513 */
+/* 523 */
 /*!*********************************!*\
   !*** ./~/prefix-style/index.js ***!
   \*********************************/
@@ -49410,14 +50764,14 @@
 
 
 /***/ }),
-/* 514 */
+/* 524 */
 /*!**********************************!*\
   !*** ./~/to-camel-case/index.js ***!
   \**********************************/
 /***/ (function(module, exports, __webpack_require__) {
 
 	
-	var space = __webpack_require__(/*! to-space-case */ 515)
+	var space = __webpack_require__(/*! to-space-case */ 525)
 	
 	/**
 	 * Export.
@@ -49440,14 +50794,14 @@
 
 
 /***/ }),
-/* 515 */
+/* 525 */
 /*!**********************************!*\
   !*** ./~/to-space-case/index.js ***!
   \**********************************/
 /***/ (function(module, exports, __webpack_require__) {
 
 	
-	var clean = __webpack_require__(/*! to-no-case */ 516)
+	var clean = __webpack_require__(/*! to-no-case */ 526)
 	
 	/**
 	 * Export.
@@ -49470,7 +50824,7 @@
 
 
 /***/ }),
-/* 516 */
+/* 526 */
 /*!*******************************!*\
   !*** ./~/to-no-case/index.js ***!
   \*******************************/
@@ -49546,7 +50900,7 @@
 
 
 /***/ }),
-/* 517 */
+/* 527 */
 /*!************************************!*\
   !*** ./~/add-px-to-style/index.js ***!
   \************************************/
@@ -49595,7 +50949,7 @@
 	};
 
 /***/ }),
-/* 518 */
+/* 528 */
 /*!*********************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/utils/isString.js ***!
   \*********************************************************/
@@ -49612,7 +50966,7 @@
 	}
 
 /***/ }),
-/* 519 */
+/* 529 */
 /*!******************************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/utils/getScrollbarWidth.js ***!
   \******************************************************************/
@@ -49625,7 +50979,7 @@
 	});
 	exports["default"] = getScrollbarWidth;
 	
-	var _domCss = __webpack_require__(/*! dom-css */ 512);
+	var _domCss = __webpack_require__(/*! dom-css */ 522);
 	
 	var _domCss2 = _interopRequireDefault(_domCss);
 	
@@ -49656,7 +51010,7 @@
 	}
 
 /***/ }),
-/* 520 */
+/* 530 */
 /*!************************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/utils/returnFalse.js ***!
   \************************************************************/
@@ -49673,7 +51027,7 @@
 	}
 
 /***/ }),
-/* 521 */
+/* 531 */
 /*!**************************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/utils/getInnerWidth.js ***!
   \**************************************************************/
@@ -49696,7 +51050,7 @@
 	}
 
 /***/ }),
-/* 522 */
+/* 532 */
 /*!***************************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/utils/getInnerHeight.js ***!
   \***************************************************************/
@@ -49719,7 +51073,7 @@
 	}
 
 /***/ }),
-/* 523 */
+/* 533 */
 /*!************************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/Scrollbars/styles.js ***!
   \************************************************************/
@@ -49798,7 +51152,7 @@
 	};
 
 /***/ }),
-/* 524 */
+/* 534 */
 /*!***************************************************************************!*\
   !*** ./~/react-custom-scrollbars/lib/Scrollbars/defaultRenderElements.js ***!
   \***************************************************************************/
@@ -49883,7 +51237,7 @@
 	}
 
 /***/ }),
-/* 525 */
+/* 535 */
 /*!*************************************!*\
   !*** ./src/main/js/client_react.js ***!
   \*************************************/
@@ -49891,22 +51245,22 @@
 
 	'use strict';
 	
-	var rest = __webpack_require__(/*! rest */ 526);
-	var defaultRequest = __webpack_require__(/*! rest/interceptor/defaultRequest */ 554);
-	var mime = __webpack_require__(/*! rest/interceptor/mime */ 556);
-	var uriTemplateInterceptor = __webpack_require__(/*! ./api/uriTemplateInterceptor */ 570);
-	var errorCode = __webpack_require__(/*! rest/interceptor/errorCode */ 571);
-	var baseRegistry = __webpack_require__(/*! rest/mime/registry */ 558);
+	var rest = __webpack_require__(/*! rest */ 536);
+	var defaultRequest = __webpack_require__(/*! rest/interceptor/defaultRequest */ 564);
+	var mime = __webpack_require__(/*! rest/interceptor/mime */ 566);
+	var uriTemplateInterceptor = __webpack_require__(/*! ./api/uriTemplateInterceptor */ 580);
+	var errorCode = __webpack_require__(/*! rest/interceptor/errorCode */ 581);
+	var baseRegistry = __webpack_require__(/*! rest/mime/registry */ 568);
 	
 	var registry = baseRegistry.child();
 	
-	registry.register('text/uri-list', __webpack_require__(/*! ./api/uriListConverter */ 572));
-	registry.register('application/hal+json', __webpack_require__(/*! rest/mime/type/application/hal */ 559));
+	registry.register('text/uri-list', __webpack_require__(/*! ./api/uriListConverter */ 582));
+	registry.register('application/hal+json', __webpack_require__(/*! rest/mime/type/application/hal */ 569));
 	
 	module.exports = rest.wrap(mime, { registry: registry }).wrap(uriTemplateInterceptor).wrap(errorCode).wrap(defaultRequest, { headers: { 'Accept': 'application/hal+json' } });
 
 /***/ }),
-/* 526 */
+/* 536 */
 /*!***************************!*\
   !*** ./~/rest/browser.js ***!
   \***************************/
@@ -49924,8 +51278,8 @@
 	
 		!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-			var rest = __webpack_require__(/*! ./client/default */ 527),
-			    browser = __webpack_require__(/*! ./client/xhr */ 530);
+			var rest = __webpack_require__(/*! ./client/default */ 537),
+			    browser = __webpack_require__(/*! ./client/xhr */ 540);
 	
 			rest.setPlatformDefaultClient(browser);
 	
@@ -49934,13 +51288,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 527 */
+/* 537 */
 /*!**********************************!*\
   !*** ./~/rest/client/default.js ***!
   \**********************************/
@@ -50018,7 +51372,7 @@
 	
 			var client, target, platformDefault;
 	
-			client = __webpack_require__(/*! ../client */ 528);
+			client = __webpack_require__(/*! ../client */ 538);
 	
 			/**
 			 * Make a request with the default client
@@ -50067,13 +51421,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 528 */
+/* 538 */
 /*!**************************!*\
   !*** ./~/rest/client.js ***!
   \**************************/
@@ -50140,13 +51494,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 529 */
+/* 539 */
 /*!***************************************!*\
   !*** (webpack)/buildin/amd-define.js ***!
   \***************************************/
@@ -50156,7 +51510,7 @@
 
 
 /***/ }),
-/* 530 */
+/* 540 */
 /*!******************************!*\
   !*** ./~/rest/client/xhr.js ***!
   \******************************/
@@ -50176,11 +51530,11 @@
 	
 			var when, UrlBuilder, normalizeHeaderName, responsePromise, client, headerSplitRE;
 	
-			when = __webpack_require__(/*! when */ 531);
-			UrlBuilder = __webpack_require__(/*! ../UrlBuilder */ 550);
-			normalizeHeaderName = __webpack_require__(/*! ../util/normalizeHeaderName */ 552);
-			responsePromise = __webpack_require__(/*! ../util/responsePromise */ 553);
-			client = __webpack_require__(/*! ../client */ 528);
+			when = __webpack_require__(/*! when */ 541);
+			UrlBuilder = __webpack_require__(/*! ../UrlBuilder */ 560);
+			normalizeHeaderName = __webpack_require__(/*! ../util/normalizeHeaderName */ 562);
+			responsePromise = __webpack_require__(/*! ../util/responsePromise */ 563);
+			client = __webpack_require__(/*! ../client */ 538);
 	
 			// according to the spec, the line break is '\r\n', but doesn't hold true in practice
 			headerSplitRE = /[\r|\n]+/;
@@ -50332,14 +51686,14 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529),
+		__webpack_require__(/*! !webpack amd define */ 539),
 		typeof window !== 'undefined' ? window : void 0
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 531 */
+/* 541 */
 /*!************************!*\
   !*** ./~/when/when.js ***!
   \************************/
@@ -50356,24 +51710,24 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-		var timed = __webpack_require__(/*! ./lib/decorators/timed */ 532);
-		var array = __webpack_require__(/*! ./lib/decorators/array */ 536);
-		var flow = __webpack_require__(/*! ./lib/decorators/flow */ 539);
-		var fold = __webpack_require__(/*! ./lib/decorators/fold */ 540);
-		var inspect = __webpack_require__(/*! ./lib/decorators/inspect */ 541);
-		var generate = __webpack_require__(/*! ./lib/decorators/iterate */ 542);
-		var progress = __webpack_require__(/*! ./lib/decorators/progress */ 543);
-		var withThis = __webpack_require__(/*! ./lib/decorators/with */ 544);
-		var unhandledRejection = __webpack_require__(/*! ./lib/decorators/unhandledRejection */ 545);
-		var TimeoutError = __webpack_require__(/*! ./lib/TimeoutError */ 535);
+		var timed = __webpack_require__(/*! ./lib/decorators/timed */ 542);
+		var array = __webpack_require__(/*! ./lib/decorators/array */ 546);
+		var flow = __webpack_require__(/*! ./lib/decorators/flow */ 549);
+		var fold = __webpack_require__(/*! ./lib/decorators/fold */ 550);
+		var inspect = __webpack_require__(/*! ./lib/decorators/inspect */ 551);
+		var generate = __webpack_require__(/*! ./lib/decorators/iterate */ 552);
+		var progress = __webpack_require__(/*! ./lib/decorators/progress */ 553);
+		var withThis = __webpack_require__(/*! ./lib/decorators/with */ 554);
+		var unhandledRejection = __webpack_require__(/*! ./lib/decorators/unhandledRejection */ 555);
+		var TimeoutError = __webpack_require__(/*! ./lib/TimeoutError */ 545);
 	
 		var Promise = [array, flow, fold, generate, progress,
 			inspect, withThis, timed, unhandledRejection]
 			.reduce(function(Promise, feature) {
 				return feature(Promise);
-			}, __webpack_require__(/*! ./lib/Promise */ 547));
+			}, __webpack_require__(/*! ./lib/Promise */ 557));
 	
-		var apply = __webpack_require__(/*! ./lib/apply */ 538)(Promise);
+		var apply = __webpack_require__(/*! ./lib/apply */ 548)(Promise);
 	
 		// Public API
 	
@@ -50572,11 +51926,11 @@
 	
 		return when;
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	})(__webpack_require__(/*! !webpack amd define */ 529));
+	})(__webpack_require__(/*! !webpack amd define */ 539));
 
 
 /***/ }),
-/* 532 */
+/* 542 */
 /*!****************************************!*\
   !*** ./~/when/lib/decorators/timed.js ***!
   \****************************************/
@@ -50589,8 +51943,8 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var env = __webpack_require__(/*! ../env */ 533);
-		var TimeoutError = __webpack_require__(/*! ../TimeoutError */ 535);
+		var env = __webpack_require__(/*! ../env */ 543);
+		var TimeoutError = __webpack_require__(/*! ../TimeoutError */ 545);
 	
 		function setTimeout(f, ms, x, y) {
 			return env.setTimer(function() {
@@ -50659,17 +52013,17 @@
 		};
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 533 */
+/* 543 */
 /*!***************************!*\
   !*** ./~/when/lib/env.js ***!
   \***************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
+	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
 	/** @author Brian Cavalier */
 	/** @author John Hann */
 	
@@ -50700,7 +52054,7 @@
 	
 		} else if (!capturedSetTimeout) { // vert.x
 			var vertxRequire = require;
-			var vertx = __webpack_require__(/*! vertx */ 534);
+			var vertx = __webpack_require__(/*! vertx */ 544);
 			setTimer = function (f, ms) { return vertx.setTimer(ms, f); };
 			clearTimer = vertx.cancelTimer;
 			asap = vertx.runOnLoop || vertx.runOnContext;
@@ -50741,12 +52095,12 @@
 			};
 		}
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ }),
-/* 534 */
+/* 544 */
 /*!***********************!*\
   !*** vertx (ignored) ***!
   \***********************/
@@ -50755,7 +52109,7 @@
 	/* (ignored) */
 
 /***/ }),
-/* 535 */
+/* 545 */
 /*!************************************!*\
   !*** ./~/when/lib/TimeoutError.js ***!
   \************************************/
@@ -50787,10 +52141,10 @@
 	
 		return TimeoutError;
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 /***/ }),
-/* 536 */
+/* 546 */
 /*!****************************************!*\
   !*** ./~/when/lib/decorators/array.js ***!
   \****************************************/
@@ -50803,8 +52157,8 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var state = __webpack_require__(/*! ../state */ 537);
-		var applier = __webpack_require__(/*! ../apply */ 538);
+		var state = __webpack_require__(/*! ../state */ 547);
+		var applier = __webpack_require__(/*! ../apply */ 548);
 	
 		return function array(Promise) {
 	
@@ -51094,11 +52448,11 @@
 		};
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 537 */
+/* 547 */
 /*!*****************************!*\
   !*** ./~/when/lib/state.js ***!
   \*****************************/
@@ -51138,11 +52492,11 @@
 		}
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 538 */
+/* 548 */
 /*!*****************************!*\
   !*** ./~/when/lib/apply.js ***!
   \*****************************/
@@ -51200,13 +52554,13 @@
 		}
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 	
 	
 
 
 /***/ }),
-/* 539 */
+/* 549 */
 /*!***************************************!*\
   !*** ./~/when/lib/decorators/flow.js ***!
   \***************************************/
@@ -51371,11 +52725,11 @@
 		}
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 540 */
+/* 550 */
 /*!***************************************!*\
   !*** ./~/when/lib/decorators/fold.js ***!
   \***************************************/
@@ -51407,11 +52761,11 @@
 		};
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 541 */
+/* 551 */
 /*!******************************************!*\
   !*** ./~/when/lib/decorators/inspect.js ***!
   \******************************************/
@@ -51424,7 +52778,7 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var inspect = __webpack_require__(/*! ../state */ 537).inspect;
+		var inspect = __webpack_require__(/*! ../state */ 547).inspect;
 	
 		return function inspection(Promise) {
 	
@@ -51436,11 +52790,11 @@
 		};
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 542 */
+/* 552 */
 /*!******************************************!*\
   !*** ./~/when/lib/decorators/iterate.js ***!
   \******************************************/
@@ -51510,11 +52864,11 @@
 		};
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 543 */
+/* 553 */
 /*!*******************************************!*\
   !*** ./~/when/lib/decorators/progress.js ***!
   \*******************************************/
@@ -51543,11 +52897,11 @@
 		};
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 544 */
+/* 554 */
 /*!***************************************!*\
   !*** ./~/when/lib/decorators/with.js ***!
   \***************************************/
@@ -51589,12 +52943,12 @@
 		};
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 	
 
 
 /***/ }),
-/* 545 */
+/* 555 */
 /*!*****************************************************!*\
   !*** ./~/when/lib/decorators/unhandledRejection.js ***!
   \*****************************************************/
@@ -51607,8 +52961,8 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
-		var setTimer = __webpack_require__(/*! ../env */ 533).setTimer;
-		var format = __webpack_require__(/*! ../format */ 546);
+		var setTimer = __webpack_require__(/*! ../env */ 543).setTimer;
+		var format = __webpack_require__(/*! ../format */ 556);
 	
 		return function unhandledRejection(Promise) {
 	
@@ -51685,11 +53039,11 @@
 		function noop() {}
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 546 */
+/* 556 */
 /*!******************************!*\
   !*** ./~/when/lib/format.js ***!
   \******************************/
@@ -51750,11 +53104,11 @@
 		}
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 547 */
+/* 557 */
 /*!*******************************!*\
   !*** ./~/when/lib/Promise.js ***!
   \*******************************/
@@ -51767,20 +53121,20 @@
 	(function(define) { 'use strict';
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-		var makePromise = __webpack_require__(/*! ./makePromise */ 548);
-		var Scheduler = __webpack_require__(/*! ./Scheduler */ 549);
-		var async = __webpack_require__(/*! ./env */ 533).asap;
+		var makePromise = __webpack_require__(/*! ./makePromise */ 558);
+		var Scheduler = __webpack_require__(/*! ./Scheduler */ 559);
+		var async = __webpack_require__(/*! ./env */ 543).asap;
 	
 		return makePromise({
 			scheduler: new Scheduler(async)
 		});
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	})(__webpack_require__(/*! !webpack amd define */ 529));
+	})(__webpack_require__(/*! !webpack amd define */ 539));
 
 
 /***/ }),
-/* 548 */
+/* 558 */
 /*!***********************************!*\
   !*** ./~/when/lib/makePromise.js ***!
   \***********************************/
@@ -52740,12 +54094,12 @@
 			return Promise;
 		};
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ }),
-/* 549 */
+/* 559 */
 /*!*********************************!*\
   !*** ./~/when/lib/Scheduler.js ***!
   \*********************************/
@@ -52830,11 +54184,11 @@
 		return Scheduler;
 	
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}(__webpack_require__(/*! !webpack amd define */ 529)));
+	}(__webpack_require__(/*! !webpack amd define */ 539)));
 
 
 /***/ }),
-/* 550 */
+/* 560 */
 /*!******************************!*\
   !*** ./~/rest/UrlBuilder.js ***!
   \******************************/
@@ -52856,7 +54210,7 @@
 	
 			var mixin, origin, urlRE, absoluteUrlRE, fullyQualifiedUrlRE;
 	
-			mixin = __webpack_require__(/*! ./util/mixin */ 551);
+			mixin = __webpack_require__(/*! ./util/mixin */ 561);
 	
 			urlRE = /([a-z][a-z0-9\+\-\.]*:)\/\/([^@]+@)?(([^:\/]+)(:([0-9]+))?)?(\/[^?#]*)?(\?[^#]*)?(#\S*)?/i;
 			absoluteUrlRE = /^([a-z][a-z0-9\-\+\.]*:\/\/|\/)/i;
@@ -53065,14 +54419,14 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529),
+		__webpack_require__(/*! !webpack amd define */ 539),
 		typeof window !== 'undefined' ? window.location : void 0
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 551 */
+/* 561 */
 /*!******************************!*\
   !*** ./~/rest/util/mixin.js ***!
   \******************************/
@@ -53123,13 +54477,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 552 */
+/* 562 */
 /*!********************************************!*\
   !*** ./~/rest/util/normalizeHeaderName.js ***!
   \********************************************/
@@ -53170,13 +54524,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 553 */
+/* 563 */
 /*!****************************************!*\
   !*** ./~/rest/util/responsePromise.js ***!
   \****************************************/
@@ -53194,8 +54548,8 @@
 	
 		!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 	
-			var when = __webpack_require__(/*! when */ 531),
-				normalizeHeaderName = __webpack_require__(/*! ./normalizeHeaderName */ 552);
+			var when = __webpack_require__(/*! when */ 541),
+				normalizeHeaderName = __webpack_require__(/*! ./normalizeHeaderName */ 562);
 	
 			function property(promise, name) {
 				return promise.then(
@@ -53319,13 +54673,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 554 */
+/* 564 */
 /*!**********************************************!*\
   !*** ./~/rest/interceptor/defaultRequest.js ***!
   \**********************************************/
@@ -53345,8 +54699,8 @@
 	
 			var interceptor, mixinUtil, defaulter;
 	
-			interceptor = __webpack_require__(/*! ../interceptor */ 555);
-			mixinUtil = __webpack_require__(/*! ../util/mixin */ 551);
+			interceptor = __webpack_require__(/*! ../interceptor */ 565);
+			mixinUtil = __webpack_require__(/*! ../util/mixin */ 561);
 	
 			defaulter = (function () {
 	
@@ -53407,13 +54761,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 555 */
+/* 565 */
 /*!*******************************!*\
   !*** ./~/rest/interceptor.js ***!
   \*******************************/
@@ -53433,11 +54787,11 @@
 	
 			var defaultClient, mixin, responsePromise, client, when;
 	
-			defaultClient = __webpack_require__(/*! ./client/default */ 527);
-			mixin = __webpack_require__(/*! ./util/mixin */ 551);
-			responsePromise = __webpack_require__(/*! ./util/responsePromise */ 553);
-			client = __webpack_require__(/*! ./client */ 528);
-			when = __webpack_require__(/*! when */ 531);
+			defaultClient = __webpack_require__(/*! ./client/default */ 537);
+			mixin = __webpack_require__(/*! ./util/mixin */ 561);
+			responsePromise = __webpack_require__(/*! ./util/responsePromise */ 563);
+			client = __webpack_require__(/*! ./client */ 538);
+			when = __webpack_require__(/*! when */ 541);
 	
 			/**
 			 * Interceptors have the ability to intercept the request and/org response
@@ -53581,13 +54935,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 556 */
+/* 566 */
 /*!************************************!*\
   !*** ./~/rest/interceptor/mime.js ***!
   \************************************/
@@ -53607,10 +54961,10 @@
 	
 			var interceptor, mime, registry, noopConverter, when;
 	
-			interceptor = __webpack_require__(/*! ../interceptor */ 555);
-			mime = __webpack_require__(/*! ../mime */ 557);
-			registry = __webpack_require__(/*! ../mime/registry */ 558);
-			when = __webpack_require__(/*! when */ 531);
+			interceptor = __webpack_require__(/*! ../interceptor */ 565);
+			mime = __webpack_require__(/*! ../mime */ 567);
+			registry = __webpack_require__(/*! ../mime/registry */ 568);
+			when = __webpack_require__(/*! when */ 541);
 	
 			noopConverter = {
 				read: function (obj) { return obj; },
@@ -53700,13 +55054,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 557 */
+/* 567 */
 /*!************************!*\
   !*** ./~/rest/mime.js ***!
   \************************/
@@ -53762,13 +55116,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 558 */
+/* 568 */
 /*!*********************************!*\
   !*** ./~/rest/mime/registry.js ***!
   \*********************************/
@@ -53788,8 +55142,8 @@
 	
 			var mime, when, registry;
 	
-			mime = __webpack_require__(/*! ../mime */ 557);
-			when = __webpack_require__(/*! when */ 531);
+			mime = __webpack_require__(/*! ../mime */ 567);
+			when = __webpack_require__(/*! when */ 541);
 	
 			function Registry(mimes) {
 	
@@ -53873,11 +55227,11 @@
 			registry = new Registry({});
 	
 			// include provided serializers
-			registry.register('application/hal', __webpack_require__(/*! ./type/application/hal */ 559));
-			registry.register('application/json', __webpack_require__(/*! ./type/application/json */ 566));
-			registry.register('application/x-www-form-urlencoded', __webpack_require__(/*! ./type/application/x-www-form-urlencoded */ 567));
-			registry.register('multipart/form-data', __webpack_require__(/*! ./type/multipart/form-data */ 568));
-			registry.register('text/plain', __webpack_require__(/*! ./type/text/plain */ 569));
+			registry.register('application/hal', __webpack_require__(/*! ./type/application/hal */ 569));
+			registry.register('application/json', __webpack_require__(/*! ./type/application/json */ 576));
+			registry.register('application/x-www-form-urlencoded', __webpack_require__(/*! ./type/application/x-www-form-urlencoded */ 577));
+			registry.register('multipart/form-data', __webpack_require__(/*! ./type/multipart/form-data */ 578));
+			registry.register('text/plain', __webpack_require__(/*! ./type/text/plain */ 579));
 	
 			registry.register('+json', registry.delegate('application/json'));
 	
@@ -53886,13 +55240,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 559 */
+/* 569 */
 /*!*********************************************!*\
   !*** ./~/rest/mime/type/application/hal.js ***!
   \*********************************************/
@@ -53912,12 +55266,12 @@
 	
 			var pathPrefix, template, find, lazyPromise, responsePromise, when;
 	
-			pathPrefix = __webpack_require__(/*! ../../../interceptor/pathPrefix */ 560);
-			template = __webpack_require__(/*! ../../../interceptor/template */ 561);
-			find = __webpack_require__(/*! ../../../util/find */ 564);
-			lazyPromise = __webpack_require__(/*! ../../../util/lazyPromise */ 565);
-			responsePromise = __webpack_require__(/*! ../../../util/responsePromise */ 553);
-			when = __webpack_require__(/*! when */ 531);
+			pathPrefix = __webpack_require__(/*! ../../../interceptor/pathPrefix */ 570);
+			template = __webpack_require__(/*! ../../../interceptor/template */ 571);
+			find = __webpack_require__(/*! ../../../util/find */ 574);
+			lazyPromise = __webpack_require__(/*! ../../../util/lazyPromise */ 575);
+			responsePromise = __webpack_require__(/*! ../../../util/responsePromise */ 563);
+			when = __webpack_require__(/*! when */ 541);
 	
 			function defineProperty(obj, name, value) {
 				Object.defineProperty(obj, name, {
@@ -54034,13 +55388,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 560 */
+/* 570 */
 /*!******************************************!*\
   !*** ./~/rest/interceptor/pathPrefix.js ***!
   \******************************************/
@@ -54060,8 +55414,8 @@
 	
 			var interceptor, UrlBuilder;
 	
-			interceptor = __webpack_require__(/*! ../interceptor */ 555);
-			UrlBuilder = __webpack_require__(/*! ../UrlBuilder */ 550);
+			interceptor = __webpack_require__(/*! ../interceptor */ 565);
+			UrlBuilder = __webpack_require__(/*! ../UrlBuilder */ 560);
 	
 			function startsWith(str, prefix) {
 				return str.indexOf(prefix) === 0;
@@ -54102,13 +55456,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 561 */
+/* 571 */
 /*!****************************************!*\
   !*** ./~/rest/interceptor/template.js ***!
   \****************************************/
@@ -54128,9 +55482,9 @@
 	
 			var interceptor, uriTemplate, mixin;
 	
-			interceptor = __webpack_require__(/*! ../interceptor */ 555);
-			uriTemplate = __webpack_require__(/*! ../util/uriTemplate */ 562);
-			mixin = __webpack_require__(/*! ../util/mixin */ 551);
+			interceptor = __webpack_require__(/*! ../interceptor */ 565);
+			uriTemplate = __webpack_require__(/*! ../util/uriTemplate */ 572);
+			mixin = __webpack_require__(/*! ../util/mixin */ 561);
 	
 			/**
 			 * Applies request params to the path as a URI Template
@@ -54167,13 +55521,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 562 */
+/* 572 */
 /*!************************************!*\
   !*** ./~/rest/util/uriTemplate.js ***!
   \************************************/
@@ -54195,7 +55549,7 @@
 	
 			var uriEncoder, operations, prefixRE;
 	
-			uriEncoder = __webpack_require__(/*! ./uriEncoder */ 563);
+			uriEncoder = __webpack_require__(/*! ./uriEncoder */ 573);
 	
 			prefixRE = /^([^:]*):([0-9]+)$/;
 			operations = {
@@ -54348,13 +55702,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 563 */
+/* 573 */
 /*!***********************************!*\
   !*** ./~/rest/util/uriEncoder.js ***!
   \***********************************/
@@ -54537,13 +55891,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 564 */
+/* 574 */
 /*!*****************************!*\
   !*** ./~/rest/util/find.js ***!
   \*****************************/
@@ -54587,13 +55941,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 565 */
+/* 575 */
 /*!************************************!*\
   !*** ./~/rest/util/lazyPromise.js ***!
   \************************************/
@@ -54613,7 +55967,7 @@
 	
 			var when;
 	
-			when = __webpack_require__(/*! when */ 531);
+			when = __webpack_require__(/*! when */ 541);
 	
 			/**
 			 * Create a promise whose work is started only when a handler is registered.
@@ -54651,13 +56005,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 566 */
+/* 576 */
 /*!**********************************************!*\
   !*** ./~/rest/mime/type/application/json.js ***!
   \**********************************************/
@@ -54707,13 +56061,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 567 */
+/* 577 */
 /*!***************************************************************!*\
   !*** ./~/rest/mime/type/application/x-www-form-urlencoded.js ***!
   \***************************************************************/
@@ -54806,13 +56160,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 568 */
+/* 578 */
 /*!*************************************************!*\
   !*** ./~/rest/mime/type/multipart/form-data.js ***!
   \*************************************************/
@@ -54888,13 +56242,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 569 */
+/* 579 */
 /*!****************************************!*\
   !*** ./~/rest/mime/type/text/plain.js ***!
   \****************************************/
@@ -54926,13 +56280,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 570 */
+/* 580 */
 /*!***************************************************!*\
   !*** ./src/main/js/api/uriTemplateInterceptor.js ***!
   \***************************************************/
@@ -54943,7 +56297,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require) {
 		'use strict';
 	
-		var interceptor = __webpack_require__(/*! rest/interceptor */ 555);
+		var interceptor = __webpack_require__(/*! rest/interceptor */ 565);
 	
 		return interceptor({
 			request: function request(_request /*, config, meta */) {
@@ -54959,7 +56313,7 @@
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 571 */
+/* 581 */
 /*!*****************************************!*\
   !*** ./~/rest/interceptor/errorCode.js ***!
   \*****************************************/
@@ -54979,8 +56333,8 @@
 	
 			var interceptor, when;
 	
-			interceptor = __webpack_require__(/*! ../interceptor */ 555);
-			when = __webpack_require__(/*! when */ 531);
+			interceptor = __webpack_require__(/*! ../interceptor */ 565);
+			when = __webpack_require__(/*! when */ 541);
 	
 			/**
 			 * Rejects the response promise based on the status code.
@@ -55009,13 +56363,13 @@
 		}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	
 	}(
-		__webpack_require__(/*! !webpack amd define */ 529)
+		__webpack_require__(/*! !webpack amd define */ 539)
 		// Boilerplate for AMD and Node
 	));
 
 
 /***/ }),
-/* 572 */
+/* 582 */
 /*!*********************************************!*\
   !*** ./src/main/js/api/uriListConverter.js ***!
   \*********************************************/
@@ -55047,7 +56401,7 @@
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 573 */
+/* 583 */
 /*!*******************************!*\
   !*** ./src/main/js/follow.js ***!
   \*******************************/

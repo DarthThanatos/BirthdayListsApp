@@ -35,15 +35,15 @@ public class ReservationService {
     public PresentReservation createReservation(ReservationRequest reservationRequest) {
         Mapping mapping = mappingRepository.findByPresentPresentId(reservationRequest.getPresentId());
         PresentReservation presentReservation = new PresentReservation(mapping, reservationRequest.getBuyerName(), reservationRequest.getBuyerEmail(),
-                LocalDateTime.now(), reservationRequest.isSuggestion(), reservationRequest.isBought());
+                LocalDateTime.now(), reservationRequest.getPresentId());
         String key = UUID.randomUUID().toString();
-        sendUnreservationLink(presentReservation.getBuyerEmail(), key, reservationRequest.getFrontUrl());
+        sendUnreservationLink(presentReservation.getBuyerEmail(), key);
         presentReservation.setKey(key);
         return reservationRepository.save(presentReservation);
     }
 
-    private void sendUnreservationLink(String buyerEmail, String key, String frontUrl) {
-        emailService.sendSimpleMessage(buyerEmail, "Reservation", frontUrl + "/reservation/" + key);
+    private void sendUnreservationLink(String buyerEmail, String key) {
+        emailService.sendSimpleMessage(buyerEmail, "Reservation",  "localhost:8080/api/reservation/resign/" + key);
     }
 
     public PresentReservation save(PresentReservation presentReservation) {

@@ -1,6 +1,7 @@
 'use strict';
 import SearchBar from 'material-ui-search-bar'
 import GridLayout from 'react-grid-layout'
+import Modal from 'react-modal';
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -13,9 +14,14 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3"};
+		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showModal: false};
 		this.loadNewPage = this.loadNewPage.bind(this)
+
+        this.handleOpenMailModal = this.handleOpenMailModal.bind(this);
+        this.handleCloseMailModal = this.handleCloseMailModal.bind(this);
+        this.handleReservation = this.handleReservation.bind(this);
 	}
+
 
     registerMockedUser() {
 		client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}).done(
@@ -99,8 +105,8 @@ class App extends React.Component {
 		    console.log("got list of presents from existing wishlist: ")
 		    console.log(response)
 		    this.setState({listKey: listKey})
-		    this.setState({presents: response.entity.content})
-		    this.setState({page: response.entity.content.length<5 ? 0 : 1})
+		    this.setState({presents: response.entity})
+		    this.setState({page: response.entity.length<5 ? 0 : 1})
 		});
     }
 
@@ -119,12 +125,12 @@ class App extends React.Component {
     }
 
     onPageLoaded(response){
-            const page = this.state.page
-            var presents = this.state.presents
-            const uniquePresents = this.mergeToFirstById(presents, response.entity.content)
-		    this.setState({presents: uniquePresents})
-		    this.setState({page: response.entity.content.length < 5 ? page : page + 1})
-		    this.forceUpdate()
+        const page = this.state.page
+        var presents = this.state.presents
+        const uniquePresents = this.mergeToFirstById(presents, response.entity)
+        this.setState({presents: uniquePresents})
+        this.setState({page: response.entity.length < 5 ? page : page + 1})
+        this.forceUpdate()
     }
 
     mergeToFirstById(arrayOne, arrayTwo){
@@ -144,6 +150,56 @@ class App extends React.Component {
         return res
     }
 
+
+     handleOpenMailModal (present) {
+        console.log("Opening mail modal for: ")
+        console.log(present)
+        this.setState({presentToReserve: present})
+        this.setState({ showModal: true });
+     }
+
+     handleReservation(present, email){
+        console.log("Sending reservation post on email: " + email)
+        console.log(present)
+
+        document.getElementById("emailCancel").hidden = true
+        document.getElementById("emailSubmit").hidden = true
+        document.getElementById("emailInput").hidden = true
+        document.getElementById("emailInfo").innerHTML = ""
+        document.getElementById("emailWaitInfo").innerHTML = "Czekaj, rezerwacja w trakcie ..."
+
+		client({
+		    method: 'POST',
+		    path: '/api/reservation',
+		    entity: {
+		        buyerName: "anonim",
+		        buyerEmail: email,
+		        presentId: present.presentId
+		    },
+		    headers: {'Content-Type': 'application/json'}
+        })
+        .done(response => {
+            this.state.presents.filter((present_) => present.presentId == present_.presentId).forEach((present)=> present.boughtOrReserved=true)
+            console.log("email response: " + present.presentId + " reserved -> true")
+            console.log(this.state.presents)
+
+
+            document.getElementById("emailCancel").hidden = false
+            document.getElementById("emailSubmit").hidden = false
+            document.getElementById("emailInput").hidden = false
+            document.getElementById("emailWaitInfo").innerHTML = ""
+
+            this.setState({ showModal: false });
+		})
+
+     }
+
+     handleCloseMailModal () {
+        console.log("Closing mail modal")
+        this.setState({ showModal: false });
+     }
+
+
 	render() {
 		var sectionStyle = {
           width: "85%",
@@ -152,15 +208,50 @@ class App extends React.Component {
           marginRight: "auto",
 
         }
+
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
-		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}/>
+		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}  handleOpenMailModal={this.handleOpenMailModal}/>
 		        <Footer/>
-		    </div>
 
-		 )
+                <Modal ref="MailModal" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
+                       isOpen={this.state.showModal} contentLabel="Type your mail">
+                    <MailModal ref="MailModalContent" handleReservation={this.handleReservation} handleCloseMailModal={this.handleCloseMailModal} presentToReserve={this.state.presentToReserve}/>
+                </Modal>
+		    </div>
+		)
 	}
+}
+
+class MailModal extends React.Component{
+
+    render(){
+        var sectionStyle = {
+            width: 300,
+            height: 150,
+            background: "#666666"
+        }
+
+        var infoText = typeof this.props.presentToReserve != "undefined"
+            ? "Podaj swój mail by zarezerwować: " + this.props.presentToReserve.name
+            : "Podaj swój mail"
+
+        return (
+            <div ref="MailModalDiv" style={sectionStyle}>
+                <div id="emailInfo" ref="MailInfo" style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color:"#FFFFFF"}}>{infoText}</div>
+
+                <div style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                    <input id="emailInput" type="text" placeholder="imie.nazwisko@domena"/>
+                </div>
+                <div id="emailWaitInfo" ref="MailWaitInfo" style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color:"#FFFFFF"}}></div>
+                <div style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                    <button id="emailSubmit" style={{ width:100, height:20}} onClick={() => this.props.handleReservation(this.props.presentToReserve, document.getElementById("emailInput").value)}>Potwierdź</button>
+                    <button id="emailCancel" style={{ width:100, height:20, marginLeft:10}} onClick={this.props.handleCloseMailModal}>Anuluj</button>
+                </div>
+            </div>
+        )
+    }
 }
 
 class Header extends React.Component{
@@ -253,7 +344,7 @@ class Center extends React.Component{
         };
         return(
              <div style={sectionStyle}>
-                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage}/>
+                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal}/>
              </div>
         );
     }
@@ -272,7 +363,7 @@ class ListSquare extends React.Component{
         return (
             <div style={sectionStyle}>
                 <ListSquareHeader/>
-                <ListSquareMainBody presents={this.props.presents} loadNewPage={this.props.loadNewPage}/>
+                <ListSquareMainBody presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal}/>
             </div>
         )
     }
@@ -362,7 +453,7 @@ class ListSquareMainBody extends React.Component{
             (present, i) => {
                 return(
                     <div key={present.presentId} data-grid={{x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true}} style={{border: ".1px solid #0066cc"}}>
-                        <PresentComponent present={present}  />
+                        <PresentComponent present={present}  handleOpenMailModal={this.props.handleOpenMailModal} />
                     </div>)
             }
         ) : [];
@@ -375,7 +466,7 @@ class ListSquareMainBody extends React.Component{
                     </div>
                     {presentComponents}
                 </GridLayout>
-                <ShowMorePagesButton loadNewPage={this.props.loadNewPage}/>
+                <ShowMorePagesButton loadNewPage={this.props.loadNewPage} />
             </Scrollbars>
         )
     }
@@ -431,7 +522,7 @@ class PresentComponent extends React.Component{
             <div >
                 <div style={{background: "#FF8C2F",  width:"100%", height:"30px", display: "flex", flexDirection:"row", alignItems:"center"}}>
                     <div style={{width:"50px", marginLeft:"10px", fontSize:"20px"}}>{this.props.present.name}</div>
-                    <button style={{width:"100px", marginLeft:"80px"}}>Rezerwuj</button>
+                    <button style={{width:"100px", marginLeft:"80px"}} onClick={() => this.props.handleOpenMailModal(this.props.present)}>Rezerwuj</button>
                 </div>
 
                 <div style={{width:"100%", height:"160px", display: "flex", flexDirection:"row", alignItems: "center"}}>
@@ -467,6 +558,7 @@ try{
         <App />,
         document.getElementById('react')
     )
+    Modal.setAppElement('#react');
 }catch(e){ console.log("not found element: react")}
 
 try {
@@ -476,3 +568,4 @@ try {
         document.getElementById('react_guest')
     )
 }catch(e){console.log("not found element: react_guest")}
+

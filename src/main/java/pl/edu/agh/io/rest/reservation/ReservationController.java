@@ -43,16 +43,15 @@ public class ReservationController {
         return reservationService.findByKey(key);
     }
 
-    @PutMapping("/{key}/bought")
-    public PresentReservation markAsBought(@PathVariable String key, @RequestBody BoughtStatusChangeRequest bought) {
-        final PresentReservation present = reservationService.findByKey(key);
-        present.setBought(bought.isBought());
-        return reservationService.findByKey(key);
-    }
 
     @DeleteMapping("/{key}")
     @Transactional
     public void deleteByKey(@PathVariable String key) {
+        reservationService.deleteByKey(key);
+    }
+
+    @GetMapping("/resign/{key}")
+    public void resign(@PathVariable("key") String key){
         reservationService.deleteByKey(key);
     }
 

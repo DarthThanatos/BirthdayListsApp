@@ -54,4 +54,8 @@ public class PresentService {
     public Page<Present> findByWishListKey(Pageable pageable, String key) {
         return presentRepository.findByWishListKey(key, pageable);
     }
+
+    public Present findByPresentId(Long presentId){
+        return presentRepository.findByPresentId(presentId);
+    }
 }

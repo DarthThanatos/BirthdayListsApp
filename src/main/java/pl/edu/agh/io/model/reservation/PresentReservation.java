@@ -17,20 +17,19 @@ public class PresentReservation {
     private String buyerName;
     private String buyerEmail;
     private LocalDateTime reservationDate;
-    private boolean isSuggestion;
-    private boolean isBought;
     private String key;
+
+    private Long presentId;
 
     public PresentReservation() {
     }
 
-    public PresentReservation(Mapping mapping, String buyerName, String buyerEmail, LocalDateTime reservationDate, boolean isSuggestion, boolean isBought) {
+    public PresentReservation(Mapping mapping, String buyerName, String buyerEmail, LocalDateTime reservationDate, long presentId) {
         this.mapping = mapping;
         this.buyerName = buyerName;
         this.buyerEmail = buyerEmail;
         this.reservationDate = reservationDate;
-        this.isSuggestion = isSuggestion;
-        this.isBought = isBought;
+        this.presentId = presentId;
     }
 
     public Long getReservationId() {
@@ -73,27 +72,19 @@ public class PresentReservation {
         this.reservationDate = reservationDate;
     }
 
-    public boolean isSuggestion() {
-        return isSuggestion;
-    }
-
-    public void setSuggestion(boolean suggestion) {
-        isSuggestion = suggestion;
-    }
-
-    public boolean isBought() {
-        return isBought;
-    }
-
-    public void setBought(boolean bought) {
-        isBought = bought;
-    }
-
     public String getKey() {
         return key;
     }
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public Long getPresentId() {
+        return presentId;
+    }
+
+    public void setPresentId(Long presentId) {
+        this.presentId = presentId;
     }
 }

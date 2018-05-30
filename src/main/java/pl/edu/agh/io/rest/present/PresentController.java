@@ -103,7 +103,43 @@ public class PresentController {
     }
 
     @GetMapping(value="/paged")
-    Page<Present> list(Pageable pageable, @PathVariable("key") String key){
-        return presentService.findByWishListKey(pageable, key);
+    List<Present> list(Pageable pageable, @PathVariable("key") String key){
+        Page<Present> presentsPage = presentService.findByWishListKey(pageable, key);
+        Long listId = wishListService.getByKey(key).getWishListId();
+
+        List<Present> reservedPresents = reservationService.findAllByListId(listId)
+                .stream()
+                .map(r -> r.getMapping().getPresent())
+                .collect(Collectors.toList());
+
+        return pageToList(presentsPage).stream().map(present -> {
+            PresentInfoResponse presentInfoResponse = new PresentInfoResponse();
+            presentInfoResponse.setDescription(present.getDescription());
+            presentInfoResponse.setName(present.getName());
+            presentInfoResponse.setPresentId(present.getPresentId());
+            presentInfoResponse.setCategory(present.getCategory());
+            presentInfoResponse.setShopLink(present.getShopLink());
+            presentInfoResponse.setImageUrl(present.getImageUrl());
+            presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+            return presentInfoResponse;
+        }).collect(Collectors.toList());
+    }
+
+    private List<Present> pageToList(Page<Present> page){
+        List<Present> res = new ArrayList<>();
+        page.forEach(res::add);
+        return res;
+    }
+
+    @GetMapping("/resrvationStatus")
+    public List<Boolean> getReservationStatuses(List<Long> ids, @PathVariable("key") String key){
+        Long listId = wishListService.getByKey(key).getWishListId();
+
+        List<Present> reservedPresents = reservationService.findAllByListId(listId)
+                .stream()
+                .map(r -> r.getMapping().getPresent())
+                .collect(Collectors.toList());
+
+        return ids.stream().map(presentService::findByPresentId).map(reservedPresents::contains).collect(Collectors.toList());
     }
 }
