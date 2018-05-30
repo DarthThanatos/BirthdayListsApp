@@ -78,6 +78,10 @@
 	var client = __webpack_require__(/*! ./client_react */ 535);
 	var follow = __webpack_require__(/*! ./follow */ 583);
 	
+	var ALL = "all";
+	var RESERVED = "reserved";
+	var NOT_RESERVED = "not_reserved";
+	
 	var App = function (_React$Component) {
 	    _inherits(App, _React$Component);
 	
@@ -86,12 +90,13 @@
 	
 	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-	        _this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showModal: false };
+	        _this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showModal: false, mode: ALL };
 	        _this.loadNewPage = _this.loadNewPage.bind(_this);
 	
 	        _this.handleOpenMailModal = _this.handleOpenMailModal.bind(_this);
 	        _this.handleCloseMailModal = _this.handleCloseMailModal.bind(_this);
 	        _this.handleReservation = _this.handleReservation.bind(_this);
+	        _this.changeMode = _this.changeMode.bind(_this);
 	        return _this;
 	    }
 	
@@ -238,8 +243,6 @@
 	    }, {
 	        key: 'handleOpenMailModal',
 	        value: function handleOpenMailModal(present) {
-	            console.log("Opening mail modal for: ");
-	            console.log(present);
 	            this.setState({ presentToReserve: present });
 	            this.setState({ showModal: true });
 	        }
@@ -247,9 +250,6 @@
 	        key: 'handleReservation',
 	        value: function handleReservation(present, email) {
 	            var _this9 = this;
-	
-	            console.log("Sending reservation post on email: " + email);
-	            console.log(present);
 	
 	            document.getElementById("emailCancel").hidden = true;
 	            document.getElementById("emailSubmit").hidden = true;
@@ -272,22 +272,22 @@
 	                }).forEach(function (present) {
 	                    return present.boughtOrReserved = true;
 	                });
-	                console.log("email response: " + present.presentId + " reserved -> true");
-	                console.log(_this9.state.presents);
-	
 	                document.getElementById("emailCancel").hidden = false;
 	                document.getElementById("emailSubmit").hidden = false;
 	                document.getElementById("emailInput").hidden = false;
 	                document.getElementById("emailWaitInfo").innerHTML = "";
-	
 	                _this9.setState({ showModal: false });
 	            });
 	        }
 	    }, {
 	        key: 'handleCloseMailModal',
 	        value: function handleCloseMailModal() {
-	            console.log("Closing mail modal");
 	            this.setState({ showModal: false });
+	        }
+	    }, {
+	        key: 'changeMode',
+	        value: function changeMode(mode) {
+	            this.setState({ mode: mode });
 	        }
 	    }, {
 	        key: 'render',
@@ -304,7 +304,7 @@
 	                'div',
 	                { style: sectionStyle },
 	                React.createElement(Header, null),
-	                React.createElement(Center, { presents: this.state.presents, loadNewPage: this.loadNewPage, handleOpenMailModal: this.handleOpenMailModal }),
+	                React.createElement(Center, { presents: this.state.presents, loadNewPage: this.loadNewPage, handleOpenMailModal: this.handleOpenMailModal, mode: this.state.mode, changeMode: this.changeMode }),
 	                React.createElement(Footer, null),
 	                React.createElement(
 	                    _reactModal2.default,
@@ -539,7 +539,7 @@
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
-	                React.createElement(ListSquare, { presents: this.props.presents, loadNewPage: this.props.loadNewPage, handleOpenMailModal: this.props.handleOpenMailModal })
+	                React.createElement(ListSquare, { presents: this.props.presents, loadNewPage: this.props.loadNewPage, handleOpenMailModal: this.props.handleOpenMailModal, mode: this.props.mode, changeMode: this.props.changeMode })
 	            );
 	        }
 	    }]);
@@ -565,12 +565,11 @@
 	                background: "white",
 	                opacity: 0.9
 	            };
-	            console.log("ListSquare: load new page: " + this.props.loadNewPage);
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
-	                React.createElement(ListSquareHeader, null),
-	                React.createElement(ListSquareMainBody, { presents: this.props.presents, loadNewPage: this.props.loadNewPage, handleOpenMailModal: this.props.handleOpenMailModal })
+	                React.createElement(ListSquareHeader, { mode: this.props.mode, changeMode: this.props.changeMode }),
+	                React.createElement(ListSquareMainBody, { presents: this.props.presents, mode: this.props.mode, loadNewPage: this.props.loadNewPage, handleOpenMailModal: this.props.handleOpenMailModal })
 	            );
 	        }
 	    }]);
@@ -610,7 +609,7 @@
 	                    ' 20 maja 2018 (za 5 dni)'
 	                ),
 	                React.createElement(SearchBarComponent, null),
-	                React.createElement(ListSquareNavigationButtons, null)
+	                React.createElement(ListSquareNavigationButtons, { mode: this.props.mode, changeMode: this.props.changeMode })
 	            );
 	        }
 	    }]);
@@ -660,26 +659,34 @@
 	var ListSquareNavigationButtons = function (_React$Component10) {
 	    _inherits(ListSquareNavigationButtons, _React$Component10);
 	
-	    function ListSquareNavigationButtons() {
+	    function ListSquareNavigationButtons(props) {
 	        _classCallCheck(this, ListSquareNavigationButtons);
 	
-	        return _possibleConstructorReturn(this, (ListSquareNavigationButtons.__proto__ || Object.getPrototypeOf(ListSquareNavigationButtons)).apply(this, arguments));
+	        var _this19 = _possibleConstructorReturn(this, (ListSquareNavigationButtons.__proto__ || Object.getPrototypeOf(ListSquareNavigationButtons)).call(this, props));
+	
+	        _this19.all = _this19.all.bind(_this19);
+	        _this19.reserved = _this19.reserved.bind(_this19);
+	        _this19.notReserved = _this19.notReserved.bind(_this19);
+	        return _this19;
 	    }
 	
 	    _createClass(ListSquareNavigationButtons, [{
 	        key: 'all',
 	        value: function all() {
-	            console.log("Clicked select all presents button");
+	            console.log("Clicked select all presents button, changing from: " + this.props.mode);
+	            this.props.changeMode(ALL);
 	        }
 	    }, {
 	        key: 'reserved',
 	        value: function reserved() {
-	            console.log("Clicked select reserved presents button");
+	            console.log("Clicked select reserved presents button" + this.props.mode);
+	            this.props.changeMode(RESERVED);
 	        }
 	    }, {
 	        key: 'notReserved',
 	        value: function notReserved() {
-	            console.log("Clicked select not reserved presents button");
+	            console.log("Clicked select not reserved presents button" + this.props.mode);
+	            this.props.changeMode(NOT_RESERVED);
 	        }
 	    }, {
 	        key: 'render',
@@ -692,22 +699,27 @@
 	                alignItems: 'flex-start',
 	                marginLeft: "10%"
 	            };
+	
+	            var reserved_color = this.props.mode == RESERVED ? "#FF8C2F" : "#666666";
+	            var not_reserved_color = this.props.mode == NOT_RESERVED ? "#FF8C2F" : "#666666";
+	            var all_color = this.props.mode == ALL ? "#FF8C2F" : "#666666";
+	
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
 	                React.createElement(
 	                    'button',
-	                    { style: { borderRadius: "12px", height: "75px" }, onClick: this.all },
+	                    { style: { borderRadius: "12px", height: "75px", background: all_color }, onClick: this.all },
 	                    'Wszystkie(15)'
 	                ),
 	                React.createElement(
 	                    'button',
-	                    { style: { borderRadius: "12px", height: "75px" }, onClick: this.notReserved },
+	                    { style: { borderRadius: "12px", height: "75px", background: not_reserved_color }, onClick: this.notReserved },
 	                    'Niezarezerwowane(10)'
 	                ),
 	                React.createElement(
 	                    'button',
-	                    { style: { borderRadius: "12px", height: "75px" }, onClick: this.reserved },
+	                    { style: { borderRadius: "12px", height: "75px", background: reserved_color }, onClick: this.reserved },
 	                    'Zarezerwowane(5)'
 	                )
 	            );
@@ -727,28 +739,36 @@
 	    }
 	
 	    _createClass(ListSquareMainBody, [{
+	        key: 'shouldShowPresent',
+	        value: function shouldShowPresent(present) {
+	            var mode = this.props.mode;
+	            if (mode == ALL) return true;
+	            if (mode == RESERVED) return present.boughtOrReserved;
+	            return !present.boughtOrReserved;
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this21 = this;
 	
-	            console.log("List sqaure main body rendering presents: " + (typeof this.props.presents != "undefined"));
-	            console.log(this.props.presents);
-	
+	            var layout = [];
 	            var presentComponents = this.props.presents;
-	            presentComponents = typeof presentComponents != "undefined" ? presentComponents.map(function (present, i) {
+	            presentComponents = typeof presentComponents != "undefined" ? presentComponents.filter(function (present) {
+	                return _this21.shouldShowPresent(present);
+	            }).map(function (present, i) {
+	                layout.push({ i: present.presentId.toString(), x: (i + 1) % 3, y: Math.floor((i + 1) / 3), w: 1, h: 1, static: true });
 	                return React.createElement(
 	                    'div',
-	                    { key: present.presentId, 'data-grid': { x: (i + 1) % 3, y: Math.floor((i + 1) / 3), w: 1, h: 1, static: true }, style: { border: ".1px solid #0066cc" } },
+	                    { id: "present" + present.presentId, key: present.presentId, 'data-grid': { x: (i + 1) % 3, y: Math.floor((i + 1) / 3), w: 1, h: 1, static: true }, style: { border: ".1px solid #0066cc" } },
 	                    React.createElement(PresentComponent, { present: present, handleOpenMailModal: _this21.props.handleOpenMailModal })
 	                );
 	            }) : [];
-	
 	            return React.createElement(
 	                _reactCustomScrollbars.Scrollbars,
 	                { style: { width: 1000, height: 600 } },
 	                React.createElement(
 	                    _reactGridLayout2.default,
-	                    { className: 'layout', width: 800, rowHeight: 250, cols: 3, style: { marginLeft: "100px", marginRight: "100px" } },
+	                    { layout: layout, className: 'layout', width: 800, rowHeight: 250, cols: 3, style: { marginLeft: "100px", marginRight: "100px" } },
 	                    React.createElement(
 	                        'div',
 	                        { key: 'sugg', 'data-grid': { x: 0, y: 0, w: 1, h: 1, static: true } },
@@ -852,6 +872,7 @@
 	        value: function render() {
 	            var _this25 = this;
 	
+	            var reserveButtonHidden = this.props.present.boughtOrReserved;
 	            return React.createElement(
 	                'div',
 	                null,
@@ -865,7 +886,7 @@
 	                    ),
 	                    React.createElement(
 	                        'button',
-	                        { style: { width: "100px", marginLeft: "80px" }, onClick: function onClick() {
+	                        { hidden: reserveButtonHidden, style: { width: "100px", marginLeft: "80px" }, onClick: function onClick() {
 	                                return _this25.props.handleOpenMailModal(_this25.props.present);
 	                            } },
 	                        'Rezerwuj'

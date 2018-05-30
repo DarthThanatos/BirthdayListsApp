@@ -10,16 +10,21 @@ const follow = require('./follow');
 
 import { Scrollbars } from 'react-custom-scrollbars';
 
+const ALL = "all"
+const RESERVED = "reserved"
+const NOT_RESERVED = "not_reserved"
+
 class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showModal: false};
+		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showModal: false, mode:ALL};
 		this.loadNewPage = this.loadNewPage.bind(this)
 
         this.handleOpenMailModal = this.handleOpenMailModal.bind(this);
         this.handleCloseMailModal = this.handleCloseMailModal.bind(this);
         this.handleReservation = this.handleReservation.bind(this);
+        this.changeMode = this.changeMode.bind(this);
 	}
 
 
@@ -152,16 +157,11 @@ class App extends React.Component {
 
 
      handleOpenMailModal (present) {
-        console.log("Opening mail modal for: ")
-        console.log(present)
         this.setState({presentToReserve: present})
         this.setState({ showModal: true });
      }
 
      handleReservation(present, email){
-        console.log("Sending reservation post on email: " + email)
-        console.log(present)
-
         document.getElementById("emailCancel").hidden = true
         document.getElementById("emailSubmit").hidden = true
         document.getElementById("emailInput").hidden = true
@@ -180,25 +180,22 @@ class App extends React.Component {
         })
         .done(response => {
             this.state.presents.filter((present_) => present.presentId == present_.presentId).forEach((present)=> present.boughtOrReserved=true)
-            console.log("email response: " + present.presentId + " reserved -> true")
-            console.log(this.state.presents)
-
-
             document.getElementById("emailCancel").hidden = false
             document.getElementById("emailSubmit").hidden = false
             document.getElementById("emailInput").hidden = false
             document.getElementById("emailWaitInfo").innerHTML = ""
-
             this.setState({ showModal: false });
 		})
 
      }
 
      handleCloseMailModal () {
-        console.log("Closing mail modal")
         this.setState({ showModal: false });
      }
 
+    changeMode(mode){
+        this.setState({mode: mode})
+    }
 
 	render() {
 		var sectionStyle = {
@@ -212,7 +209,7 @@ class App extends React.Component {
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
-		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}  handleOpenMailModal={this.handleOpenMailModal}/>
+		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}  handleOpenMailModal={this.handleOpenMailModal} mode={this.state.mode} changeMode={this.changeMode}/>
 		        <Footer/>
 
                 <Modal ref="MailModal" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
@@ -344,7 +341,7 @@ class Center extends React.Component{
         };
         return(
              <div style={sectionStyle}>
-                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal}/>
+                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal} mode={this.props.mode} changeMode={this.props.changeMode}/>
              </div>
         );
     }
@@ -359,11 +356,10 @@ class ListSquare extends React.Component{
             background: "white",
             opacity: 0.9
          }
-        console.log("ListSquare: load new page: " + this.props.loadNewPage)
         return (
             <div style={sectionStyle}>
-                <ListSquareHeader/>
-                <ListSquareMainBody presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal}/>
+                <ListSquareHeader mode={this.props.mode} changeMode={this.props.changeMode}/>
+                <ListSquareMainBody presents={this.props.presents} mode={this.props.mode} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal}/>
             </div>
         )
     }
@@ -381,8 +377,8 @@ class ListSquareHeader extends React.Component{
                 <br/>
                 <div style={{height: "25px", width: "1000px", textAlign:"center", fontWeight: "bold", fontSize:"25px"}}> 19 urodzinki</div>
                 <div style={{height: "25px", width: "1000px", textAlign:"center", fontSize:"17px"}}> 20 maja 2018 (za 5 dni)</div>
-                <SearchBarComponent/>
-                <ListSquareNavigationButtons/>
+                <SearchBarComponent />
+                <ListSquareNavigationButtons mode={this.props.mode} changeMode={this.props.changeMode}/>
             </div>
         )
     }
@@ -412,16 +408,27 @@ class SearchBarComponent extends React.Component{
 
 class ListSquareNavigationButtons extends React.Component{
 
+    constructor(props){
+        super(props)
+        this.all = this.all.bind(this)
+        this.reserved = this.reserved.bind(this)
+        this.notReserved = this.notReserved.bind(this)
+    }
+
     all(){
-        console.log("Clicked select all presents button")
+        console.log("Clicked select all presents button, changing from: " + this.props.mode)
+        this.props.changeMode(ALL)
+
     }
 
     reserved(){
-        console.log("Clicked select reserved presents button")
+        console.log("Clicked select reserved presents button" + this.props.mode)
+        this.props.changeMode(RESERVED)
     }
 
     notReserved(){
-        console.log("Clicked select not reserved presents button")
+        console.log("Clicked select not reserved presents button" + this.props.mode)
+        this.props.changeMode(NOT_RESERVED )
     }
 
     render(){
@@ -433,34 +440,46 @@ class ListSquareNavigationButtons extends React.Component{
             alignItems: 'flex-start',
             marginLeft:"10%"
         }
+
+        var reserved_color = this.props.mode == RESERVED ? "#FF8C2F" : "#666666"
+        var not_reserved_color = this.props.mode == NOT_RESERVED ? "#FF8C2F" : "#666666"
+        var all_color = this.props.mode == ALL ? "#FF8C2F" : "#666666"
+
         return (
             <div style={sectionStyle}>
-                <button style={{borderRadius: "12px", height: "75px"}} onClick={this.all}>Wszystkie(15)</button>
-                <button style={{borderRadius: "12px", height: "75px"}} onClick={this.notReserved}>Niezarezerwowane(10)</button>
-                <button style={{borderRadius: "12px", height: "75px"}} onClick={this.reserved}>Zarezerwowane(5)</button>
+                <button style={{borderRadius: "12px", height: "75px", background: all_color}} onClick={this.all}>Wszystkie(15)</button>
+                <button style={{borderRadius: "12px", height: "75px", background: not_reserved_color }} onClick={this.notReserved}>Niezarezerwowane(10)</button>
+                <button style={{borderRadius: "12px", height: "75px", background: reserved_color}} onClick={this.reserved}>Zarezerwowane(5)</button>
             </div>
         )
     }
 }
 
 class ListSquareMainBody extends React.Component{
-    render(){
-        console.log("List sqaure main body rendering presents: " + (typeof this.props.presents != "undefined"))
-        console.log(this.props.presents)
 
+    shouldShowPresent(present){
+        var mode = this.props.mode
+        if(mode == ALL) return true;
+        if(mode == RESERVED) return present.boughtOrReserved
+        return !present.boughtOrReserved
+    }
+
+    render(){
+
+        var layout = []
         var presentComponents = this.props.presents;
-        presentComponents = typeof presentComponents != "undefined" ? presentComponents.map(
+        presentComponents = typeof presentComponents != "undefined" ? presentComponents.filter(present => this.shouldShowPresent(present)).map(
             (present, i) => {
+                layout.push({i: present.presentId.toString(), x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true})
                 return(
-                    <div key={present.presentId} data-grid={{x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true}} style={{border: ".1px solid #0066cc"}}>
+                    <div id={"present" + present.presentId} key={present.presentId} data-grid={{x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true}} style={{border: ".1px solid #0066cc"}}>
                         <PresentComponent present={present}  handleOpenMailModal={this.props.handleOpenMailModal} />
                     </div>)
             }
         ) : [];
-
         return(
             <Scrollbars style={{ width: 1000, height: 600 }}>
-                <GridLayout className="layout" width={800}  rowHeight={250} cols={3} style={{ marginLeft:"100px", marginRight: "100px"}}>
+                <GridLayout layout={layout} className="layout" width={800}  rowHeight={250} cols={3} style={{ marginLeft:"100px", marginRight: "100px"}}>
                     <div key="sugg" data-grid={{x: 0, y: 0, w:1, h:1, static:true}}>
                         <SuggestComponent />
                     </div>
@@ -518,11 +537,12 @@ class PresentComponent extends React.Component{
     }
 
     render(){
+        var reserveButtonHidden = this.props.present.boughtOrReserved
         return(
             <div >
                 <div style={{background: "#FF8C2F",  width:"100%", height:"30px", display: "flex", flexDirection:"row", alignItems:"center"}}>
                     <div style={{width:"50px", marginLeft:"10px", fontSize:"20px"}}>{this.props.present.name}</div>
-                    <button style={{width:"100px", marginLeft:"80px"}} onClick={() => this.props.handleOpenMailModal(this.props.present)}>Rezerwuj</button>
+                    <button hidden={reserveButtonHidden} style={{width:"100px", marginLeft:"80px"}} onClick={() => this.props.handleOpenMailModal(this.props.present)}>Rezerwuj</button>
                 </div>
 
                 <div style={{width:"100%", height:"160px", display: "flex", flexDirection:"row", alignItems: "center"}}>
