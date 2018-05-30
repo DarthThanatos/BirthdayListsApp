@@ -1,6 +1,8 @@
 package pl.edu.agh.io.rest.present;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.io.model.present.Present;
 import pl.edu.agh.io.model.reservation.PresentReservation;
@@ -66,6 +68,7 @@ public class PresentController {
     @PostMapping("/add")
     public Present addPresent(@RequestBody Present present, @PathVariable("key") String key) {
         Long listId = wishListService.getByKey(key).getWishListId();
+        present.setWishListKey(key);
         return wishListService.addPresent(listId, present);
     }
 
@@ -97,5 +100,10 @@ public class PresentController {
             wishListService.addPresent(listId, present);
         }
         presentService.deleteSuggestion(sId);
+    }
+
+    @GetMapping(value="/paged")
+    Page<Present> list(Pageable pageable, @PathVariable("key") String key){
+        return presentService.findByWishListKey(pageable, key);
     }
 }

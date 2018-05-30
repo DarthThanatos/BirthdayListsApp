@@ -1,6 +1,8 @@
 package pl.edu.agh.io.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.io.model.present.Present;
 import pl.edu.agh.io.model.present.PresentRepository;
@@ -47,5 +49,9 @@ public class PresentService {
 
     public Suggestion saveSuggestion(Suggestion suggestion) {
         return suggestionRepository.save(suggestion);
+    }
+
+    public Page<Present> findByWishListKey(Pageable pageable, String key) {
+        return presentRepository.findByWishListKey(key, pageable);
     }
 }

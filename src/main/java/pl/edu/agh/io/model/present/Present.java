@@ -17,6 +17,7 @@ public class Present {
     private String category;
     private String shopLink;
     private String imageUrl;
+    private String wishListKey;
 
     public Present() {
     }
@@ -72,5 +73,13 @@ public class Present {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getWishListKey() {
+        return wishListKey;
+    }
+
+    public void setWishListKey(String wishListKey) {
+        this.wishListKey = wishListKey;
     }
 }

@@ -83,8 +83,7 @@
 	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
 	        _this.state = { token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3" };
-	        console.log("state: ");
-	        console.log(_this.state);
+	        _this.loadNewPage = _this.loadNewPage.bind(_this);
 	        return _this;
 	    }
 	
@@ -151,7 +150,7 @@
 	            var _this6 = this;
 	
 	            console.log("posting default presents as birthday guy to list with the key: " + listKey);
-	            this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" }).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).done(function (response) {
+	            this.postDefaultPresent(listKey, { name: "Kask1", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" }).then(this.postDefaultPresent(listKey, { name: "Kask2", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask3", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask4", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask5", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask6", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).then(this.postDefaultPresent(listKey, { name: "Kask7", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" })).done(function (response) {
 	                return _this6.getPresentsFromList(listKey);
 	            });
 	        }
@@ -174,16 +173,59 @@
 	
 	            console.log("getting presents from existing list: " + listKey);
 	
-	            client({ method: 'GET', path: '/api/list/key/' + listKey + '/present', headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+	            client({ method: 'GET', path: '/api/list/key/' + listKey + '/present/paged?page=0&size=5', headers: { 'Content-Type': 'application/json' } }).done(function (response) {
 	                console.log("got list of presents from existing wishlist: ");
 	                console.log(response);
-	                _this7.setState({ presents: response.entity });
+	                _this7.setState({ listKey: listKey });
+	                _this7.setState({ presents: response.entity.content });
+	                _this7.setState({ page: response.entity.content.length < 5 ? 0 : 1 });
 	            });
 	        }
 	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            this.registerMockedUser();
+	        }
+	    }, {
+	        key: 'loadNewPage',
+	        value: function loadNewPage() {
+	            var _this8 = this;
+	
+	            console.log("Loading new page");
+	
+	            var listKey = this.state.listKey;
+	            var page = this.state.page;
+	            client({ method: 'GET', path: '/api/list/key/' + listKey + '/present/paged?page=' + page + '&size=5', headers: { 'Content-Type': 'application/json' } }).done(function (response) {
+	                _this8.onPageLoaded(response);
+	            });
+	        }
+	    }, {
+	        key: 'onPageLoaded',
+	        value: function onPageLoaded(response) {
+	            var page = this.state.page;
+	            var presents = this.state.presents;
+	            var uniquePresents = this.mergeToFirstById(presents, response.entity.content);
+	            this.setState({ presents: uniquePresents });
+	            this.setState({ page: response.entity.content.length < 5 ? page : page + 1 });
+	            this.forceUpdate();
+	        }
+	    }, {
+	        key: 'mergeToFirstById',
+	        value: function mergeToFirstById(arrayOne, arrayTwo) {
+	            var res = arrayOne.slice();
+	            for (var i = 0; i < arrayTwo.length; i++) {
+	                var notPresentAlready = true;
+	                for (var j = 0; j < arrayOne.length; j++) {
+	                    if (arrayTwo[i].presentId == arrayOne[j].presentId) {
+	                        notPresentAlready = false;
+	                        break;
+	                    }
+	                }
+	                if (notPresentAlready) {
+	                    res.push(arrayTwo[i]);
+	                }
+	            }
+	            return res;
 	        }
 	    }, {
 	        key: 'render',
@@ -199,7 +241,7 @@
 	                'div',
 	                { style: sectionStyle },
 	                React.createElement(Header, null),
-	                React.createElement(Center, { presents: this.state.presents }),
+	                React.createElement(Center, { presents: this.state.presents, loadNewPage: this.loadNewPage }),
 	                React.createElement(Footer, null)
 	            );
 	        }
@@ -369,7 +411,7 @@
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
-	                React.createElement(ListSquare, { presents: this.props.presents })
+	                React.createElement(ListSquare, { presents: this.props.presents, loadNewPage: this.props.loadNewPage })
 	            );
 	        }
 	    }]);
@@ -395,11 +437,12 @@
 	                background: "white",
 	                opacity: 0.9
 	            };
+	            console.log("ListSquare: load new page: " + this.props.loadNewPage);
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
 	                React.createElement(ListSquareHeader, null),
-	                React.createElement(ListSquareMainBody, { presents: this.props.presents })
+	                React.createElement(ListSquareMainBody, { presents: this.props.presents, loadNewPage: this.props.loadNewPage })
 	            );
 	        }
 	    }]);
@@ -582,7 +625,8 @@
 	                        React.createElement(SuggestComponent, null)
 	                    ),
 	                    presentComponents
-	                )
+	                ),
+	                React.createElement(ShowMorePagesButton, { loadNewPage: this.props.loadNewPage })
 	            );
 	        }
 	    }]);
@@ -590,8 +634,43 @@
 	    return ListSquareMainBody;
 	}(React.Component);
 	
-	var SuggestComponent = function (_React$Component11) {
-	    _inherits(SuggestComponent, _React$Component11);
+	var ShowMorePagesButton = function (_React$Component11) {
+	    _inherits(ShowMorePagesButton, _React$Component11);
+	
+	    function ShowMorePagesButton(props) {
+	        _classCallCheck(this, ShowMorePagesButton);
+	
+	        var _this18 = _possibleConstructorReturn(this, (ShowMorePagesButton.__proto__ || Object.getPrototypeOf(ShowMorePagesButton)).call(this, props));
+	
+	        _this18.moreItems = _this18.moreItems.bind(_this18);
+	        return _this18;
+	    }
+	
+	    _createClass(ShowMorePagesButton, [{
+	        key: 'moreItems',
+	        value: function moreItems() {
+	            this.props.loadNewPage();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                'div',
+	                { style: { width: 1000, height: 50, display: "flex", flexDirection: "row", justifyContent: "center" } },
+	                React.createElement(
+	                    'button',
+	                    { style: { height: 30 }, onClick: this.moreItems },
+	                    'Poka\u017C wi\u0119cej'
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return ShowMorePagesButton;
+	}(React.Component);
+	
+	var SuggestComponent = function (_React$Component12) {
+	    _inherits(SuggestComponent, _React$Component12);
 	
 	    function SuggestComponent() {
 	        _classCallCheck(this, SuggestComponent);
@@ -624,8 +703,8 @@
 	    return SuggestComponent;
 	}(React.Component);
 	
-	var PresentComponent = function (_React$Component12) {
-	    _inherits(PresentComponent, _React$Component12);
+	var PresentComponent = function (_React$Component13) {
+	    _inherits(PresentComponent, _React$Component13);
 	
 	    function PresentComponent() {
 	        _classCallCheck(this, PresentComponent);
@@ -696,8 +775,8 @@
 	    return PresentComponent;
 	}(React.Component);
 	
-	var GuestApp = function (_React$Component13) {
-	    _inherits(GuestApp, _React$Component13);
+	var GuestApp = function (_React$Component14) {
+	    _inherits(GuestApp, _React$Component14);
 	
 	    function GuestApp() {
 	        _classCallCheck(this, GuestApp);
@@ -50590,7 +50669,7 @@
   \***************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/** @license MIT License (c) copyright 2010-2014 original author or authors */
 	/** @author Brian Cavalier */
 	/** @author John Hann */
 	

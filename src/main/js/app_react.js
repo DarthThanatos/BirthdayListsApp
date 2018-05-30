@@ -14,8 +14,7 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3"};
-		console.log("state: " )
-		console.log(this.state)
+		this.loadNewPage = this.loadNewPage.bind(this)
 	}
 
     registerMockedUser() {
@@ -71,13 +70,13 @@ class App extends React.Component {
 
     postDefaultPresents(listKey){
         console.log("posting default presents as birthday guy to list with the key: " + listKey)
-        this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        this.postDefaultPresent(listKey, { name: "Kask1", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        .then(this.postDefaultPresent(listKey, { name: "Kask2", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask3", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask4", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask5", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask6", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask7", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
         .done(response => this.getPresentsFromList(listKey))
 
     }
@@ -96,16 +95,54 @@ class App extends React.Component {
     getPresentsFromList(listKey){
         console.log("getting presents from existing list: " + listKey)
 
-		client({method: 'GET', path: '/api/list/key/' + listKey + '/present',headers: {'Content-Type': 'application/json'}}).done(response => {
+		client({method: 'GET', path: '/api/list/key/' + listKey + '/present/paged?page=0&size=5',headers: {'Content-Type': 'application/json'}}).done(response => {
 		    console.log("got list of presents from existing wishlist: ")
 		    console.log(response)
-		    this.setState({presents: response.entity})
+		    this.setState({listKey: listKey})
+		    this.setState({presents: response.entity.content})
+		    this.setState({page: response.entity.content.length<5 ? 0 : 1})
 		});
     }
 
 	componentDidMount() {
 	    this.registerMockedUser();
 	}
+
+    loadNewPage(){
+        console.log("Loading new page")
+
+        const listKey=this.state.listKey
+        const page = this.state.page
+		client({method: 'GET', path: '/api/list/key/' + listKey + '/present/paged?page=' + page + '&size=5',headers: {'Content-Type': 'application/json'}}).done(
+		    response => {this.onPageLoaded(response)}
+		);
+    }
+
+    onPageLoaded(response){
+            const page = this.state.page
+            var presents = this.state.presents
+            const uniquePresents = this.mergeToFirstById(presents, response.entity.content)
+		    this.setState({presents: uniquePresents})
+		    this.setState({page: response.entity.content.length < 5 ? page : page + 1})
+		    this.forceUpdate()
+    }
+
+    mergeToFirstById(arrayOne, arrayTwo){
+        var res = arrayOne.slice()
+        for(var i = 0; i < arrayTwo.length; i++){
+            var notPresentAlready = true
+            for(var j = 0; j < arrayOne.length; j++){
+                if(arrayTwo[i].presentId == arrayOne[j].presentId){
+                    notPresentAlready = false;
+                    break;
+                }
+            }
+            if(notPresentAlready){
+                res.push(arrayTwo[i])
+            }
+        }
+        return res
+    }
 
 	render() {
 		var sectionStyle = {
@@ -118,7 +155,7 @@ class App extends React.Component {
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
-		        <Center presents={this.state.presents}/>
+		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}/>
 		        <Footer/>
 		    </div>
 
@@ -216,7 +253,7 @@ class Center extends React.Component{
         };
         return(
              <div style={sectionStyle}>
-                <ListSquare presents={this.props.presents}/>
+                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage}/>
              </div>
         );
     }
@@ -231,10 +268,11 @@ class ListSquare extends React.Component{
             background: "white",
             opacity: 0.9
          }
+        console.log("ListSquare: load new page: " + this.props.loadNewPage)
         return (
             <div style={sectionStyle}>
                 <ListSquareHeader/>
-                <ListSquareMainBody presents={this.props.presents}/>
+                <ListSquareMainBody presents={this.props.presents} loadNewPage={this.props.loadNewPage}/>
             </div>
         )
     }
@@ -337,7 +375,28 @@ class ListSquareMainBody extends React.Component{
                     </div>
                     {presentComponents}
                 </GridLayout>
+                <ShowMorePagesButton loadNewPage={this.props.loadNewPage}/>
             </Scrollbars>
+        )
+    }
+}
+
+class ShowMorePagesButton extends React.Component{
+
+    constructor(props){
+        super(props)
+        this.moreItems = this.moreItems.bind(this)
+    }
+
+    moreItems(){
+        this.props.loadNewPage()
+    }
+
+    render(){
+        return(
+            <div style={{width: 1000, height:50, display: "flex",  flexDirection:"row", justifyContent: "center"}}>
+                <button style={{height:30}} onClick={this.moreItems}>Pokaż więcej</button>
+            </div>
         )
     }
 }
@@ -417,4 +476,3 @@ try {
         document.getElementById('react_guest')
     )
 }catch(e){console.log("not found element: react_guest")}
-
