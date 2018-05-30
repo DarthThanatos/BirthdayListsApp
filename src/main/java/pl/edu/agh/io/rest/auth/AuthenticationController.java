@@ -35,7 +35,7 @@ public class AuthenticationController {
     private User registerUser(@RequestBody RegisterRequest registerRequest) {
         try {
             User user = authenticationService.registerUser(registerRequest);
-            emailService.sendSimpleMessage(user.getEmail(), "Podaruj mi", "Witaj w Podaruj mi");
+//            emailService.sendSimpleMessage(user.getEmail(), "Podaruj mi", "Witaj w Podaruj mi");
             return user;
         } catch (Exception e) {
             throw new UserAlreadyExists(registerRequest.getEmail());

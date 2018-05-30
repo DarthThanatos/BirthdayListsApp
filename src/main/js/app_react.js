@@ -7,6 +7,7 @@ const ReactDOM = require('react-dom');
 const client = require('./client_react');
 const follow = require('./follow');
 
+import { Scrollbars } from 'react-custom-scrollbars';
 
 class App extends React.Component {
 
@@ -71,6 +72,8 @@ class App extends React.Component {
     postDefaultPresents(listKey){
         console.log("posting default presents as birthday guy to list with the key: " + listKey)
         this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
+        .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
         .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
         .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
         .then(this.postDefaultPresent(listKey, { name: "Kask", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
@@ -327,12 +330,14 @@ class ListSquareMainBody extends React.Component{
         ) : [];
 
         return(
-            <GridLayout className="layout" width={800}  rowHeight={250} cols={3} style={{ height: "600px", marginLeft:"100px", marginRight: "100px"}}>
-                <div key="sugg" data-grid={{x: 0, y: 0, w:1, h:1, static:true}}>
-                    <SuggestComponent />
-                </div>
-                {presentComponents}
-            </GridLayout>
+            <Scrollbars style={{ width: 1000, height: 600 }}>
+                <GridLayout className="layout" width={800}  rowHeight={250} cols={3} style={{ marginLeft:"100px", marginRight: "100px"}}>
+                    <div key="sugg" data-grid={{x: 0, y: 0, w:1, h:1, static:true}}>
+                        <SuggestComponent />
+                    </div>
+                    {presentComponents}
+                </GridLayout>
+            </Scrollbars>
         )
     }
 }
