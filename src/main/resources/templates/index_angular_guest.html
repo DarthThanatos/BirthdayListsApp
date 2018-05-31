@@ -8,6 +8,7 @@
     <script src="js/guest_app.js"></script>
     <script src="js/guest_controller.js"></script>
     <link rel="stylesheet" type="text/css" href="css/guest_home.css"/>
+    <link rel="stylesheet" type="text/css" href="css/searchbar.css"/>
 </head>
 <body>
 <div id="root" ng-app="GuestHome" ng-controller="GuestController">
@@ -19,7 +20,29 @@
     </div>
 
     <div id="center">
+        <div id="list-square">
+            <div id="list-square-header">
+                <br/>
+                <div style="height: 25px; width: 1000px; text-align:center; font-weight: bold; font-size:25px;"> 19 urodzinki</div>
+                <div style="height: 25px; width: 1000px; text-align:center; font-size:17px;"> 20 maja 2018 (za 5 dni)</div>
 
+                <div class="search">
+                    <input type="text" class="searchTerm" placeholder="What are you looking for?"/>
+                    <button type="submit" class="searchButton">
+                        <img src="img/search.png"/>
+                    </button>
+                </div>
+
+                <div id="list-square-navigation-buttons">
+                    <button style="borderRadius: 10px; height: 67px;" ng-click="{{all()}}">Wszystkie(15)</button>
+                    <button style="borderRadius: 10px; height: 67px; margin-left:2px;" ng-click="{{notReserved()}}">Niezarezerwowane(10)</button>
+                    <button style="borderRadius: 10px; height: 67px; margin-left:2px;" ng-click="{{reserved()}}">Zarezerwowane(5)</button>
+                </div>
+            </div>
+            <div id="list-square-main-body">
+
+            </div>
+        </div>
     </div>
 
     <div id="footer">
@@ -33,7 +56,7 @@
         <div id="service-icons">
 
             <button style="border-radius: 12px; display: flex; flex-direction: row; align-items: center; height: 75px;" ng-click="{{this.fbClicked()}}">
-            <img src="img/fb.png" style="margin-left:15px; margin-right:15px;"/>
+                <img src="img/fb.png" style="margin-left:15px; margin-right:15px;"/>
             </button>
 
             <img src="img/service.png" style="margin-left: 15px; margin-right:15px;"/>
