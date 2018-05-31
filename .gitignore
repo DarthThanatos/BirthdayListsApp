@@ -1,5 +1,7 @@
 /.gradle/
 /.idea/
+/.vs/
+/src/main/resources/static/built/*
 /bin/
 /lib/
 /node_modules/
@@ -7,3 +9,4 @@
 podarujmi-back.iml
 prezenty-back-master.iml
 sources
+package-lock.json
