@@ -20,4 +20,8 @@ GuestHome.controller('GuestController', function GuestController($scope) {
     $scope.suggest = function(){
         console.log("making a suggestion")
     }
+
+    $scope.handleOpenMailModal = function(present){
+        console.log("mail modal with present: " + present)
+    }
 })
