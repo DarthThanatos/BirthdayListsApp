@@ -296,7 +296,7 @@ class Header extends React.Component{
         }
         return (
             <div style={sectionStyle}>
-                <img src="cake.png" style={{marginLeft: "25px"}}/>
+                <img src="img/cake.png" style={{marginLeft: "25px"}}/>
                 <div style={{marginLeft:"25px", fontWeight: "bold", fontFamily: 'Cochin', fontSize:"22px"}}>Prezenty</div>
                 <div style={{marginLeft:"25px", fontFamily: 'Cochin', fontSize:"17px"}}>Rezerwacje</div>
                 <div style={{fontFamily: 'Cochin', fontSize:"17px", border: ".1px solid #0066cc", marginLeft:"800px"}}>Wyloguj</div>
@@ -344,13 +344,13 @@ class ServicesIcons extends React.Component{
             <div style={sectionStyle}>
 
                 <button style={{borderRadius: "12px", display: "flex", flexDirection: "row", alignItems: "center", height: "75px"}} onClick={this.fbClicked}>
-                    <img src="fb.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
+                    <img src="img/fb.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
                  </button>
 
-                <img src="service.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-                <img src="google.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-                <img src="pinterest.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-                <img src="twitter.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
+                <img src="img/service.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
+                <img src="img/google.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
+                <img src="img/pinterest.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
+                <img src="img/twitter.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
 
             </div>
         )
@@ -364,7 +364,7 @@ class Center extends React.Component{
             position:"relative",
             width: "1200px",
             height: "950px",
-            backgroundImage: "url(background_transparent.png)",
+            backgroundImage: "url(img/background_transparent.png)",
 
             display: "flex",
             flexDirection: "row",
@@ -602,6 +602,8 @@ class PresentComponent extends React.Component{
     }
 }
 
+
 try{
     Modal.setAppElement('#react_guest');
 }catch(e){}
+

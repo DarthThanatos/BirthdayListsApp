@@ -81,7 +81,7 @@
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-	           value: true
+	    value: true
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -95,31 +95,31 @@
 	var React = __webpack_require__(/*! react */ 2);
 	
 	var BirthdayGuyHome = function (_React$Component) {
-	           _inherits(BirthdayGuyHome, _React$Component);
+	    _inherits(BirthdayGuyHome, _React$Component);
 	
-	           function BirthdayGuyHome() {
-	                      _classCallCheck(this, BirthdayGuyHome);
+	    function BirthdayGuyHome() {
+	        _classCallCheck(this, BirthdayGuyHome);
 	
-	                      return _possibleConstructorReturn(this, (BirthdayGuyHome.__proto__ || Object.getPrototypeOf(BirthdayGuyHome)).apply(this, arguments));
-	           }
+	        return _possibleConstructorReturn(this, (BirthdayGuyHome.__proto__ || Object.getPrototypeOf(BirthdayGuyHome)).apply(this, arguments));
+	    }
 	
-	           _createClass(BirthdayGuyHome, [{
-	                      key: 'render',
-	                      value: function render() {
-	                                 return React.createElement(
-	                                            'div',
-	                                            null,
-	                                            React.createElement(
-	                                                       'p',
-	                                                       null,
-	                                                       'Hello Guest'
-	                                            ),
-	                                            React.createElement('img', { src: 'background_transparent.png', alt: 'birthday party image' })
-	                                 );
-	                      }
-	           }]);
+	    _createClass(BirthdayGuyHome, [{
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    'div',
+	                    { style: { fontSize: "20px", width: "100%", height: "30px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" } },
+	                    'Solenizat - strona g\u0142\xF3wna'
+	                ),
+	                React.createElement('img', { src: 'img/background_transparent.png', alt: 'birthday party image' })
+	            );
+	        }
+	    }]);
 	
-	           return BirthdayGuyHome;
+	    return BirthdayGuyHome;
 	}(React.Component);
 	
 	exports.default = BirthdayGuyHome;
@@ -5272,7 +5272,7 @@
 	            return React.createElement(
 	                'div',
 	                { style: sectionStyle },
-	                React.createElement('img', { src: 'cake.png', style: { marginLeft: "25px" } }),
+	                React.createElement('img', { src: 'img/cake.png', style: { marginLeft: "25px" } }),
 	                React.createElement(
 	                    'div',
 	                    { style: { marginLeft: "25px", fontWeight: "bold", fontFamily: 'Cochin', fontSize: "22px" } },
@@ -5370,12 +5370,12 @@
 	                React.createElement(
 	                    'button',
 	                    { style: { borderRadius: "12px", display: "flex", flexDirection: "row", alignItems: "center", height: "75px" }, onClick: this.fbClicked },
-	                    React.createElement('img', { src: 'fb.png', style: { marginLeft: "15px", marginRight: "15px" } })
+	                    React.createElement('img', { src: 'img/fb.png', style: { marginLeft: "15px", marginRight: "15px" } })
 	                ),
-	                React.createElement('img', { src: 'service.png', style: { marginLeft: "15px", marginRight: "15px" } }),
-	                React.createElement('img', { src: 'google.png', style: { marginLeft: "15px", marginRight: "15px" } }),
-	                React.createElement('img', { src: 'pinterest.png', style: { marginLeft: "15px", marginRight: "15px" } }),
-	                React.createElement('img', { src: 'twitter.png', style: { marginLeft: "15px", marginRight: "15px" } })
+	                React.createElement('img', { src: 'img/service.png', style: { marginLeft: "15px", marginRight: "15px" } }),
+	                React.createElement('img', { src: 'img/google.png', style: { marginLeft: "15px", marginRight: "15px" } }),
+	                React.createElement('img', { src: 'img/pinterest.png', style: { marginLeft: "15px", marginRight: "15px" } }),
+	                React.createElement('img', { src: 'img/twitter.png', style: { marginLeft: "15px", marginRight: "15px" } })
 	            );
 	        }
 	    }]);
@@ -5399,7 +5399,7 @@
 	                position: "relative",
 	                width: "1200px",
 	                height: "950px",
-	                backgroundImage: "url(background_transparent.png)",
+	                backgroundImage: "url(img/background_transparent.png)",
 	
 	                display: "flex",
 	                flexDirection: "row",
