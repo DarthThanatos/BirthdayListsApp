@@ -51,6 +51,20 @@
     margin-left: 96px;
 }
 
+#list-square-main-body{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.suggest-component{
+    width:250px; height: 250px;
+    border: .1px solid #0066cc;
+    background: #00DBFF;
+    font-size: 35px;
+}
+
 #footer{
      width: 1200px;
      border: .1px solid #0066cc;

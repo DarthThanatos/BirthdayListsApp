@@ -16,4 +16,8 @@ GuestHome.controller('GuestController', function GuestController($scope) {
     $scope.reserved = function(){
         console.log("reserved clicked")
     }
+
+    $scope.suggest = function(){
+        console.log("making a suggestion")
+    }
 })
