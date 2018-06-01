@@ -86,8 +86,11 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
 
         }
 
+        function synchPresentsStates(atEnd){
+            $scope.client({method: 'GET', path: modeToPageUrl($scope.currentPage) ,headers: {'Content-Type': 'application/json'}}, response => {processPresents(response); atEnd()})
+        }
 
-         function synchPresentsStates(atEnd){
+         function synchPresentsStates_old(atEnd){
             const listKey=$scope.listKey
             const presentsIdsToCoordsDict = getPresentsIdsToCoordsDict()
             const entity= {ids: Object.keys(presentsIdsToCoordsDict)}
