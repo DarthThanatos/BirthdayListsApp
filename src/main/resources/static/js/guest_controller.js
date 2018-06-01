@@ -1,4 +1,4 @@
-GuestHome.controller('GuestController', function GuestController($scope) {
+GuestHome.controller('GuestController', function GuestController($scope, Popeye) {
 	'use strict';
 
     const ALL = "all"
@@ -50,9 +50,26 @@ GuestHome.controller('GuestController', function GuestController($scope) {
         console.log("making a suggestion")
     }
 
-    $scope.handleOpenMailModal = function(present){
-        console.log("mail modal with present: " + present)
-    }
+    $scope.mailModalOpen = function(present){
+        var modalScope = $scope.$new();
+        var modal = Popeye.openModal({
+            templateUrl: "guest_mail_modal.html",
+            scope: modalScope,
+            click: false,
+            keyboard: false
+        });
+
+        modalScope.mailModalSubmit = function(){
+            console.log("submit")
+        }
+
+        modalScope.mailModalCancel = function(){
+            Popeye.closeCurrentModal()
+        }
+
+    };
+
+
 
     $scope.client = function(request_dict, callback, error_callback){
         var method = request_dict.method
@@ -210,6 +227,8 @@ GuestHome.controller('GuestController', function GuestController($scope) {
         if($scope.mode == NOT_RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/notReserved?page=' + page +'&size=5'
         if($scope.mode == RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/reserved?page=' + page +'&size=5'
    }
+
+
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)
 })
