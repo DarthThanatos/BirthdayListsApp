@@ -1,6 +1,8 @@
 package pl.edu.agh.io.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.io.model.present.Present;
 import pl.edu.agh.io.model.reservation.Mapping;
@@ -10,6 +12,7 @@ import pl.edu.agh.io.model.reservation.ReservationRepository;
 import pl.edu.agh.io.request.ReservationRequest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +35,9 @@ public class ReservationService {
         return reservationRepository.findAllByMappingWishListWishListId(listId);
     }
 
+    public Page<PresentReservation> findAllByListId(Long listId, Pageable pageable) {
+        return reservationRepository.findAllByMappingWishListWishListId(listId, pageable);
+    }
     public PresentReservation createReservation(ReservationRequest reservationRequest) {
         Mapping mapping = mappingRepository.findByPresentPresentId(reservationRequest.getPresentId());
         PresentReservation presentReservation = new PresentReservation(mapping, reservationRequest.getBuyerName(), reservationRequest.getBuyerEmail(),
@@ -58,4 +64,18 @@ public class ReservationService {
         reservationRepository.deleteByKey(key);
     }
 
+    public Page<PresentReservation> finAll(Pageable pageable){
+        return reservationRepository.findAll(pageable);
+    }
+
+    public List<PresentReservation> findAll(){
+        return iterToList(reservationRepository.findAll());
+    }
+
+
+    private List<PresentReservation> iterToList(Iterable<PresentReservation> iter){
+        List<PresentReservation> res = new ArrayList<>();
+        iter.forEach(res::add);
+        return res;
+    }
 }

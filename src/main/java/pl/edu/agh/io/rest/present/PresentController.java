@@ -125,8 +125,37 @@ public class PresentController {
         }).collect(Collectors.toList());
     }
 
-    private List<Present> pageToList(Page<Present> page){
-        List<Present> res = new ArrayList<>();
+    @GetMapping("/paged/reserved")
+    List<Present> getReservedPage(Pageable pageable, @PathVariable("key") String key){
+        Long listId = wishListService.getByKey(key).getWishListId();
+        List<Present> reservedPresents = pageToList(reservationService.findAllByListId(listId, pageable))
+                .stream()
+                .map(r -> r.getMapping().getPresent())
+                .collect(Collectors.toList());
+        return reservedPresents.stream().map(present -> {
+            PresentInfoResponse presentInfoResponse = new PresentInfoResponse();
+            presentInfoResponse.setDescription(present.getDescription());
+            presentInfoResponse.setName(present.getName());
+            presentInfoResponse.setPresentId(present.getPresentId());
+            presentInfoResponse.setCategory(present.getCategory());
+            presentInfoResponse.setShopLink(present.getShopLink());
+            presentInfoResponse.setImageUrl(present.getImageUrl());
+            presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+            return presentInfoResponse;
+        }).collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/paged/notReserved")
+    List<Present> getNotReservedPage(Pageable pageable, @PathVariable("key") String key){
+        List<Long> reservedIds = reservationService.findAll().stream().map(PresentReservation::getPresentId).collect(Collectors.toList());
+        reservedIds.add((long) -1);
+        System.out.println("reserved ids: " + reservedIds.stream().map(Object::toString).reduce( (s, s2) -> s + s2 + ","));
+        return pageToList(presentService.findByWishListKeyAndPresentIdNotIn(key, reservedIds, pageable));
+    }
+
+    private <T> List<T> pageToList(Page<T> page){
+        List<T> res = new ArrayList<>();
         page.forEach(res::add);
         return res;
     }

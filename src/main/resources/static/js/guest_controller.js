@@ -1,11 +1,18 @@
 GuestHome.controller('GuestController', function GuestController($scope) {
 	'use strict';
 
+    const ALL = "all"
+    const RESERVED = "reserved"
+    const NOT_RESERVED = "not_reserved"
+
+    $scope.mode = ALL
     $scope.currentPage = 0
     $scope.notFirstPage = false;
+
     $scope.listKey = ""
     $scope.token = ""
     $scope.email = ""
+
     $scope.firstRow = []
     $scope.secondRow = []
     $scope.allRows = [[], []]
@@ -17,14 +24,26 @@ GuestHome.controller('GuestController', function GuestController($scope) {
 
     $scope.all = function(){
         console.log("all clicked")
+        $scope.mode = ALL
+        $scope.currentPage = 0
+        $scope.notFirstPage = false;
+        $scope.client({method: 'GET', path: modeToPageUrl(0) ,headers: {'Content-Type': 'application/json'}}, onFirstPageLoaded)
     }
 
     $scope.notReserved = function(){
         console.log("not reserved clicked")
+        $scope.mode = NOT_RESERVED
+        $scope.currentPage = 0
+        $scope.notFirstPage = false;
+        $scope.client({method: 'GET', path: modeToPageUrl(0) ,headers: {'Content-Type': 'application/json'}}, onFirstPageLoaded)
     }
 
     $scope.reserved = function(){
         console.log("reserved clicked")
+        $scope.mode = RESERVED
+        $scope.currentPage = 0
+        $scope.notFirstPage = false;
+        $scope.client({method: 'GET', path: modeToPageUrl(0) ,headers: {'Content-Type': 'application/json'}}, onFirstPageLoaded)
     }
 
     $scope.suggest = function(){
@@ -102,7 +121,7 @@ GuestHome.controller('GuestController', function GuestController($scope) {
 
     function postDefaultPresents(response){
         console.log("posting default presents as birthday guy to list with the key: " + response.key)
-        for (var i = 0; i < 7; i++){
+        for (var i = 0; i < 17; i++){
             postDefaultPresent(
                 response.key,
                 {
@@ -147,7 +166,7 @@ GuestHome.controller('GuestController', function GuestController($scope) {
     $scope.previousPage = function(){
         console.log("previous page clicked")
         if($scope.currentPage == 0) return;
-        $scope.client({method: 'GET', path: '/api/list/key/' + $scope.listKey + '/present/paged?page=' + ($scope.currentPage - 1) +'&size=5',headers: {'Content-Type': 'application/json'}}, onPreviousPageLoaded)
+        $scope.client({method: 'GET', path: modeToPageUrl($scope.currentPage - 1), headers: {'Content-Type': 'application/json'}}, onPreviousPageLoaded)
     }
 
     function onPreviousPageLoaded(response){
@@ -160,7 +179,7 @@ GuestHome.controller('GuestController', function GuestController($scope) {
 
     $scope.nextPage = function(){
         console.log("next page clicked")
-        $scope.client({method: 'GET', path: '/api/list/key/' + $scope.listKey + '/present/paged?page=' + ($scope.currentPage + 1) +'&size=5',headers: {'Content-Type': 'application/json'}}, onNextPageLoaded)
+        $scope.client({method: 'GET', path: modeToPageUrl($scope.currentPage + 1),headers: {'Content-Type': 'application/json'}}, onNextPageLoaded)
     }
 
     function onNextPageLoaded(response){
@@ -174,7 +193,7 @@ GuestHome.controller('GuestController', function GuestController($scope) {
 
     $scope.firstPage = function(){
         console.log("Going to first page")
-        $scope.client({method: 'GET', path: '/api/list/key/' + $scope.listKey + '/present/paged?page=0&size=5',headers: {'Content-Type': 'application/json'}}, onFirstPageLoaded)
+        $scope.client({method: 'GET', path: modeToPageUrl(0) ,headers: {'Content-Type': 'application/json'}}, onFirstPageLoaded)
     }
 
     function onFirstPageLoaded(response){
@@ -185,6 +204,12 @@ GuestHome.controller('GuestController', function GuestController($scope) {
         processPresents(response)
 
     }
+
+   function modeToPageUrl(page){
+        if($scope.mode == ALL) return '/api/list/key/' + $scope.listKey + '/present/paged?page=' + page +'&size=5'
+        if($scope.mode == NOT_RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/notReserved?page=' + page +'&size=5'
+        if($scope.mode == RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/reserved?page=' + page +'&size=5'
+   }
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)
 })

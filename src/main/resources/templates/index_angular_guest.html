@@ -7,6 +7,7 @@
     <script src="lib/angular.min.js"></script>
     <script src="js/guest_app.js"></script>
     <script src="js/guest_controller.js"></script>
+    <script src="js/guest_filters.js"></script>
     <link rel="stylesheet" type="text/css" href="css/guest_home.css"/>
     <link rel="stylesheet" type="text/css" href="css/searchbar.css"/>
 </head>
@@ -15,7 +16,7 @@
     <div id="header">
         <img src="img/cake.png" style="margin-left: 25px;"/>
         <div style="margin-left: 25px; font-weight: bold; font-family: Cochin; font-size:22px;">Prezenty</div>
-        <div style="margin-left:25px; font-family: Cochin; font-size:17px;">Rezerwacje</div>
+        <div style="margin-left:25px; font-family: Cochin; font-size:17px; ">Rezerwacje</div>
         <div style="font-family: Cochin; font-size: 17px; border: .1px solid #0066cc; margin-left:800px;">Wyloguj</div>
     </div>
 
@@ -34,9 +35,9 @@
                 </div>
 
                 <div id="list-square-navigation-buttons">
-                    <button style="borderRadius: 10px; height: 68px;" ng-click="all()">Wszystkie(15)</button>
-                    <button style="borderRadius: 10px; height: 68px; margin-left:2px;" ng-click="notReserved()">Niezarezerwowane(10)</button>
-                    <button style="borderRadius: 10px; height: 68px; margin-left:2px;" ng-click="reserved()">Zarezerwowane(5)</button>
+                    <button style="borderRadius: 10px; height: 68px;  {{mode | mode_to_color:'all'}} " ng-click="all()">Wszystkie(15)</button>
+                    <button style="borderRadius: 10px; height: 68px; margin-left:2px;  {{mode | mode_to_color:'not_reserved'}}" ng-click="notReserved()">Niezarezerwowane(10)</button>
+                    <button style="borderRadius: 10px; height: 68px; margin-left:2px;  {{mode | mode_to_color:'reserved'}}" ng-click="reserved()">Zarezerwowane(5)</button>
                 </div>
             </div>
             <div id="current-page">
