@@ -23,7 +23,6 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     $scope.all = function(){
-        console.log("all clicked")
         $scope.mode = ALL
         $scope.currentPage = 0
         $scope.notFirstPage = false;
@@ -31,7 +30,6 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     $scope.notReserved = function(){
-        console.log("not reserved clicked")
         $scope.mode = NOT_RESERVED
         $scope.currentPage = 0
         $scope.notFirstPage = false;
@@ -39,7 +37,6 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     $scope.reserved = function(){
-        console.log("reserved clicked")
         $scope.mode = RESERVED
         $scope.currentPage = 0
         $scope.notFirstPage = false;
@@ -51,6 +48,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     $scope.mailModalOpen = function(present){
+
         var modalScope = $scope.$new();
         var modal = Popeye.openModal({
             templateUrl: "guest_mail_modal.html",
@@ -60,15 +58,77 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
         });
 
         modalScope.mailModalSubmit = function(){
-            console.log("submit")
+            var email = $scope.email == "" ? document.getElementById("emailInput").value : $scope.email
+
+            document.getElementById("emailCancel").hidden = true
+            document.getElementById("emailSubmit").hidden = true
+            document.getElementById("emailInput").hidden = true
+            document.getElementById("emailInfo").innerHTML = ""
+            document.getElementById("emailWaitInfo").innerHTML = "Czekaj, rezerwacja w trakcie ..."
+
+            $scope.client({
+                method: 'POST',
+                path: '/api/reservation',
+                entity: {
+                    buyerName: "anonim",
+                    buyerEmail: email,
+                    presentId: present.presentId
+                },
+                headers: {'Content-Type': 'application/json'}
+            }, (response) => afterReservation(response, email))
+        }
+
+        function afterReservation(response, email){
+            if(response != ""){
+                $scope.email = email;
+                synchPresentsStates(() => {Popeye.closeCurrentModal(); $scope.$apply();})
+            }
+
+        }
+
+
+         function synchPresentsStates(atEnd){
+            const listKey=$scope.listKey
+            const presentsIdsToCoordsDict = getPresentsIdsToCoordsDict()
+            const entity= {ids: Object.keys(presentsIdsToCoordsDict)}
+            $scope.client({method: 'POST', path: '/api/list/key/' + listKey + '/present/reservationStatus', entity: entity, headers: {'Content-Type': 'application/json'}}, function(response){
+                for(var k = 0; k < entity.ids.length; k++){
+                    var id = entity.ids[k];
+                    var i = presentsIdsToCoordsDict[id][0], j = presentsIdsToCoordsDict[id][1];
+                    $scope.allRows[i][j].boughtOrReserved = response[k];
+                }
+                atEnd()
+            });
+         }
+
+        function getPresentsIdsToCoordsDict(){
+            var res = {}
+            for (var i = 0; i < $scope.allRows.length; i++){
+                for(var j = 0; j< $scope.allRows[i].length; j++){
+                    var id = $scope.allRows[i][j].presentId
+                    res[id] = [i,j]
+                }
+            }
+            return res;
         }
 
         modalScope.mailModalCancel = function(){
             Popeye.closeCurrentModal()
         }
 
-    };
+        modal.opened.then(function(){
 
+            document.getElementById("emailCancel").hidden = false
+            document.getElementById("emailSubmit").hidden = false
+            document.getElementById("emailInput").hidden = false
+            document.getElementById("emailInfo").innerHTML = "Podaj swój mail by zarezerwować: " + present.name
+            document.getElementById("emailWaitInfo").innerHTML = ""
+
+            if($scope.email != ""){
+                modalScope.mailModalSubmit()
+            }
+        })
+    };
 
 
     $scope.client = function(request_dict, callback, error_callback){
@@ -87,7 +147,11 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
         xobj.onreadystatechange = function() {
             if (xobj.readyState === 4) {
                 if(xobj.status === 200){
-                    callback(JSON.parse(xobj.responseText))
+                    try{
+                        callback(JSON.parse(xobj.responseText))
+                     }catch(e){
+                        callback(xobj.responseText) //simple, non-JSON msg or an empty string
+                     }
                 }
                 else{
                     error_callback(JSON.parse(xobj.responseText))
@@ -100,7 +164,6 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     function afterRegistered(response){
-        console.log(response)
         $scope.client({method: 'POST', path: '/auth/login', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterLogin)
 
     }
@@ -137,7 +200,6 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     function postDefaultPresents(response){
-        console.log("posting default presents as birthday guy to list with the key: " + response.key)
         for (var i = 0; i < 17; i++){
             postDefaultPresent(
                 response.key,
@@ -181,27 +243,21 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     $scope.previousPage = function(){
-        console.log("previous page clicked")
         if($scope.currentPage == 0) return;
         $scope.client({method: 'GET', path: modeToPageUrl($scope.currentPage - 1), headers: {'Content-Type': 'application/json'}}, onPreviousPageLoaded)
     }
 
     function onPreviousPageLoaded(response){
-        console.log("Previous page loaded")
-        console.log(response)
         $scope.currentPage -= 1
         $scope.notFirstPage = $scope.currentPage != 0;
         processPresents(response)
     }
 
     $scope.nextPage = function(){
-        console.log("next page clicked")
         $scope.client({method: 'GET', path: modeToPageUrl($scope.currentPage + 1),headers: {'Content-Type': 'application/json'}}, onNextPageLoaded)
     }
 
     function onNextPageLoaded(response){
-        console.log("Next page loaded")
-        console.log(response)
         if(response.length == 0)return
         $scope.currentPage += 1
         $scope.notFirstPage = true;
@@ -209,13 +265,10 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     $scope.firstPage = function(){
-        console.log("Going to first page")
         $scope.client({method: 'GET', path: modeToPageUrl(0) ,headers: {'Content-Type': 'application/json'}}, onFirstPageLoaded)
     }
 
     function onFirstPageLoaded(response){
-        console.log("First page loaded")
-        console.log(response)
         $scope.currentPage = 0
         $scope.notFirstPage = false;
         processPresents(response)
@@ -227,8 +280,6 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
         if($scope.mode == NOT_RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/notReserved?page=' + page +'&size=5'
         if($scope.mode == RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/reserved?page=' + page +'&size=5'
    }
-
-
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)
 })
