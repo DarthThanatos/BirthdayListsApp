@@ -56,6 +56,14 @@
     align-items: center;
 }
 
+#current-page{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+}
+
 .suggest-component{
     width:250px; height: 250px;
     border: .1px solid #0066cc;

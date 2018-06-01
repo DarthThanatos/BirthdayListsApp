@@ -1,6 +1,9 @@
 GuestHome.controller('GuestController', function GuestController($scope) {
 	'use strict';
 
+    $scope.currentPage = 0
+    $scope.notFirstPage = false;
+    $scope.listKey = ""
     $scope.token = ""
     $scope.email = ""
     $scope.firstRow = []
@@ -99,13 +102,19 @@ GuestHome.controller('GuestController', function GuestController($scope) {
 
     function postDefaultPresents(response){
         console.log("posting default presents as birthday guy to list with the key: " + response.key)
-        postDefaultPresent(response.key, { name: "Kask1", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        postDefaultPresent(response.key, { name: "Kask2", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        postDefaultPresent(response.key, { name: "Kask3", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        postDefaultPresent(response.key, { name: "Kask4", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        postDefaultPresent(response.key, { name: "Kask5", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        postDefaultPresent(response.key, { name: "Kask6", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        postDefaultPresent(response.key, { name: "Kask7", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
+        for (var i = 0; i < 7; i++){
+            postDefaultPresent(
+                response.key,
+                {
+                    name: "Kask" + i,
+                    description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei",
+                    category: "Inne",
+                    shopLink: "https://allegro.pl/",
+                    imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"
+                }
+            )
+
+        }
         getPresentsFromList(response.key)
     }
 
@@ -121,6 +130,7 @@ GuestHome.controller('GuestController', function GuestController($scope) {
     }
 
     function getPresentsFromList(listKey){
+        $scope.listKey = listKey
         $scope.client(
             {method: 'GET', path: '/api/list/key/' + listKey + '/present/paged?page=0&size=5',headers: {'Content-Type': 'application/json'}},
             processPresents
@@ -132,6 +142,48 @@ GuestHome.controller('GuestController', function GuestController($scope) {
         $scope.secondRow = response.slice(2,5)
         $scope.allRows = [$scope.firstRow, $scope.secondRow];
         $scope.$apply();
+    }
+
+    $scope.previousPage = function(){
+        console.log("previous page clicked")
+        if($scope.currentPage == 0) return;
+        $scope.client({method: 'GET', path: '/api/list/key/' + $scope.listKey + '/present/paged?page=' + ($scope.currentPage - 1) +'&size=5',headers: {'Content-Type': 'application/json'}}, onPreviousPageLoaded)
+    }
+
+    function onPreviousPageLoaded(response){
+        console.log("Previous page loaded")
+        console.log(response)
+        $scope.currentPage -= 1
+        $scope.notFirstPage = $scope.currentPage != 0;
+        processPresents(response)
+    }
+
+    $scope.nextPage = function(){
+        console.log("next page clicked")
+        $scope.client({method: 'GET', path: '/api/list/key/' + $scope.listKey + '/present/paged?page=' + ($scope.currentPage + 1) +'&size=5',headers: {'Content-Type': 'application/json'}}, onNextPageLoaded)
+    }
+
+    function onNextPageLoaded(response){
+        console.log("Next page loaded")
+        console.log(response)
+        if(response.length == 0)return
+        $scope.currentPage += 1
+        $scope.notFirstPage = true;
+        processPresents(response)
+    }
+
+    $scope.firstPage = function(){
+        console.log("Going to first page")
+        $scope.client({method: 'GET', path: '/api/list/key/' + $scope.listKey + '/present/paged?page=0&size=5',headers: {'Content-Type': 'application/json'}}, onFirstPageLoaded)
+    }
+
+    function onFirstPageLoaded(response){
+        console.log("First page loaded")
+        console.log(response)
+        $scope.currentPage = 0
+        $scope.notFirstPage = false;
+        processPresents(response)
+
     }
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)

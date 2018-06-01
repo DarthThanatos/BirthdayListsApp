@@ -9,7 +9,6 @@
     <script src="js/guest_controller.js"></script>
     <link rel="stylesheet" type="text/css" href="css/guest_home.css"/>
     <link rel="stylesheet" type="text/css" href="css/searchbar.css"/>
-    <!--<script src="js/extra.js"></script>-->
 </head>
 <body ng-app="GuestHome">
 <div id="root"  ng-controller="GuestController">
@@ -28,7 +27,7 @@
                 <div style="height: 25px; width: 1000px; text-align:center; font-size:17px;"> 20 maja 2018 (za 5 dni)</div>
 
                 <div class="search">
-                    <input type="text" class="searchTerm" placeholder="What are you looking for?"/>
+                    <input type="text" class="searchTerm" placeholder="Czego szukasz?"/>
                     <button type="submit" class="searchButton">
                         <img src="img/search.png"/>
                     </button>
@@ -40,8 +39,14 @@
                     <button style="borderRadius: 10px; height: 68px; margin-left:2px;" ng-click="reserved()">Zarezerwowane(5)</button>
                 </div>
             </div>
+            <div id="current-page">
+                <button ng-show="notFirstPage" style="border:none; background:white;" ng-click="firstPage()"> <img  src="img/double_arrow.png"/></button>
+                <button ng-show="notFirstPage" style="border:none; background:white;" ng-click="previousPage()"> <img  src="img/left_arrow.png"/></button>
+                Strona: {{currentPage}}
+                <button style="border:none; background:white" ng-click="nextPage()"><img src="img/right_arrow.png"/></button>
+            </div>
             <div id="list-square-main-body">
-                <button style="border:none; background:white;"> <img  src="img/left_arrow.png"/></button>
+
                 <table style="margin-top: 15px">
 
                     <tr >
@@ -57,7 +62,7 @@
                         </td>
                     </tr>
                 </table>
-                <button style="border:none; background:white"><img src="img/right_arrow.png"/></button>
+
             </div>
         </div>
     </div>
