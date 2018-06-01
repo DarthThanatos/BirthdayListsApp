@@ -1,0 +1,21 @@
+<div style="border: .1px solid #0066cc;">
+    <div style="background: #FF8C2F;  width:100%; height:30px; display: flex; flex-direction:row; align-items:center;">
+        <div style="width:50px; margin-left:10px; font-size:20px;">{{present.name}}</div>
+        <button style="width:100px; margin-left:80px;" ng-click="handleOpenMailModal(2)">Rezerwuj</button>
+    </div>
+
+    <div style="font-size:20px; width:100%; height:30px; display: flex;  flex-direction:row; align-items:center; justify-content: center;">
+        Kategoria: {{present.category}}
+    </div>
+
+    <div style="width:100%; height:130px; display: flex; flex-direction:row; align-items: center;">
+        <img src="{{present.imageUrl}}" alt="present img" style="width: 100px; margin-left:5px;"/>
+        <div style="width: 120px; text-align:center; font-size:13px; margin-right:5px;"> {{present.description}}</div>
+    </div>
+    <div style="width:100%; height:30px; display: flex;  flex-direction:row; justify-content: center;">
+        <a href="{{present.shopLink}}">{{present.shopLink}}</a>
+    </div>
+    <div style="width:100%; height:30px; display: flex; justify-content:center;">
+        <button style="height:20px; display: flex;  flex-direction:row; align-items: center;"> Pokaż więcej </button>
+    </div>
+</div>

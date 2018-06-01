@@ -1,9 +1,11 @@
 GuestHome.controller('GuestController', function GuestController($scope) {
 	'use strict';
-	
+
     $scope.token = ""
     $scope.email = ""
-    $scope.presents = []
+    $scope.firstRow = []
+    $scope.secondRow = []
+    $scope.allRows = [[], []]
 
 
     $scope.fbClicked = function(){
@@ -121,8 +123,15 @@ GuestHome.controller('GuestController', function GuestController($scope) {
     function getPresentsFromList(listKey){
         $scope.client(
             {method: 'GET', path: '/api/list/key/' + listKey + '/present/paged?page=0&size=5',headers: {'Content-Type': 'application/json'}},
-            function(response){console.log("got presents"); console.log(response); $scope.presents = response;}
+            processPresents
         )
+    }
+
+    function processPresents(response){
+        $scope.firstRow = response.slice(0,2)
+        $scope.secondRow = response.slice(2,5)
+        $scope.allRows = [$scope.firstRow, $scope.secondRow];
+        $scope.$apply();
     }
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)

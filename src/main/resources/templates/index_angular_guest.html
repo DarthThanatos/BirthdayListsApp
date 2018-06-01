@@ -9,9 +9,10 @@
     <script src="js/guest_controller.js"></script>
     <link rel="stylesheet" type="text/css" href="css/guest_home.css"/>
     <link rel="stylesheet" type="text/css" href="css/searchbar.css"/>
+    <!--<script src="js/extra.js"></script>-->
 </head>
-<body>
-<div id="root" ng-app="GuestHome" ng-controller="GuestController">
+<body ng-app="GuestHome">
+<div id="root"  ng-controller="GuestController">
     <div id="header">
         <img src="img/cake.png" style="margin-left: 25px;"/>
         <div style="margin-left: 25px; font-weight: bold; font-family: Cochin; font-size:22px;">Prezenty</div>
@@ -42,126 +43,17 @@
             <div id="list-square-main-body">
                 <button style="border:none; background:white;"> <img  src="img/left_arrow.png"/></button>
                 <table style="margin-top: 15px">
+
                     <tr >
-                        <td  >
-                            <button class="suggest-component" ng-click="suggest()"> Zaproponuj </button>
-                        </td>
-                        <td >
-                            <div style="border: .1px solid #0066cc;">
-                                <div style="background: #FF8C2F;  width:100%; height:30px; display: flex; flex-direction:row; align-items:center;">
-                                    <div style="width:50px; margin-left:10px; font-size:20px;">Kask</div>
-                                    <button style="width:100px; margin-left:80px;" ng-click="handleOpenMailModal(2)">Rezerwuj</button>
-                                </div>
-
-                                <div style="font-size:20px; width:100%; height:30px; display: flex;  flex-direction:row; align-items:center; justify-content: center;">
-                                    Kategoria: Inne
-                                </div>
-
-                                <div style="width:100%; height:130px; display: flex; flex-direction:row; align-items: center;">
-                                    <img src="https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" alt="present img" style="width: 100px; margin-left:5px;"/>
-                                    <div style="width: 120px; text-align:center; font-size:13px; margin-right:5px;"> Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei</div>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex;  flex-direction:row; justify-content: center;">
-                                    <a href="https://allegro.pl/">https://allegro.pl/</a>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex; justify-content:center;">
-                                    <button style="height:20px; display: flex;  flex-direction:row; align-items: center;"> Pokaż więcej </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td >
-                            <div style="border: .1px solid #0066cc;">
-                                <div style="background: #FF8C2F;  width:100%; height:30px; display: flex; flex-direction:row; align-items:center;">
-                                    <div style="width:50px; margin-left:10px; font-size:20px;">Kask</div>
-                                    <button style="width:100px; margin-left:80px;" ng-click="handleOpenMailModal(2)">Rezerwuj</button>
-                                </div>
-
-                                <div style="font-size:20px; width:100%; height:30px; display: flex;  flex-direction:row; align-items:center; justify-content: center;">
-                                    Kategoria: Inne
-                                </div>
-
-                                <div style="width:100%; height:130px; display: flex; flex-direction:row; align-items: center;">
-                                    <img src="https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" alt="present img" style="width: 100px; margin-left:5px;"/>
-                                    <div style="width: 120px; text-align:center; font-size:13px; margin-right:5px;"> Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei</div>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex;  flex-direction:row; justify-content: center;">
-                                    <a href="https://allegro.pl/">https://allegro.pl/</a>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex; justify-content:center;">
-                                    <button style="height:20px; display: flex;  flex-direction:row; align-items: center;"> Pokaż więcej </button>
-                                </div>
-                            </div>
+                        <td><button class="suggest-component" ng-click="suggest()"> Zaproponuj </button></td>
+                        <td ng-repeat="present in firstRow">
+                            <div ng-include="'angular_present_component.html'"></div>
                         </td>
                     </tr>
+
                     <tr >
-                        <td >
-                            <div style="border: .1px solid #0066cc;">
-                                <div style="background: #FF8C2F;  width:100%; height:30px; display: flex; flex-direction:row; align-items:center;">
-                                    <div style="width:50px; margin-left:10px; font-size:20px;">Kask</div>
-                                    <button style="width:100px; margin-left:80px;" ng-click="handleOpenMailModal(2)">Rezerwuj</button>
-                                </div>
-
-                                <div style="font-size:20px; width:100%; height:30px; display: flex;  flex-direction:row; align-items:center; justify-content: center;">
-                                    Kategoria: Inne
-                                </div>
-
-                                <div style="width:100%; height:130px; display: flex; flex-direction:row; align-items: center;">
-                                    <img src="https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" alt="present img" style="width: 100px; margin-left:5px;"/>
-                                    <div style="width: 120px; text-align:center; font-size:13px; margin-right:5px;"> Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei</div>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex;  flex-direction:row; justify-content: center;">
-                                    <a href="https://allegro.pl/">https://allegro.pl/</a>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex; justify-content:center;">
-                                    <button style="height:20px; display: flex;  flex-direction:row; align-items: center;"> Pokaż więcej </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td >
-                            <div style="border: .1px solid #0066cc;">
-                                <div style="background: #FF8C2F;  width:100%; height:30px; display: flex; flex-direction:row; align-items:center;">
-                                    <div style="width:50px; margin-left:10px; font-size:20px;">Kask</div>
-                                    <button style="width:100px; margin-left:80px;" ng-click="handleOpenMailModal(2)">Rezerwuj</button>
-                                </div>
-
-                                <div style="font-size:20px; width:100%; height:30px; display: flex;  flex-direction:row; align-items:center; justify-content: center;">
-                                    Kategoria: Inne
-                                </div>
-
-                                <div style="width:100%; height:130px; display: flex; flex-direction:row; align-items: center;">
-                                    <img src="https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" alt="present img" style="width: 100px; margin-left:5px;"/>
-                                    <div style="width: 120px; text-align:center; font-size:13px; margin-right:5px;"> Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei</div>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex;  flex-direction:row; justify-content: center;">
-                                    <a href="https://allegro.pl/">https://allegro.pl/</a>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex; justify-content:center;">
-                                    <button style="height:20px; display: flex;  flex-direction:row; align-items: center;"> Pokaż więcej </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td >
-                            <div style="border: .1px solid #0066cc;">
-                                <div style="background: #FF8C2F;  width:100%; height:30px; display: flex; flex-direction:row; align-items:center;">
-                                    <div style="width:50px; margin-left:10px; font-size:20px;">Kask</div>
-                                    <button style="width:100px; margin-left:80px;" ng-click="handleOpenMailModal(2)">Rezerwuj</button>
-                                </div>
-
-                                <div style="font-size:20px; width:100%; height:30px; display: flex;  flex-direction:row; align-items:center; justify-content: center;">
-                                    Kategoria: Inne
-                                </div>
-
-                                <div style="width:100%; height:130px; display: flex; flex-direction:row; align-items: center;">
-                                    <img src="https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg" alt="present img" style="width: 100px; margin-left:5px;"/>
-                                    <div style="width: 120px; text-align:center; font-size:13px; margin-right:5px;"> Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei</div>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex;  flex-direction:row; justify-content: center;">
-                                    <a href="https://allegro.pl/">https://allegro.pl/</a>
-                                </div>
-                                <div style="width:100%; height:30px; display: flex; justify-content:center;">
-                                    <button style="height:20px; display: flex;  flex-direction:row; align-items: center;"> Pokaż więcej </button>
-                                </div>
-                            </div>
+                        <td ng-repeat="present in secondRow">
+                            <div ng-include="'angular_present_component.html'"></div>
                         </td>
                     </tr>
                 </table>
