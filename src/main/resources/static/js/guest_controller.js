@@ -286,3 +286,4 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)
 })
+

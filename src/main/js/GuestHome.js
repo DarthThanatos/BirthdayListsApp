@@ -3,6 +3,7 @@
 import SearchBar from 'material-ui-search-bar'
 import GridLayout from 'react-grid-layout'
 import Modal from 'react-modal';
+import PresentDialog from './PresentDialog'
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -19,7 +20,7 @@ export default class GuestHome extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showModal: false, mode:ALL, email: ""};
+		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showMailModal: false, showPresentDialog:false, mode:ALL, email: ""};
 		this.loadNewPage = this.loadNewPage.bind(this)
 
         this.handleOpenMailModal = this.handleOpenMailModal.bind(this);
@@ -29,6 +30,8 @@ export default class GuestHome extends React.Component {
         this.synchPresentsStates = this.synchPresentsStates.bind(this)
         this.onAfterSynch = this.onAfterSynch.bind(this);
         this.afterMailModalOpen = this.afterMailModalOpen.bind(this)
+        this.handleOpenPresentDialog = this.handleOpenPresentDialog.bind(this)
+        this.handleClosePresentDialog = this.handleClosePresentDialog.bind(this)
 	}
 
 
@@ -162,7 +165,7 @@ export default class GuestHome extends React.Component {
 
      handleOpenMailModal (present) {
         this.setState({presentToReserve: present})
-        this.setState({ showModal: true });
+        this.setState({ showMailModal: true });
      }
 
      handleReservation(present, email){
@@ -207,21 +210,38 @@ export default class GuestHome extends React.Component {
         atEnd()
     }
 
+	afterMailModalOpen(){
+        if(this.state.email != ""){
+            this.handleReservation(this.state.presentToReserve, this.state.email)
+        }
+	}
+
     turnOffMailModal(){
         document.getElementById("emailCancel").hidden = false
         document.getElementById("emailSubmit").hidden = false
         document.getElementById("emailInput").hidden = false
         document.getElementById("emailWaitInfo").innerHTML = ""
-        this.setState({ showModal: false });
+        this.setState({ showMailModal: false });
     }
 
      handleCloseMailModal () {
-        this.setState({ showModal: false });
+        this.setState({ showMailModal: false });
+     }
+
+
+     handleOpenPresentDialog (present) {
+        this.setState( {presentToDisplay: present });
+        this.setState({ showPresentDialog: true });
+     }
+
+     handleClosePresentDialog () {
+        this.setState({ showPresentDialog: false });
      }
 
     changeMode(mode){
         this.setState({mode: mode})
     }
+
 
 	render() {
 		var sectionStyle = {
@@ -235,22 +255,22 @@ export default class GuestHome extends React.Component {
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
-		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}  handleOpenMailModal={this.handleOpenMailModal} mode={this.state.mode} changeMode={this.changeMode}/>
+		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}  handleOpenMailModal={this.handleOpenMailModal} handleOpenPresentDialog={this.handleOpenPresentDialog} mode={this.state.mode} changeMode={this.changeMode}/>
 		        <Footer/>
 
                 <Modal ref="MailModal" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
-                       isOpen={this.state.showModal} onAfterOpen={this.afterMailModalOpen} contentLabel="Type your mail">
+                       isOpen={this.state.showMailModal} onAfterOpen={this.afterMailModalOpen} contentLabel="Type your mail">
                     <MailModal ref="MailModalContent" handleReservation={this.handleReservation} handleCloseMailModal={this.handleCloseMailModal} presentToReserve={this.state.presentToReserve}/>
+                </Modal>
+
+                <Modal ref="PresentDialog" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
+                       isOpen={this.state.showPresentDialog}  contentLabel="Present Dialog" >
+                    <PresentDialog ref="PresentDialogContent" handleClosePresentDialog={this.handleClosePresentDialog} present={this.state.presentToDisplay}/>
                 </Modal>
 		    </div>
 		)
 	}
 
-	afterMailModalOpen(){
-        if(this.state.email != ""){
-            this.handleReservation(this.state.presentToReserve, this.state.email)
-        }
-	}
 }
 
 class MailModal extends React.Component{
@@ -373,7 +393,7 @@ class Center extends React.Component{
         };
         return(
              <div style={sectionStyle}>
-                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal} mode={this.props.mode} changeMode={this.props.changeMode}/>
+                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal} handleOpenPresentDialog={this.props.handleOpenPresentDialog} mode={this.props.mode} changeMode={this.props.changeMode}/>
              </div>
         );
     }
@@ -391,7 +411,7 @@ class ListSquare extends React.Component{
         return (
             <div style={sectionStyle}>
                 <ListSquareHeader mode={this.props.mode} changeMode={this.props.changeMode}/>
-                <ListSquareMainBody presents={this.props.presents} mode={this.props.mode} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal}/>
+                <ListSquareMainBody presents={this.props.presents} mode={this.props.mode} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal} handleOpenPresentDialog={this.props.handleOpenPresentDialog}/>
             </div>
         )
     }
@@ -507,7 +527,7 @@ class ListSquareMainBody extends React.Component{
                 layout.push({i: present.presentId.toString(), x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true})
                 return(
                     <div id={"present" + present.presentId} key={present.presentId} data-grid={{x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true}} style={{border: ".1px solid #0066cc"}}>
-                        <PresentComponent present={present}  handleOpenMailModal={this.props.handleOpenMailModal} />
+                        <PresentComponent present={present}  handleOpenMailModal={this.props.handleOpenMailModal} handleOpenPresentDialog={this.props.handleOpenPresentDialog}/>
                     </div>)
             }
         );
@@ -595,7 +615,7 @@ class PresentComponent extends React.Component{
                     <a href={this.props.present.shopLink}> {this.props.present.shopLink} </a>
                 </div>
                 <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center"}}>
-                    <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}}> Pokaż więcej </button>
+                    <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}} onClick={() => this.props.handleOpenPresentDialog(this.props.present)}> Pokaż więcej </button>
                 </div>
             </div>
         )
