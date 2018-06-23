@@ -47,6 +47,20 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
         console.log("making a suggestion")
     }
 
+    $scope.presentDialogOpen = function(present){
+        var modalScope = $scope.$new();
+        modalScope.presentToDisplay = present;
+        var modal = Popeye.openModal({
+            templateUrl: "guest_present_dialog.html",
+            scope: modalScope,
+            click: false,
+            keyboard: false
+        });
+         modalScope.handleClosePresentDialog = function () {
+            Popeye.closeCurrentModal()
+         }
+    }
+
     $scope.mailModalOpen = function(present){
 
         var modalScope = $scope.$new();

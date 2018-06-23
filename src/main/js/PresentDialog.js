@@ -17,10 +17,10 @@ export default class PresentDialog extends React.Component{
 
         return (
             <div ref="PresentDialogDiv" style={sectionStyle}>
-                <div style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                <div style={{ width:700, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                     <input id="name" type="text" placeholder="Nazwa prezentu" value={this.props.present.name}/>
                 </div>
-                <div style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                <div style={{ width:700, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                     <button onClick={this.props.handleClosePresentDialog}>Zamknij</button>
                 </div>
             </div>
