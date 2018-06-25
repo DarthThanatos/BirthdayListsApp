@@ -56,35 +56,56 @@ export default class PresentDialog extends React.Component{
                     <h1>{this.props.title}</h1>
                 </div>
                 <div style={{display: "flex", flexDirection: "row"}}>
-                    <div style={{width:(width/2), height: height}}>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="name" type="text" placeholder="Nazwa prezentu" defaultValue={this.props.present.name}/>
+                    <div style={{width:(width/2)}}>
+                        <div style={{height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                            <h3 style={{marginRight: 5}}>Nazwa prezentu</h3>
+                            <input id="name" type="text" placeholder="Nazwa prezentu" style={{width:"100%", textAlign: "center", border: "none", borderBottom: "1px solid grey", wordBreak: "breakWord"}}  defaultValue={this.props.present.name}/>
                         </div>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="description" type="text" placeholder="Opis prezentu" defaultValue={this.props.present.description}/>
+
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                            <h3 style={{marginRight: 5}}>Link do strony sklepu</h3>
+                            <input id="shopLink" type="text" placeholder="Link do sklepu" defaultValue={this.props.present.shopLink} style={{width:"100%", textAlign: "center", border: "none", borderBottom: "1px solid grey"}}/>
                         </div>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="shopLink" type="text" placeholder="Link do sklepu" defaultValue={this.props.present.shopLink}/>
+
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                            <h3 style={{marginRight: 5}}>Opis prezentu</h3>
+                            <textArea id="description" rows={15} style={{ border: "solid 1px", width:"100%"}} >
+                                {this.props.present.description}
+                            </textArea>
                         </div>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="category" type="text" placeholder="Kategoria prezentu" defaultValue={this.props.present.category}/>
-                        </div>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <button onClick={this.props.handleClosePresentDialog}>Zamknij</button>
+                        <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                            <h3 style={{marginRight: 5}}>Kategoria prezentu</h3>
+                            <select id="category" style={{width:"100%"}}>
+                              <option value="Inne">Inne</option>
+                              <option value="Gry">Gry</option>
+                              <option value="Książki">Książki</option>
+                              <option value="Filmy">Filmy</option>
+                            </select>
                         </div>
                     </div>
                     <div style={{width:(width/2)}}>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", fontWeight: "bold", fontSize:22}}>
                            Wybierz ikonkę od prezentu
                         </div>
-                        <img style={{ width: (width/2), height:200, border: "solid 1px"}} src={this.state.currentImgLink} onError={(e)=>{e.target.src="img/default_present_img.png"}}></img>
+
+                        <div style={{ width: (width/2), height:200,  marginLeft: 5, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                            <img style={{border: "solid 1px", width: "50%", height:"90%"}} src={this.state.currentImgLink} onError={(e)=>{e.target.src="img/default_present_img.png"}}></img>
+                        </div>
+
+                        <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", fontWeight: "bold", fontSize:22}}>
+                            Link ikonki prezentu
+                        </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink}/>
+                            <input id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink} style={{width:"75%", textAlign: "center", border: "none", borderBottom: "1px solid grey"}}/>
                         </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             <button style={{display: this.state.showChangeIconBtn}} onClick={this.changeIcon}>Zmień ikonkę</button>
                         </div>
                     </div>
+                </div>
+                <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop:10, marginBottom:20}}>
+                    <button onClick={this.props.handleClosePresentDialog} style={{borderRadius: "12px", width:150, height: 40, background: "#FF8C2F"}}>Zatwierdź</button>
+                    <button onClick={this.props.handleClosePresentDialog} style={{marginLeft:5, borderRadius: "12px", width:150, height: 40, background: "#FF8C2F"}}>Anuluj</button>
                 </div>
             </div>
         )
