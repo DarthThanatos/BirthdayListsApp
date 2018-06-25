@@ -5,8 +5,6 @@ const ReactDOM = require('react-dom');
 const client = require('./client_react');
 const follow = require('./follow');
 
-import $ from 'jquery'
-
 export default class PresentDialog extends React.Component{
 
     constructor(props){
@@ -16,6 +14,12 @@ export default class PresentDialog extends React.Component{
 		this.changeIcon = this.changeIcon.bind(this)
 		this.onIconCorrect = this.onIconCorrect.bind(this)
 		this.onIconIncorrect = this.onIconIncorrect.bind(this)
+    }
+
+    componentDidMount(){
+        $(function(){
+            $('textarea').autogrow();
+        });
     }
 
     handleImgLinkChange(event){
@@ -95,8 +99,9 @@ export default class PresentDialog extends React.Component{
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", fontWeight: "bold", fontSize:22}}>
                             Link ikonki prezentu
                         </div>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink} style={{width:"75%", textAlign: "center", border: "none", borderBottom: "1px solid grey"}}/>
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                            <textArea id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink}
+                            style={{width:"75%", height:"auto", textAlign: "center", border: "none", resize: "none", borderBottom: "1px solid grey", overflow:"hidden"}}/>
                         </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             <button style={{display: this.state.showChangeIconBtn}} onClick={this.changeIcon}>Zmień ikonkę</button>
@@ -111,3 +116,4 @@ export default class PresentDialog extends React.Component{
         )
     }
 }
+
