@@ -5,6 +5,8 @@ const ReactDOM = require('react-dom');
 const client = require('./client_react');
 const follow = require('./follow');
 
+import ReactPencil from "react-pencil"
+
 export default class PresentDialog extends React.Component{
 
     constructor(props){
@@ -16,11 +18,7 @@ export default class PresentDialog extends React.Component{
 		this.onIconIncorrect = this.onIconIncorrect.bind(this)
     }
 
-    componentDidMount(){
-        $(function(){
-            $('textarea').autogrow();
-        });
-    }
+
 
     handleImgLinkChange(event){
         this.setState(
@@ -73,9 +71,7 @@ export default class PresentDialog extends React.Component{
 
                         <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             <h3 style={{marginRight: 5}}>Opis prezentu</h3>
-                            <textArea id="description" rows={15} style={{ border: "solid 1px", width:"100%"}} >
-                                {this.props.present.description}
-                            </textArea>
+                            <textArea id="description" rows={15} style={{ border: "solid 1px", width:"100%"}} defaultValue={this.props.present.description}/>
                         </div>
                         <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             <h3 style={{marginRight: 5}}>Kategoria prezentu</h3>
@@ -100,7 +96,7 @@ export default class PresentDialog extends React.Component{
                             Link ikonki prezentu
                         </div>
                         <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <textArea id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink}
+                            <input id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink}
                             style={{width:"75%", height:"auto", textAlign: "center", border: "none", resize: "none", borderBottom: "1px solid grey", overflow:"hidden"}}/>
                         </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
