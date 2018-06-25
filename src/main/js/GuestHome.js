@@ -265,7 +265,7 @@ export default class GuestHome extends React.Component {
 
                 <Modal ref="PresentDialog" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
                        isOpen={this.state.showPresentDialog}  contentLabel="Present Dialog" >
-                    <PresentDialog ref="PresentDialogContent" handleClosePresentDialog={this.handleClosePresentDialog} present={this.state.presentToDisplay}/>
+                    <PresentDialog ref="PresentDialogContent" handleClosePresentDialog={this.handleClosePresentDialog} present={this.state.presentToDisplay} title="Szczegóły prezentu"/>
                 </Modal>
 		    </div>
 		)
