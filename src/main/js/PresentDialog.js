@@ -58,16 +58,16 @@ export default class PresentDialog extends React.Component{
                 <div style={{display: "flex", flexDirection: "row"}}>
                     <div style={{width:(width/2), height: height}}>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="name" type="text" placeholder="Nazwa prezentu" value={this.props.present.name}/>
+                            <input id="name" type="text" placeholder="Nazwa prezentu" defaultValue={this.props.present.name}/>
                         </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="description" type="text" placeholder="Opis prezentu" value={this.props.present.description}/>
+                            <input id="description" type="text" placeholder="Opis prezentu" defaultValue={this.props.present.description}/>
                         </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="shopLink" type="text" placeholder="Link do sklepu" value={this.props.present.shopLink}/>
+                            <input id="shopLink" type="text" placeholder="Link do sklepu" defaultValue={this.props.present.shopLink}/>
                         </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="category" type="text" placeholder="Kategoria prezentu" value={this.props.present.category}/>
+                            <input id="category" type="text" placeholder="Kategoria prezentu" defaultValue={this.props.present.category}/>
                         </div>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             <button onClick={this.props.handleClosePresentDialog}>Zamknij</button>
@@ -79,7 +79,9 @@ export default class PresentDialog extends React.Component{
                         </div>
                         <img style={{ width: (width/2), height:200, border: "solid 1px"}} src={this.state.currentImgLink} onError={(e)=>{e.target.src="img/default_present_img.png"}}></img>
                         <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange}/>
+                            <input id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink}/>
+                        </div>
+                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             <button style={{display: this.state.showChangeIconBtn}} onClick={this.changeIcon}>Zmień ikonkę</button>
                         </div>
                     </div>
