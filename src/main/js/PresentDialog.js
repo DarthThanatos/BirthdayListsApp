@@ -51,7 +51,7 @@ export default class PresentDialog extends React.Component{
             imageUrl: this.refs.imgLink.value,
             wishListKey: this.props.present.wishListKey
         }
-        this.props.handleSubmitEditPresentDialog(present)
+        this.props.handleSubmitPresentDialog(present)
     }
 
     render(){

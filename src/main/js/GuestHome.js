@@ -33,6 +33,7 @@ export default class GuestHome extends React.Component {
         this.handleOpenPresentDialog = this.handleOpenPresentDialog.bind(this)
         this.handleClosePresentDialog = this.handleClosePresentDialog.bind(this)
         this.handleSubmitEditPresentDialog = this.handleSubmitEditPresentDialog.bind(this)
+        this.handleSubmitSuggestPresentDialog = this.handleSubmitSuggestPresentDialog.bind(this)
 
         this.onAfterPresentUpdateSubmitted = this.onAfterPresentUpdateSubmitted.bind(this)
 	}
@@ -233,9 +234,19 @@ export default class GuestHome extends React.Component {
      }
 
 
-     handleOpenPresentDialog (present) {
-        this.setState( {presentToDisplay: present });
+     handleOpenPresentDialog (present, title, submitFun) {
+        if(present == null){
+            present = {
+                "name": "Nowy prezent",
+                "description": "Opis",
+                "category": "Inne",
+                "shopLink": "https://allegro.pl/",
+                "imageUrl": "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"
+             }
+        }
+        this.setState( {presentToDisplay: present, presentDialogTitle: title, presentDialogSubmitFun: submitFun});
         this.setState({ showPresentDialog: true });
+
      }
 
      handleClosePresentDialog () {
@@ -259,6 +270,11 @@ export default class GuestHome extends React.Component {
         window.location.reload()
     }
 
+    handleSubmitSuggestPresentDialog(present){
+        console.log("Submited suggestion")
+        this.setState({ showPresentDialog: false });
+    }
+
     changeMode(mode){
         this.setState({mode: mode})
     }
@@ -276,7 +292,12 @@ export default class GuestHome extends React.Component {
 		return (
 		    <div style={sectionStyle}>
 		        <Header/>
-		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}  handleOpenMailModal={this.handleOpenMailModal} handleOpenPresentDialog={this.handleOpenPresentDialog} mode={this.state.mode} changeMode={this.changeMode}/>
+		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}
+		            handleOpenMailModal={this.handleOpenMailModal}
+		            handleOpenPresentDialog={this.handleOpenPresentDialog}
+		            handleSubmitEditPresentDialog={this.handleSubmitEditPresentDialog}
+		            handleSubmitSuggestPresentDialog={this.handleSubmitSuggestPresentDialog}
+		            mode={this.state.mode} changeMode={this.changeMode}/>
 		        <Footer/>
 
                 <Modal ref="MailModal" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
@@ -288,8 +309,9 @@ export default class GuestHome extends React.Component {
                        isOpen={this.state.showPresentDialog}  contentLabel="Present Dialog" >
                     <PresentDialog ref="PresentDialogContent"
                         handleClosePresentDialog={this.handleClosePresentDialog}
-                        handleSubmitEditPresentDialog={this.handleSubmitEditPresentDialog}
-                        present={this.state.presentToDisplay} title="Szczegóły prezentu"/>
+                        handleSubmitPresentDialog={this.state.presentDialogSubmitFun}
+                        present={this.state.presentToDisplay}
+                        title={this.state.presentDialogTitle} />
                 </Modal>
 		    </div>
 		)
@@ -417,7 +439,12 @@ class Center extends React.Component{
         };
         return(
              <div style={sectionStyle}>
-                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal} handleOpenPresentDialog={this.props.handleOpenPresentDialog} mode={this.props.mode} changeMode={this.props.changeMode}/>
+                <ListSquare presents={this.props.presents} loadNewPage={this.props.loadNewPage}
+                    handleOpenMailModal={this.props.handleOpenMailModal}
+                    handleOpenPresentDialog={this.props.handleOpenPresentDialog}
+		            handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
+		            handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}
+                    mode={this.props.mode} changeMode={this.props.changeMode}/>
              </div>
         );
     }
@@ -435,7 +462,11 @@ class ListSquare extends React.Component{
         return (
             <div style={sectionStyle}>
                 <ListSquareHeader mode={this.props.mode} changeMode={this.props.changeMode}/>
-                <ListSquareMainBody presents={this.props.presents} mode={this.props.mode} loadNewPage={this.props.loadNewPage} handleOpenMailModal={this.props.handleOpenMailModal} handleOpenPresentDialog={this.props.handleOpenPresentDialog}/>
+                <ListSquareMainBody presents={this.props.presents} mode={this.props.mode} loadNewPage={this.props.loadNewPage}
+                    handleOpenMailModal={this.props.handleOpenMailModal}
+		            handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
+		            handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}
+                    handleOpenPresentDialog={this.props.handleOpenPresentDialog}/>
             </div>
         )
     }
@@ -551,7 +582,10 @@ class ListSquareMainBody extends React.Component{
                 layout.push({i: present.presentId.toString(), x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true})
                 return(
                     <div id={"present" + present.presentId} key={present.presentId} data-grid={{x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true}} style={{border: ".1px solid #0066cc"}}>
-                        <PresentComponent present={present}  handleOpenMailModal={this.props.handleOpenMailModal} handleOpenPresentDialog={this.props.handleOpenPresentDialog}/>
+                        <PresentComponent present={present}
+                            handleOpenMailModal={this.props.handleOpenMailModal}
+                            handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
+                            handleOpenPresentDialog={this.props.handleOpenPresentDialog}/>
                     </div>)
             }
         );
@@ -559,7 +593,9 @@ class ListSquareMainBody extends React.Component{
             <Scrollbars style={{ width: 1000, height: 600 }}>
                 <GridLayout layout={layout} className="layout" width={800}  rowHeight={250} cols={3} style={{ marginLeft:"100px", marginRight: "100px"}}>
                     <div key="sugg" data-grid={{x: 0, y: 0, w:1, h:1, static:true}}>
-                        <SuggestComponent />
+                        <SuggestComponent
+                            handleOpenPresentDialog={this.props.handleOpenPresentDialog}
+                            handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}/>
                     </div>
                     {presentComponents}
                 </GridLayout>
@@ -593,8 +629,14 @@ class ShowMorePagesButton extends React.Component{
 
 class SuggestComponent extends React.Component{
 
+    constructor(props){
+        super(props);
+        this.suggest = this.suggest.bind(this);
+    }
+
     suggest(){
         console.log("suggest present")
+        this.props.handleOpenPresentDialog(null, "Zaproponuj prezent", this.props.handleSubmitSuggestPresentDialog)
     }
 
     render(){
@@ -639,7 +681,7 @@ class PresentComponent extends React.Component{
                     <a href={this.props.present.shopLink}> {this.props.present.shopLink} </a>
                 </div>
                 <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center"}}>
-                    <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}} onClick={() => this.props.handleOpenPresentDialog(this.props.present)}> Pokaż więcej </button>
+                    <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}} onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}> Pokaż więcej </button>
                 </div>
             </div>
         )
