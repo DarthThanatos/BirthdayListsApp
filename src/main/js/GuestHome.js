@@ -32,6 +32,9 @@ export default class GuestHome extends React.Component {
         this.afterMailModalOpen = this.afterMailModalOpen.bind(this)
         this.handleOpenPresentDialog = this.handleOpenPresentDialog.bind(this)
         this.handleClosePresentDialog = this.handleClosePresentDialog.bind(this)
+        this.handleSubmitEditPresentDialog = this.handleSubmitEditPresentDialog.bind(this)
+
+        this.onAfterPresentUpdateSubmitted = this.onAfterPresentUpdateSubmitted.bind(this)
 	}
 
 
@@ -196,11 +199,12 @@ export default class GuestHome extends React.Component {
      synchPresentsStates(atEnd){
         const listKey=this.state.listKey
         const entity= {ids: this.state.presents.map(present_ => present_.presentId)}
-        client({method: 'POST', path: '/api/list/key/' + listKey + '/present/reservationStatus', entity: entity, headers: {'Content-Type': 'application/json'}}).done(
+        client({method: 'POST', path: '/api/list/key/' + listKey + '/present/havingId', entity: entity, headers: {'Content-Type': 'application/json'}}).done(
             response => {
                 for(var i = 0; i < this.state.presents.length; i++){
-                    this.state.presents[i].boughtOrReserved = response.entity[i];
+                    this.state.presents[i] = response.entity[i];
                 }
+                this.setState({})
                 this.onAfterSynch(atEnd)
             }
         );
@@ -238,6 +242,23 @@ export default class GuestHome extends React.Component {
         this.setState({ showPresentDialog: false });
      }
 
+    handleSubmitEditPresentDialog(present){
+        this.refs.PresentDialogContent.setState({disabledMode:true})
+		client({method: 'POST', path: 'api/list/key/' + this.state.listKey + '/present',
+		        entity: present,
+		        headers: {'Content-Type': 'application/json'}})
+		   .done(this.onAfterPresentUpdateSubmitted);
+    }
+
+    onAfterPresentUpdateSubmitted(response){
+        console.log("updated present:" )
+        console.log(response)
+//        this.synchPresentsStates(() => {this.forceUpdate()})
+        this.refs.PresentDialogContent.setState({disabledMode:false})
+        this.setState({ showPresentDialog: false });
+        window.location.reload()
+    }
+
     changeMode(mode){
         this.setState({mode: mode})
     }
@@ -265,7 +286,10 @@ export default class GuestHome extends React.Component {
 
                 <Modal ref="PresentDialog" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)', border: "solid 2px"}}}
                        isOpen={this.state.showPresentDialog}  contentLabel="Present Dialog" >
-                    <PresentDialog ref="PresentDialogContent" handleClosePresentDialog={this.handleClosePresentDialog} present={this.state.presentToDisplay} title="Szczegóły prezentu"/>
+                    <PresentDialog ref="PresentDialogContent"
+                        handleClosePresentDialog={this.handleClosePresentDialog}
+                        handleSubmitEditPresentDialog={this.handleSubmitEditPresentDialog}
+                        present={this.state.presentToDisplay} title="Szczegóły prezentu"/>
                 </Modal>
 		    </div>
 		)

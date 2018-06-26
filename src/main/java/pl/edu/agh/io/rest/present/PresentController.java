@@ -56,6 +56,7 @@ public class PresentController {
             presentInfoResponse.setShopLink(present.getShopLink());
             presentInfoResponse.setImageUrl(present.getImageUrl());
             presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+            presentInfoResponse.setWishListKey(key);
             return presentInfoResponse;
         }).collect(Collectors.toList());
     }
@@ -121,6 +122,7 @@ public class PresentController {
             presentInfoResponse.setShopLink(present.getShopLink());
             presentInfoResponse.setImageUrl(present.getImageUrl());
             presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+            presentInfoResponse.setWishListKey(key);
             return presentInfoResponse;
         }).collect(Collectors.toList());
     }
@@ -141,9 +143,11 @@ public class PresentController {
             presentInfoResponse.setShopLink(present.getShopLink());
             presentInfoResponse.setImageUrl(present.getImageUrl());
             presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+            presentInfoResponse.setWishListKey(key);
             return presentInfoResponse;
         }).collect(Collectors.toList());
     }
+
 
 
     @GetMapping("/paged/notReserved")
@@ -176,5 +180,32 @@ public class PresentController {
                 .map(presentService::findByPresentId)
                 .map(reservedPresents::contains)
                 .collect(Collectors.toList());
+    }
+
+
+    @PostMapping("/havingId")
+    List<Present> getPresentsHavingIds(@RequestBody PresentsIds ids, @PathVariable("key") String key){
+        Long listId = wishListService.getByKey(key).getWishListId();
+        List<Present> reservedPresents = reservationService.findAllByListId(listId)
+                .stream()
+                .map(r -> r.getMapping().getPresent())
+                .collect(Collectors.toList());
+
+        return ids
+                .getIds()
+                .stream()
+                .map(presentService::findByPresentId)
+                .map(present -> {
+                    PresentInfoResponse presentInfoResponse = new PresentInfoResponse();
+                    presentInfoResponse.setDescription(present.getDescription());
+                    presentInfoResponse.setName(present.getName());
+                    presentInfoResponse.setPresentId(present.getPresentId());
+                    presentInfoResponse.setCategory(present.getCategory());
+                    presentInfoResponse.setShopLink(present.getShopLink());
+                    presentInfoResponse.setImageUrl(present.getImageUrl());
+                    presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+                    presentInfoResponse.setWishListKey(key);
+                    return presentInfoResponse;
+                }).collect(Collectors.toList());
     }
 }
