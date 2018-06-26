@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface PresentRepository extends PagingAndSortingRepository<Present, Long> {
     Page<Present> findByWishListKey(String wishListKey, Pageable pageable);
+    List<Present> findByCategoryIgnoreCaseLikeOrNameIgnoreCaseLike(String category, String name);
     Present findByPresentId(Long id);
     Page<Present> findByWishListKeyAndPresentIdNotIn(String key, List<Long> ids, Pageable pageable);
 }

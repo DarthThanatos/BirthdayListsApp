@@ -55,6 +55,10 @@ public class PresentService {
         return presentRepository.findByWishListKey(key, pageable);
     }
 
+    public List<Present> findByCategoryLikeOrNameLike(String category, String name){
+        return presentRepository.findByCategoryIgnoreCaseLikeOrNameIgnoreCaseLike(category, name);
+    }
+
     public Present findByPresentId(Long presentId){
         return presentRepository.findByPresentId(presentId);
     }

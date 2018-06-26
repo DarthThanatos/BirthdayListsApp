@@ -281,8 +281,6 @@ export default class GuestHome extends React.Component {
     }
 
     onAfterPresentSuggestionSubmitted(response){
-        console.log("submitted suggestion:" )
-        console.log(response)
         this.refs.PresentDialogContent.setState({disabledMode:false})
         this.setState({ showPresentDialog: false });
     }
@@ -309,7 +307,8 @@ export default class GuestHome extends React.Component {
 		            handleOpenPresentDialog={this.handleOpenPresentDialog}
 		            handleSubmitEditPresentDialog={this.handleSubmitEditPresentDialog}
 		            handleSubmitSuggestPresentDialog={this.handleSubmitSuggestPresentDialog}
-		            mode={this.state.mode} changeMode={this.changeMode}/>
+		            mode={this.state.mode} changeMode={this.changeMode} listKey={this.state.listKey}/>
+
 		        <Footer/>
 
                 <Modal ref="MailModal" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
@@ -460,7 +459,8 @@ class Center extends React.Component{
                     handleOpenPresentDialog={this.props.handleOpenPresentDialog}
 		            handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
 		            handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}
-                    mode={this.props.mode} changeMode={this.props.changeMode}/>
+                    mode={this.props.mode} changeMode={this.props.changeMode} listKey={this.props.listKey}/>
+
              </div>
         );
     }
@@ -477,7 +477,7 @@ class ListSquare extends React.Component{
          }
         return (
             <div style={sectionStyle}>
-                <ListSquareHeader mode={this.props.mode} changeMode={this.props.changeMode}/>
+                <ListSquareHeader mode={this.props.mode} listKey={this.props.listKey} changeMode={this.props.changeMode}/>
                 <ListSquareMainBody presents={this.props.presents} mode={this.props.mode} loadNewPage={this.props.loadNewPage}
                     handleOpenMailModal={this.props.handleOpenMailModal}
 		            handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
@@ -500,7 +500,7 @@ class ListSquareHeader extends React.Component{
                 <br/>
                 <div style={{height: "25px", width: "1000px", textAlign:"center", fontWeight: "bold", fontSize:"25px"}}> 19 urodzinki</div>
                 <div style={{height: "25px", width: "1000px", textAlign:"center", fontSize:"17px"}}> 20 maja 2018 (za 5 dni)</div>
-                <SearchBarComponent />
+                <SearchBarComponent listKey={this.props.listKey}/>
                 <ListSquareNavigationButtons mode={this.props.mode} changeMode={this.props.changeMode}/>
             </div>
         )
@@ -509,13 +509,29 @@ class ListSquareHeader extends React.Component{
 
 
 class SearchBarComponent extends React.Component{
+
+    constructor(props){
+        super(props)
+        this.search = this.search.bind(this)
+    }
+
+    search(){
+
+        var query = this.refs.searchbar.state.value
+		client({method: 'GET', path: '/api/list/key/' + this.props.listKey + '/present/paged/search?query=' + query,headers: {'Content-Type': 'application/json'}}).done(response => {
+		    console.log("got list of presents from existing wishlist: ")
+		    console.log(response)
+		});
+    }
+
     render(){
         return(
             <div style={{width: "100%",  display: "flex", justifyContent:"center"}}>
                 <div style={{border: ".1px solid #000000", height:"60px", width: "80%", display: "flex", flexDirection: "row", alignItems: "center",}}>
                     <SearchBar
+                      ref="searchbar"
                       onChange={() => console.log('onChange')}
-                      onRequestSearch={() => console.log('onRequestSearch')}
+                      onRequestSearch={this.search}
                       style={{
                         margin: '0 auto',
                         backgroundColor: 'rgb(255,240,240)',

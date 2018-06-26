@@ -14,6 +14,7 @@ import pl.edu.agh.io.service.WishListService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -146,7 +147,26 @@ public class PresentController {
         }).collect(Collectors.toList());
     }
 
-
+    @GetMapping("/paged/search")
+    List<Present> getSearchResultsPage(@PathVariable("key") String key, @RequestParam("query") String query){
+        Long listId = wishListService.getByKey(key).getWishListId();
+        List<Present> reservedPresents = reservationService.findAllByListId(listId)
+                .stream()
+                .map(r -> r.getMapping().getPresent())
+                .collect(Collectors.toList());
+        return Arrays.stream(query.split(" ")).map(s->"%"+s+"%").flatMap(q -> presentService.findByCategoryLikeOrNameLike(q, q).stream()).map(present -> {
+            PresentInfoResponse presentInfoResponse = new PresentInfoResponse();
+            presentInfoResponse.setDescription(present.getDescription());
+            presentInfoResponse.setName(present.getName());
+            presentInfoResponse.setPresentId(present.getPresentId());
+            presentInfoResponse.setCategory(present.getCategory());
+            presentInfoResponse.setShopLink(present.getShopLink());
+            presentInfoResponse.setImageUrl(present.getImageUrl());
+            presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+            presentInfoResponse.setWishListKey(key);
+            return presentInfoResponse;
+        }).collect(Collectors.toList());
+    }
 
     @GetMapping("/paged/notReserved")
     List<Present> getNotReservedPage(Pageable pageable, @PathVariable("key") String key){
