@@ -13,8 +13,11 @@ public class Suggestion {
     private Long id;
     private String name;
     private String description;
-    private String email;
-    private String key;
+    private String category;
+    private String shopLink;
+    private String imageUrl;
+
+    private String wishListKey;
 
     public Suggestion() {
     }
@@ -43,19 +46,36 @@ public class Suggestion {
         this.description = description;
     }
 
-    public String getEmail() {
-        return email;
+
+    public String getWishListKey() {
+        return wishListKey;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setWishListKey(String key) {
+        this.wishListKey = key;
     }
 
-    public String getKey() {
-        return key;
+    public String getCategory() {
+        return category;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getShopLink() {
+        return shopLink;
+    }
+
+    public void setShopLink(String shopLink) {
+        this.shopLink = shopLink;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -36,6 +36,7 @@ export default class GuestHome extends React.Component {
         this.handleSubmitSuggestPresentDialog = this.handleSubmitSuggestPresentDialog.bind(this)
 
         this.onAfterPresentUpdateSubmitted = this.onAfterPresentUpdateSubmitted.bind(this)
+        this.onAfterPresentSuggestionSubmitted = this.onAfterPresentSuggestionSubmitted.bind(this)
 	}
 
 
@@ -271,7 +272,18 @@ export default class GuestHome extends React.Component {
     }
 
     handleSubmitSuggestPresentDialog(present){
-        console.log("Submited suggestion")
+        this.refs.PresentDialogContent.setState({disabledMode:true})
+		client({method: 'POST', path: 'api/list/key/' + this.state.listKey + '/present/suggestions',
+		        entity: present,
+		        headers: {'Content-Type': 'application/json'}})
+		   .done(this.onAfterPresentSuggestionSubmitted);
+
+    }
+
+    onAfterPresentSuggestionSubmitted(response){
+        console.log("submitted suggestion:" )
+        console.log(response)
+        this.refs.PresentDialogContent.setState({disabledMode:false})
         this.setState({ showPresentDialog: false });
     }
 
@@ -311,7 +323,8 @@ export default class GuestHome extends React.Component {
                         handleClosePresentDialog={this.handleClosePresentDialog}
                         handleSubmitPresentDialog={this.state.presentDialogSubmitFun}
                         present={this.state.presentToDisplay}
-                        title={this.state.presentDialogTitle} />
+                        title={this.state.presentDialogTitle}
+                        listKey = {this.state.listKey} />
                 </Modal>
 		    </div>
 		)
@@ -324,16 +337,19 @@ class MailModal extends React.Component{
     render(){
         var sectionStyle = {
             width: 300,
-            height: 150,
+            height: 200,
             background: "#666666"
         }
 
         var infoText = typeof this.props.presentToReserve != "undefined"
-            ? "Podaj swój mail by zarezerwować: " + this.props.presentToReserve.name
+            ? "Podaj swój mail by zarezerwować"
             : "Podaj swój mail"
+        var presentName = this.props.presentToReserve.name
+        presentName = presentName.length > 35 ? presentName.substring(0,35) + "(...)" : presentName
 
         return (
             <div ref="MailModalDiv" style={sectionStyle}>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color:"#FFFFFF" }}><br/>{presentName}<br/></div>
                 <div id="emailInfo" ref="MailInfo" style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color:"#FFFFFF"}}>{infoText}</div>
 
                 <div style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
@@ -661,24 +677,29 @@ class PresentComponent extends React.Component{
     render(){
         var reserveButtonHidden = this.props.present.boughtOrReserved
         var presentDescription = this.props.present.description
+        var presentName = this.props.present.name
+        var shopLink = this.props.present.shopLink
         presentDescription = presentDescription.length > 135 ? presentDescription.substring(0, 135) + ("\n(...)") : presentDescription
+        presentName = presentName.length > 10 ? presentName.substring(0,10).replace(/\s/g, '_') + "(...)" : presentName
+        shopLink = shopLink.length > 35 ? "" : shopLink
+
         return(
             <div >
-                <div style={{background: "#FF8C2F",  width:"100%", height:"30px", display: "flex", flexDirection:"row", alignItems:"center"}}>
-                    <div style={{width:"50px", marginLeft:"10px", fontSize:"20px"}}>{this.props.present.name}</div>
-                    <button hidden={reserveButtonHidden} style={{width:"100px", marginLeft:"80px"}} onClick={() => this.props.handleOpenMailModal(this.props.present)}>Rezerwuj</button>
+                <div style={{background: "#FF8C2F",  height:"30px", display: "flex", flexDirection:"row", alignItems:"center"}}>
+                    <div style={{marginLeft:"10px", fontSize:"20px"}}>{presentName}</div>
+                    <div style={{ width:"100%", display: "flex", flexDirection:"row", alignItems:"center", justifyContent:"flex-end"}}><button hidden={reserveButtonHidden} style={{width:"100px", marginRight:2}} onClick={() => this.props.handleOpenMailModal(this.props.present)}>Rezerwuj</button></div>
                 </div>
 
                 <div style={{ fontSize:"20px", width:"100%", height:"30px", display: "flex",  flexDirection:"row", alignItems:"center", justifyContent: "center"}}>
                     Kategoria: {this.props.present.category}
                 </div>
 
-                <div style={{width:"100%", height:"130px", display: "flex", flexDirection:"row", alignItems: "center"}}>
-                    <img src={this.props.present.imageUrl} alt={this.props.present.imageUrl} style={{width: "100px", marginLeft:"5px"}}/>
+                <div style={{width:"100%", display: "flex", flexDirection:"row", alignItems: "center"}}>
+                    <img src={this.props.present.imageUrl} alt={this.props.present.imageUrl} style={{width: "100px", height:"130px", marginLeft:"5px"}} onError={(e)=>{e.target.src="img/default_present_img.png"}}/>
                     <div style={{width: "120px", textAlign:"center", fontSize:"13px", marginRight:"5px"}}> {presentDescription}</div>
                 </div>
-                <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center"}}>
-                    <a href={this.props.present.shopLink}> {this.props.present.shopLink} </a>
+                <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center", marginTop:5}}>
+                    <a href={this.props.present.shopLink}> {shopLink} </a>
                 </div>
                 <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center"}}>
                     <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}} onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}> Pokaż więcej </button>

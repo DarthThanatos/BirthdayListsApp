@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface SuggestionRepository extends PagingAndSortingRepository<Suggestion, Long> {
 
-    List<Suggestion> findByKey(String key);
+    List<Suggestion> findByWishListKey(String key);
 
 }

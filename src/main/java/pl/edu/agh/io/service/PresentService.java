@@ -36,7 +36,7 @@ public class PresentService {
     }
 
     public List<Suggestion> getAllSuggestionsForList(String key) {
-        return suggestionRepository.findByKey(key);
+        return suggestionRepository.findByWishListKey(key);
     }
 
     public void deleteSuggestion(Long id) {

@@ -35,7 +35,7 @@ public class RemovingOldListsOperation {
         LocalDateTime time = LocalDateTime.now().minusDays(407);
         wishListRepository.findByCreationDateBefore(time).forEach(list -> {
             reservationRepository.delete(reservationRepository.findAllByMappingWishListWishListId(list.getWishListId()));
-            suggestionRepository.delete(suggestionRepository.findByKey(list.getKey()));
+            suggestionRepository.delete(suggestionRepository.findByWishListKey(list.getKey()));
             mappingRepository.delete(mappingRepository.findByWishListWishListId(list.getWishListId()));
             wishListRepository.delete(list);
         });

@@ -81,7 +81,7 @@ public class PresentController {
     }
 
     @GetMapping("/suggestions")
-    public List<Suggestion> getSuggestions(@PathVariable String key) {
+    public List<Suggestion> getSuggestions(@PathVariable("key") String key) {
         return presentService.getAllSuggestionsForList(key);
     }
 
@@ -91,11 +91,9 @@ public class PresentController {
     }
 
     @GetMapping("/suggestions/{sId}")
-    public void acceptOrDiscardSuggestion(@RequestParam("apply") boolean apply,@PathVariable String key, @PathVariable Long sId){
+    public void acceptOrDiscardSuggestion(@RequestParam("apply") boolean apply,@PathVariable("key") String key, @PathVariable("sId") Long sId){
         Suggestion suggestion = presentService.getSuggestion(sId);
-        Present present = new Present(suggestion.getName(), suggestion.getDescription());
-        String email = suggestion.getEmail();
-        emailService.sendSimpleMessage(email, "test","test");
+        Present present = new Present(suggestion);
         if(apply){
             Long listId = wishListService.getByKey(key).getWishListId();
             wishListService.addPresent(listId, present);

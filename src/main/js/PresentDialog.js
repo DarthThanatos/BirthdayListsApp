@@ -49,7 +49,7 @@ export default class PresentDialog extends React.Component{
             category: this.refs.category.value,
             shopLink: this.refs.shopLink.value,
             imageUrl: this.refs.imgLink.value,
-            wishListKey: this.props.present.wishListKey
+            wishListKey: this.props.listKey
         }
         this.props.handleSubmitPresentDialog(present)
     }

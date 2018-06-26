@@ -1,5 +1,7 @@
 package pl.edu.agh.io.model.present;
 
+import pl.edu.agh.io.model.suggestion.Suggestion;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,9 +24,13 @@ public class Present {
     public Present() {
     }
 
-    public Present(String name, String description) {
-        this.name = name;
-        this.description = description;
+    public Present(Suggestion suggestion) {
+        this.name = suggestion.getName();
+        this.description = suggestion.getDescription();
+        this.category = suggestion.getCategory();
+        this.shopLink = suggestion.getShopLink();
+        this.imageUrl = suggestion.getImageUrl();
+        this.wishListKey = suggestion.getWishListKey();
     }
 
     public Long getPresentId() {
