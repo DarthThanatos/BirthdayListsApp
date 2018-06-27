@@ -116,14 +116,14 @@ export default class PresentDialog extends React.Component{
                         </div>
                         <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             <input ref="imgLink" id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink}
-                            style={{width:"75%", height:"auto", textAlign: "center", border: "none", resize: "none", borderBottom: "1px solid grey", overflow:"hidden"}}/>
+                                style={{width:"75%", height:"auto", textAlign: "center", border: "none", resize: "none", borderBottom: "1px solid grey", overflow:"hidden"}}/>
                         </div>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <button style={{display: this.state.showChangeIconBtn}} onClick={this.changeIcon}>Zmień ikonkę</button>
+                        <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop:10}}>
+                            <button style={{display: this.state.showChangeIconBtn, flexDirection: "row", justifyContent: "center", alignItems: "center", borderRadius: "12px", width:150, height:40, background: "#FF8C2F"}} onClick={this.changeIcon}>Zmień ikonkę</button>
                         </div>
                     </div>
                 </div>
-                <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop:10, marginBottom:20}}>
+                <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop:10, marginBottom:20}}>
                     <button ref="submit" onClick={this.handleSubmit} disabled={!this.state.canSubmit || this.state.disabledMode} style={{borderRadius: "12px", width:150, height: 40, background: "#FF8C2F"}}>Zatwierdź</button>
                     <button disabled={this.state.disabledMode} ref="cancel" onClick={this.props.handleClosePresentDialog} style={{marginLeft:5, borderRadius: "12px", width:150, height: 40, background: "#FF8C2F"}}>Anuluj</button>
                 </div>

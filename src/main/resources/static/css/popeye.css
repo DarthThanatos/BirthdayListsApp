@@ -42,11 +42,12 @@ body.popeye-modal-open {
     height: 100%;
     vertical-align: middle; }
   .popeye-modal-container .popeye-modal {
+     margin-right:300px;
     position: relative;
     text-align: left;
     vertical-align: middle;
     display: inline-block;
-    width: 300px;
+    width: 750px;
     border-radius: 3px;
     border: none;
     z-index: 6;

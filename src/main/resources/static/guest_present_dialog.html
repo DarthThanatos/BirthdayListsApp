@@ -1,10 +1,67 @@
+<div style="width: 750px; height: 550;">
 
-
-<div style="width: 700px; height: 550px; background: #666666;">
-    <div style="width:700; height:30; display: flex; flex-direction: row; justify-content: center; align-items: center;">
-        <input id="name" type="text" placeholder="Nazwa prezentu" value="{{presentToDisplay.name}}"/>
+    <div style="height:30; display: flex; flex-direction: row; justify-content: center; align-items: center; margin-bottom: 50;">
+        <h1>{{presentDialogTitle}}</h1>
     </div>
-    <div style="width:700; height:30; display: flex; flex-direction: row; justify-content: center; align-items: center;">
-        <button ng-click="handleClosePresentDialog()">Zamknij</button>
+    <div style="display: flex; flex-direction: row;">
+        <div style="width: 50%;">
+            <div>
+                <div style="height:30; display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                    <h3 style="margin-right: 5;">Nazwa prezentu</h3>
+                    <div style="text-align: center; font-size: 18; color: red; margin-left: 75;">
+
+                        <input id="name" type="text" placeholder="Nazwa prezentu"
+                               style="width: 100%; text-align: center; border: none; border-bottom: 1px solid grey; "
+                               defaultValue={{dialogPresent.name}} />
+                        {this.state.nameErrorMsg}
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                <h3 style="marginRight: 5;">Link do strony sklepu</h3>
+                <input id="shopLink" type="text" placeholder="Link do sklepu" defaultValue="{{dialogPresent.shopLink}}" style="width:100%; text-align: center; border: none; border-bottom: 1px solid grey;"/>
+            </div>
+
+            <div style="display: flex; flex-direction: row; justify-content: center; alignItems: center;">
+                <h3 style="marginRight: 5;">Opis prezentu</h3>
+                <textArea id="description" rows="15" style="border: solid 1px; width:100%;" defaultValue="{{dialogPresent.description}}"/>
+            </div>
+            <div style="display: flex; flex=direction: row; justify-content: center; align-items: center;">
+                <h3 style="marginRight: 5;">Kategoria prezentu</h3>
+                <select id="category" style="width:100%;" defaultValue="{{dialogPresent.category}}">
+                    <option value="Inne">Inne</option>
+                    <option value="Gry">Gry</option>
+                    <option value="Książki">Książki</option>
+                    <option value="Filmy">Filmy</option>
+                </select>
+            </div>
+        </div>
+        <div style="width:50%;">
+            <div style="height:30; display: flex; flex-direction: row; justify-content: center; align-items: center; font-weight: bold; font-size:22;">
+                Wybierz ikonkę od prezentu
+            </div>
+
+            <div style="width: 100%; height:200px;  margin-left: 5; display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                <img style="border: solid 1px; width: 50%; height:100%;" src="{this.state.currentImgLink}" onError="this.src = 'img/default_present_img.png'"></img>
+            </div>
+
+            <div style="display: flex; flex-direction: row; justify-content: center; align-items: center; font-weight: bold; font-size:22; margin-top:10px;">
+                Link ikonki prezentu
+            </div>
+            <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                <input id="imgLink" type="text" placeholder="Link ikonki" defaultValue={this.state.currentImgLink}
+                       style="width:75%; height: auto; text-align: center; border: none; resize: none; border-bottom: 1px solid grey; overflow:hidden; margin-top:10px;"/>
+            </div>
+            <div style="height:30; display: flex; flex-direction: row; justify-content: center; align-items: center; margin-top:10px;">
+                <button style="display: {{this.state.showChangeIconBtn}}; flex-direction: row; justify-content: center; alig-items: center; border-radius: 12px; width:150px; height:40px; background: #FF8C2F;" ng-click="changeIcon()">Zmień ikonkę</button>
+            </div>
+        </div>
+    </div>
+    <div style=" display: flex; flex-direction: row; justify-content: center; align-items: center; margin-top:10; margin-bottom:20;">
+        <button ng-click="handleSubmit()" ng-disabled="{{this.state.canSubmit || this.state.disabledMode}}" style="border-radius: 12px; width:150px; height: 40px; background: #FF8C2F;">Zatwierdź</button>
+        <button ng-disabled="{{this.state.disabledMode}}" ng-click="handleClosePresentDialog()" style="margin-left:5; border-radius: 12px; width:150px; height: 40px; background: #FF8C2F;">Anuluj</button>
     </div>
 </div>
+
+

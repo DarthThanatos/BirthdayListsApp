@@ -50,6 +50,12 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     $scope.presentDialogOpen = function(present){
         var modalScope = $scope.$new();
         modalScope.presentToDisplay = present;
+        modalScope.presentDialogTitle = "Edytuj";
+
+        modalScope.handleClosePresentDialog = function(){
+            Popeye.closeCurrentModal()
+        }
+
         var modal = Popeye.openModal({
             templateUrl: "guest_present_dialog.html",
             scope: modalScope,
