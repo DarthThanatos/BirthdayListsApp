@@ -20,7 +20,7 @@ export default class GuestHome extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {token: " Sending greeting email and loging in, this will take a sec ", ignored: "yolo3", showMailModal: false, showPresentDialog:false, mode:ALL, email: ""};
+		this.state = {token: "", showMailModal: false, showPresentDialog:false, mode:ALL, email: "", paginationOn: true};
 		this.loadNewPage = this.loadNewPage.bind(this)
 
         this.handleOpenMailModal = this.handleOpenMailModal.bind(this);
@@ -37,6 +37,9 @@ export default class GuestHome extends React.Component {
 
         this.onAfterPresentUpdateSubmitted = this.onAfterPresentUpdateSubmitted.bind(this)
         this.onAfterPresentSuggestionSubmitted = this.onAfterPresentSuggestionSubmitted.bind(this)
+        this.setPagination = this.setPagination.bind(this)
+        this.search = this.search.bind(this)
+        this.getPresentsFromList = this.getPresentsFromList.bind(this)
 	}
 
 
@@ -93,15 +96,21 @@ export default class GuestHome extends React.Component {
 
     postDefaultPresents(listKey){
         console.log("posting default presents as birthday guy to list with the key: " + listKey)
-        this.postDefaultPresent(listKey, { name: "Kask1", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"})
-        .then(this.postDefaultPresent(listKey, { name: "Kask2", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask3", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask4", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask5", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask6", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .then(this.postDefaultPresent(listKey, { name: "Kask7", description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei", category: "Inne", shopLink: "https://allegro.pl/", imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"}))
-        .done(response => this.getPresentsFromList(listKey))
-
+        var premise = null;
+        for(var i = 0; i < 17; i++){
+            var currentPremise = this.postDefaultPresent(
+                listKey,
+                {
+                    name: "Kask" + (i + 1),
+                    description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei",
+                    category: "Inne",
+                    shopLink: "https://allegro.pl/",
+                    imageUrl: "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"
+                }
+            )
+            premise = premise == null ? currentPremise : premise.then(currentPremise);
+        }
+        premise.done(response => this.getPresentsFromList(listKey))
     }
 
     postDefaultPresent(listKey, present){
@@ -234,7 +243,6 @@ export default class GuestHome extends React.Component {
         this.setState({ showMailModal: false });
      }
 
-
      handleOpenPresentDialog (present, title, submitFun) {
         if(present == null){
             present = {
@@ -289,6 +297,17 @@ export default class GuestHome extends React.Component {
         this.setState({mode: mode})
     }
 
+    setPagination(paginationFlag){
+        this.setState({paginationOn: paginationFlag})
+    }
+
+    search(query){
+		client({method: 'GET', path: '/api/list/key/' + this.state.listKey + '/present/search?query=' + query,headers: {'Content-Type': 'application/json'}}).done(response => {
+		    console.log("got list of presents from existing wishlist: ")
+		    console.log(response)
+		    this.setState({presents: response.entity})
+		});
+    }
 
 	render() {
 		var sectionStyle = {
@@ -307,8 +326,9 @@ export default class GuestHome extends React.Component {
 		            handleOpenPresentDialog={this.handleOpenPresentDialog}
 		            handleSubmitEditPresentDialog={this.handleSubmitEditPresentDialog}
 		            handleSubmitSuggestPresentDialog={this.handleSubmitSuggestPresentDialog}
-		            mode={this.state.mode} changeMode={this.changeMode} listKey={this.state.listKey}/>
-
+		            setPagination={this.setPagination} paginationOn={this.state.paginationOn}
+		            search={this.search}
+		            mode={this.state.mode} changeMode={this.changeMode} listKey={this.state.listKey} getPresentsFromList={this.getPresentsFromList}/>
 		        <Footer/>
 
                 <Modal ref="MailModal" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
@@ -459,7 +479,9 @@ class Center extends React.Component{
                     handleOpenPresentDialog={this.props.handleOpenPresentDialog}
 		            handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
 		            handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}
-                    mode={this.props.mode} changeMode={this.props.changeMode} listKey={this.props.listKey}/>
+		            setPagination={this.props.setPagination} paginationOn={this.props.paginationOn}
+		            search = {this.props.search}
+                    mode={this.props.mode} changeMode={this.props.changeMode} listKey={this.props.listKey} getPresentsFromList={this.props.getPresentsFromList}/>
 
              </div>
         );
@@ -477,8 +499,8 @@ class ListSquare extends React.Component{
          }
         return (
             <div style={sectionStyle}>
-                <ListSquareHeader mode={this.props.mode} listKey={this.props.listKey} changeMode={this.props.changeMode}/>
-                <ListSquareMainBody presents={this.props.presents} mode={this.props.mode} loadNewPage={this.props.loadNewPage}
+                <ListSquareHeader mode={this.props.mode} listKey={this.props.listKey} setPagination={this.props.setPagination} paginationOn={this.props.paginationOn} search={this.props.search} getPresentsFromList={this.props.getPresentsFromList} changeMode={this.props.changeMode}/>
+                <ListSquareMainBody presents={this.props.presents} paginationOn={this.props.paginationOn}  mode={this.props.mode} loadNewPage={this.props.loadNewPage}
                     handleOpenMailModal={this.props.handleOpenMailModal}
 		            handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
 		            handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}
@@ -500,28 +522,34 @@ class ListSquareHeader extends React.Component{
                 <br/>
                 <div style={{height: "25px", width: "1000px", textAlign:"center", fontWeight: "bold", fontSize:"25px"}}> 19 urodzinki</div>
                 <div style={{height: "25px", width: "1000px", textAlign:"center", fontSize:"17px"}}> 20 maja 2018 (za 5 dni)</div>
-                <SearchBarComponent listKey={this.props.listKey}/>
+                <SearchBarComponent listKey={this.props.listKey} setPagination={this.props.setPagination} search={this.props.search}  getPresentsFromList={this.props.getPresentsFromList}/>
                 <ListSquareNavigationButtons mode={this.props.mode} changeMode={this.props.changeMode}/>
             </div>
         )
     }
 }
 
-
 class SearchBarComponent extends React.Component{
 
     constructor(props){
         super(props)
         this.search = this.search.bind(this)
+        this.onChange = this.onChange.bind(this)
     }
 
     search(){
-
         var query = this.refs.searchbar.state.value
-		client({method: 'GET', path: '/api/list/key/' + this.props.listKey + '/present/paged/search?query=' + query,headers: {'Content-Type': 'application/json'}}).done(response => {
-		    console.log("got list of presents from existing wishlist: ")
-		    console.log(response)
-		});
+        if(query != "") {
+            this.props.setPagination(false)
+            this.props.search(query)
+        }
+    }
+
+    onChange(val){
+        if (val == ""){
+            this.props.setPagination(true)
+            this.props.getPresentsFromList(this.props.listKey)
+        }
     }
 
     render(){
@@ -530,14 +558,9 @@ class SearchBarComponent extends React.Component{
                 <div style={{border: ".1px solid #000000", height:"60px", width: "80%", display: "flex", flexDirection: "row", alignItems: "center",}}>
                     <SearchBar
                       ref="searchbar"
-                      onChange={() => console.log('onChange')}
+                      onChange={this.onChange}
                       onRequestSearch={this.search}
-                      style={{
-                        margin: '0 auto',
-                        backgroundColor: 'rgb(255,240,240)',
-                        width: "98%"
-                      }}
-                    />
+                      style={{ margin: '0 auto', backgroundColor: 'rgb(255,240,240)', width: "98%" }} />
                 </div>
             </div>
         )
@@ -596,11 +619,22 @@ class ListSquareNavigationButtons extends React.Component{
 
 class ListSquareMainBody extends React.Component{
 
+    constructor(props){
+        super(props)
+        this.handleScrollStop = this.handleScrollStop.bind(this)
+    }
+
     shouldShowPresent(present){
         var mode = this.props.mode
         if(mode == ALL) return true;
         if(mode == RESERVED) return present.boughtOrReserved
         return !present.boughtOrReserved
+    }
+
+    handleScrollStop(){
+        if( this.refs.scroll.viewScrollTop + this.refs.scroll.getClientHeight() == this.refs.scroll.getScrollHeight() && this.props.paginationOn){
+            this.props.loadNewPage()
+        }
     }
 
     render(){
@@ -621,9 +655,10 @@ class ListSquareMainBody extends React.Component{
                     </div>)
             }
         );
+        // <ShowMorePagesButton presents={filteredPresents} loadNewPage={this.props.loadNewPage} />
         return(
-            <Scrollbars style={{ width: 1000, height: 600 }}>
-                <GridLayout layout={layout} className="layout" width={800}  rowHeight={250} cols={3} style={{ marginLeft:"100px", marginRight: "100px"}}>
+            <Scrollbars ref="scroll" onScrollStop={this.handleScrollStop} style={{ width: 1000, height: 600 }}>
+                <GridLayout layout={layout} className="layout" width={800}  rowHeight={300} cols={3} style={{ marginLeft:"100px", marginRight: "100px"}}>
                     <div key="sugg" data-grid={{x: 0, y: 0, w:1, h:1, static:true}}>
                         <SuggestComponent
                             handleOpenPresentDialog={this.props.handleOpenPresentDialog}
@@ -631,7 +666,6 @@ class ListSquareMainBody extends React.Component{
                     </div>
                     {presentComponents}
                 </GridLayout>
-                <ShowMorePagesButton presents={filteredPresents} loadNewPage={this.props.loadNewPage} />
             </Scrollbars>
         )
     }
@@ -714,7 +748,7 @@ class PresentComponent extends React.Component{
                     <img src={this.props.present.imageUrl} alt={this.props.present.imageUrl} style={{width: "100px", height:"130px", marginLeft:"5px"}} onError={(e)=>{e.target.src="img/default_present_img.png"}}/>
                     <div style={{width: "120px", textAlign:"center", fontSize:"13px", marginRight:"5px"}}> {presentDescription}</div>
                 </div>
-                <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center", marginTop:5}}>
+                <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center", marginTop:25}}>
                     <a href={this.props.present.shopLink}> {shopLink} </a>
                 </div>
                 <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center"}}>
@@ -725,8 +759,6 @@ class PresentComponent extends React.Component{
     }
 }
 
-
 try{
     Modal.setAppElement('#react_guest');
 }catch(e){}
-

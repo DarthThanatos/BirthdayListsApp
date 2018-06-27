@@ -221,7 +221,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
             postDefaultPresent(
                 response.key,
                 {
-                    name: "Kask" + i,
+                    name: "Kask" + (i + 1),
                     description: "Jako ze poprzedni kask juz mi sie nie podoba, chcialbym dostac nowy, najlepiej w kolorze czarnym, podobnym do tego sprzedawanego w Ikei",
                     category: "Inne",
                     shopLink: "https://allegro.pl/",

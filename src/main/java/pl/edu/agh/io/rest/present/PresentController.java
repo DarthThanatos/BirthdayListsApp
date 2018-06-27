@@ -147,14 +147,14 @@ public class PresentController {
         }).collect(Collectors.toList());
     }
 
-    @GetMapping("/paged/search")
+    @GetMapping("/search")
     List<Present> getSearchResultsPage(@PathVariable("key") String key, @RequestParam("query") String query){
         Long listId = wishListService.getByKey(key).getWishListId();
         List<Present> reservedPresents = reservationService.findAllByListId(listId)
                 .stream()
                 .map(r -> r.getMapping().getPresent())
                 .collect(Collectors.toList());
-        return Arrays.stream(query.split(" ")).map(s->"%"+s+"%").flatMap(q -> presentService.findByCategoryLikeOrNameLike(q, q).stream()).map(present -> {
+        return Arrays.stream(query.split(" ")).map(s->"%"+s+"%").flatMap(q -> presentService.findByCategoryLikeOrNameLike(q, q).stream()).distinct().map(present -> {
             PresentInfoResponse presentInfoResponse = new PresentInfoResponse();
             presentInfoResponse.setDescription(present.getDescription());
             presentInfoResponse.setName(present.getName());
