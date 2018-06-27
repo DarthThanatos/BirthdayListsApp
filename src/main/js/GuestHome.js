@@ -632,7 +632,9 @@ class ListSquareMainBody extends React.Component{
     }
 
     handleScrollStop(){
-        if( this.refs.scroll.viewScrollTop + this.refs.scroll.getClientHeight() == this.refs.scroll.getScrollHeight() && this.props.paginationOn){
+        var scrollHeight = this.refs.scroll.getScrollHeight()
+        var clientEndPos = this.refs.scroll.viewScrollTop + this.refs.scroll.getClientHeight()
+        if( (clientEndPos - 1 <= scrollHeight && clientEndPos + 1 >= scrollHeight) && this.props.paginationOn){
             this.props.loadNewPage()
         }
     }
@@ -759,6 +761,9 @@ class PresentComponent extends React.Component{
     }
 }
 
+
+
 try{
     Modal.setAppElement('#react_guest');
 }catch(e){}
+
