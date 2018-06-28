@@ -208,11 +208,12 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
         }
 
         modal.opened.then(function(){
-
+            var presentName = present.name
+            presentName = presentName.length > 10 ? presentName.substring(0,40).replace(/\s/g, '_') + "(...)" : presentName
             document.getElementById("emailCancel").hidden = false
             document.getElementById("emailSubmit").hidden = false
             document.getElementById("emailInput").hidden = false
-            document.getElementById("emailInfo").innerHTML = "Podaj swój mail by zarezerwować: " + present.name
+            document.getElementById("emailInfo").innerHTML = "Podaj swój mail by zarezerwować: " + presentName
             document.getElementById("emailWaitInfo").innerHTML = ""
 
             if($scope.email != ""){
