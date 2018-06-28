@@ -753,7 +753,7 @@ class PresentComponent extends React.Component{
                 <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center", marginTop:25}}>
                     <a href={this.props.present.shopLink}> {shopLink} </a>
                 </div>
-                <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center"}}>
+                <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center", marginTop:20}}>
                     <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}} onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}> Pokaż więcej </button>
                 </div>
             </div>

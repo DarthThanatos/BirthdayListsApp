@@ -44,13 +44,54 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     $scope.suggest = function(){
-        console.log("making a suggestion")
+        const defaultPresent =
+        {
+            "name": "Nowy prezent",
+            "description": "Opis",
+            "category": "Inne",
+            "shopLink": "https://allegro.pl/",
+            "imageUrl": "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg",
+            wishListKey: $scope.listKey
+        }
+        presentDialogOpen("Zasugeruj prezent", defaultPresent, '/present/suggestions')
     }
 
-    $scope.presentDialogOpen = function(present){
+    $scope.editPresent = function(present){
+        presentDialogOpen("Edytuj prezent", present, '/present')
+    }
+
+    function presentDialogOpen(title, present, linkSuffix){
         var modalScope = $scope.$new();
-        modalScope.presentToDisplay = present;
-        modalScope.presentDialogTitle = "Edytuj";
+        modalScope.presentToDisplay = angular.copy(present);
+
+        modalScope.nameErrorMsg = ""
+        modalScope.canSubmit = true
+        modalScope.disabledMode = false
+        modalScope.categoryChoices = ["Inne", "Gry", "Filmy", "Książki"]
+
+        modalScope.presentDialogTitle = title
+
+        modalScope.onNameChanged = function(){
+            modalScope.nameErrorMsg = modalScope.presentToDisplay.name == "" ? "Pole nazwy nie może być puste" : ""
+            modalScope.canSubmit =  modalScope.presentToDisplay.name != ""
+        }
+
+        modalScope.handleSubmit = function(){
+            modalScope.disabledMode=true
+            $scope.client(
+                {
+                    method: 'POST', path: 'api/list/key/' + $scope.listKey + linkSuffix,
+                    entity: modalScope.presentToDisplay, headers: {'Content-Type': 'application/json'}
+                },
+                (response) => { modalScope.onAfterPresentSubmitted(response) }
+            )
+        }
+
+        modalScope.onAfterPresentSubmitted = function (response){
+            modalScope.disabledMode=false
+            Popeye.closeCurrentModal()
+            window.location.reload();
+        }
 
         modalScope.handleClosePresentDialog = function(){
             Popeye.closeCurrentModal()
@@ -306,4 +347,3 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)
 })
-
