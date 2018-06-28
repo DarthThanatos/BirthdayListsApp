@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController
@@ -148,7 +149,7 @@ public class PresentController {
     }
 
     @GetMapping("/search")
-    List<Present> getSearchResultsPage(@PathVariable("key") String key, @RequestParam("query") String query){
+    List<Present> getSearchResults(@PathVariable("key") String key, @RequestParam("query") String query){
         Long listId = wishListService.getByKey(key).getWishListId();
         List<Present> reservedPresents = reservationService.findAllByListId(listId)
                 .stream()
@@ -167,6 +168,60 @@ public class PresentController {
             return presentInfoResponse;
         }).collect(Collectors.toList());
     }
+
+    @GetMapping("paged/search")
+    List<Present> getPagedSearchResults(@PathVariable("key") String key, @RequestParam("query") String query, Pageable pageable){
+        return fetchFildteredSearchResults(key, query, pageable, present -> true);
+    }
+
+    @GetMapping("paged/search/reserved")
+    List<Present> getPagedSearchResultsReserved(@PathVariable("key") String key, @RequestParam("query") String query, Pageable pageable){
+        Long listId = wishListService.getByKey(key).getWishListId();
+        List<Long> reservedPresentsIds = reservationService.findAllByListId(listId)
+                .stream()
+                .map(r -> r.getMapping().getPresent().getPresentId()).collect(Collectors.toList());
+        return fetchFildteredSearchResults(key, query, pageable, present -> reservedPresentsIds.contains(present.getPresentId()));
+    }
+
+
+    @GetMapping("paged/search/notReserved")
+    List<Present> getPagedSearchResultsNotReserved(@PathVariable("key") String key, @RequestParam("query") String query, Pageable pageable){
+        Long listId = wishListService.getByKey(key).getWishListId();
+        List<Long> reservedPresentsIds = reservationService.findAllByListId(listId)
+                .stream()
+                .map(r -> r.getMapping().getPresent().getPresentId()).collect(Collectors.toList());
+        return fetchFildteredSearchResults(key, query, pageable, present -> !reservedPresentsIds.contains(present.getPresentId()));
+
+    }
+
+    private List<Present> fetchFildteredSearchResults(String key, String query, Pageable pageable, Predicate<Present> filter){
+        Long listId = wishListService.getByKey(key).getWishListId();
+        List<Present> reservedPresents = reservationService.findAllByListId(listId)
+                .stream()
+                .map(r -> r.getMapping().getPresent())
+                .collect(Collectors.toList());
+        return pageToList(
+                presentService.findByPresentIdIn(Arrays.stream(query.split(" ")).map(s->"%"+s+"%")
+                        .flatMap(q -> presentService.findByCategoryLikeOrNameLike(q, q).stream()).distinct().filter(filter).map(Present::getPresentId).collect(Collectors.toList()), pageable)
+                        .map(
+                                present -> {
+                                    PresentInfoResponse presentInfoResponse = new PresentInfoResponse();
+                                    presentInfoResponse.setDescription(present.getDescription());
+                                    presentInfoResponse.setName(present.getName());
+                                    presentInfoResponse.setPresentId(present.getPresentId());
+                                    presentInfoResponse.setCategory(present.getCategory());
+                                    presentInfoResponse.setShopLink(present.getShopLink());
+                                    presentInfoResponse.setImageUrl(present.getImageUrl());
+                                    presentInfoResponse.setBoughtOrReserved(reservedPresents.contains(present));
+                                    presentInfoResponse.setWishListKey(key);
+                                    return presentInfoResponse;
+                                }
+                        )
+        );
+
+
+    }
+
 
     @GetMapping("/paged/notReserved")
     List<Present> getNotReservedPage(Pageable pageable, @PathVariable("key") String key){

@@ -108,7 +108,7 @@ export default class PresentDialog extends React.Component{
                         </div>
 
                         <div style={{ width: (width/2), height:200,  marginLeft: 5, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                            <img style={{border: "solid 1px", width: "50%", height:"90%"}} src={this.state.currentImgLink} onError={(e)=>{e.target.src="img/default_present_img.png"}}></img>
+                            <img style={{ width: "50%", height:"90%"}} src={this.state.currentImgLink} onError={(e)=>{e.target.src="img/default_present_img.png"}}></img>
                         </div>
 
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", fontWeight: "bold", fontSize:22}}>

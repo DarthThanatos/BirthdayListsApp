@@ -66,4 +66,8 @@ public class PresentService {
     public Page<Present> findByWishListKeyAndPresentIdNotIn(String key, List<Long> ids, Pageable pageable){
         return presentRepository.findByWishListKeyAndPresentIdNotIn(key, ids, pageable);
     }
+
+    public Page<Present> findByPresentIdIn(List<Long> ids, Pageable pageable){
+        return presentRepository.findByPresentIdIn(ids, pageable);
+    }
 }

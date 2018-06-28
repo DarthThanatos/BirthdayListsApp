@@ -17,6 +17,9 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     $scope.secondRow = []
     $scope.allRows = [[], []]
 
+    $scope.searchBarContent = ""
+    $scope.searchMode = false
+    $scope.currentlySearchedPhrase = ""
 
     $scope.fbClicked = function(){
         console.log("fb clicked")
@@ -108,6 +111,29 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
          }
     }
 
+    $scope.onSearchBarChange = function(){
+        if ($scope.searchBarContent == ""){
+            $scope.searchMode = false
+            $scope.firstPage()
+        }
+    }
+
+    $scope.onSearchKey = function(event){
+        if(event.keyCode == 13){
+            $scope.search()
+        }
+    }
+
+    $scope.search = function(){
+        var query = $scope.searchBarContent
+        if(query != "") {
+            $scope.searchMode = true
+            $scope.currentlySearchedPhrase = query
+            $scope.firstPage()
+        }
+
+    }
+
     $scope.mailModalOpen = function(present){
 
         var modalScope = $scope.$new();
@@ -138,6 +164,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
                 headers: {'Content-Type': 'application/json'}
             }, (response) => afterReservation(response, email))
         }
+
 
         function afterReservation(response, email){
             if(response != ""){
@@ -340,9 +367,9 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
    function modeToPageUrl(page){
-        if($scope.mode == ALL) return '/api/list/key/' + $scope.listKey + '/present/paged?page=' + page +'&size=5'
-        if($scope.mode == NOT_RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/notReserved?page=' + page +'&size=5'
-        if($scope.mode == RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged/reserved?page=' + page +'&size=5'
+        if($scope.mode == ALL) return '/api/list/key/' + $scope.listKey + '/present/paged' + ($scope.searchMode ? "/search" : "") + '?page=' + page +'&size=5' + ($scope.searchMode ? "&query=" + $scope.currentlySearchedPhrase : "")
+        if($scope.mode == NOT_RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged' + ($scope.searchMode ? "/search" : "") + '/notReserved?page=' + page +'&size=5' + ($scope.searchMode ? "&query=" + $scope.currentlySearchedPhrase : "")
+        if($scope.mode == RESERVED) return '/api/list/key/' + $scope.listKey + '/present/paged' + ($scope.searchMode ? "/search" : "") + '/reserved?page=' + page +'&size=5' + ($scope.searchMode ? "&query=" + $scope.currentlySearchedPhrase : "")
    }
 
     $scope.client({method: 'POST', path: '/auth/register', entity: {email: "bielas.robert95@gmail.com", password: 'user'},headers: {'Content-Type': 'application/json'}}, afterRegistered, afterRegistered)
