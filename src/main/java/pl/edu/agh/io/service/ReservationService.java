@@ -49,7 +49,7 @@ public class ReservationService {
     }
 
     private boolean sendUnreservationLink(String buyerEmail, String key) {
-        return emailService.sendSimpleMessage(buyerEmail, "Reservation",  "Kliknij w poniższy link by zrezygnować z rezerwacji:\nhttp://localhost:8080/api/reservation/resign/" + key);
+        return emailService.sendSimpleMessage(buyerEmail, "Reservation",  "Kliknij w poniższy link by zrezygnować z rezerwacji:\nhttp://localhost:8080/api/reservation/resign/" + key + "\n");
     }
 
     public PresentReservation save(PresentReservation presentReservation) {
