@@ -21,6 +21,8 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     $scope.searchMode = false
     $scope.currentlySearchedPhrase = ""
 
+    $scope.balloons = false
+
     $scope.fbClicked = function(){
         console.log("fb clicked")
     }
@@ -64,6 +66,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     }
 
     function presentDialogOpen(title, present, linkSuffix){
+         $scope.balloons = true
         var modalScope = $scope.$new();
         modalScope.presentToDisplay = angular.copy(present);
 
@@ -92,12 +95,14 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
 
         modalScope.onAfterPresentSubmitted = function (response){
             modalScope.disabledMode=false
+            $scope.balloons = false
             Popeye.closeCurrentModal()
             window.location.reload();
         }
 
         modalScope.handleClosePresentDialog = function(){
             Popeye.closeCurrentModal()
+            $scope.balloons = false
         }
 
         var modal = Popeye.openModal({
@@ -108,6 +113,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
         });
          modalScope.handleClosePresentDialog = function () {
             Popeye.closeCurrentModal()
+            $scope.balloons = false
          }
     }
 
@@ -137,6 +143,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
     $scope.mailModalOpen = function(present){
 
         var modalScope = $scope.$new();
+        $scope.balloons = true
         var modal = Popeye.openModal({
             templateUrl: "guest_mail_modal.html",
             scope: modalScope,
@@ -169,7 +176,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
         function afterReservation(response, email){
             if(response != ""){
                 $scope.email = email;
-                synchPresentsStates(() => {Popeye.closeCurrentModal(); $scope.$apply();})
+                synchPresentsStates(() => {Popeye.closeCurrentModal(); $scope.$apply(); $scope.balloons = false})
             }
 
         }
@@ -205,6 +212,7 @@ GuestHome.controller('GuestController', function GuestController($scope, Popeye)
 
         modalScope.mailModalCancel = function(){
             Popeye.closeCurrentModal()
+            $scope.balloons = false
         }
 
         modal.opened.then(function(){
