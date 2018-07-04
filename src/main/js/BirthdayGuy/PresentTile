@@ -2,7 +2,7 @@
 const React = require('react');
 import { Card, CardText, CardBody,
     CardTitle, Row, Col, Button } from 'reactstrap';
-import './loader.css'
+import '../loader.css'
 export default class PresentTile extends React.Component {
 
     constructor(props) {
@@ -55,12 +55,10 @@ export default class PresentTile extends React.Component {
                       <Col sm="8">
                           <CardBody style={{padding: "0px 2em 2em 0px"}}>
                               <CardText>{this.props.description}</CardText>
+                              <CardText><a style={{margin: "1em"}} target="_blank"  href={this.props.shopLink}>Link do Sklepu</a></CardText>
                           </CardBody>
                       </Col>
                   </Row>
-                  <div className="text-center">
-                      <a style={{margin: "1em"}} target="_blank" className="btn btn-secondary" href={this.props.shopLink}>Sklep</a>
-                  </div>
               </Card>
         );
     }

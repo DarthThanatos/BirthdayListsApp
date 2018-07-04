@@ -6,7 +6,12 @@ import Modal from 'react-modal';
 import PresentDialog from '../PresentDialog'
 import Footer from "../Footer";
 import Navbar from "./Navbar"
+import '../loader.css'
 
+import { Row, Col, Button, Modal as ModalB, ModalBody, ModalFooter,
+    TabContent, TabPane, CardBody,Nav, NavItem, NavLink, Card, CardTitle, CardText,Form, FormGroup, Label,Input
+} from 'reactstrap';
+import classnames from 'classnames';
 const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('../client_react');
@@ -24,7 +29,9 @@ export default class GuestHome extends React.Component {
 		super(props);
 		this.state = {token: "", showMailModal: false, showPresentDialog:false, mode:ALL, email: "", paginationOn: true};
 		this.loadNewPage = this.loadNewPage.bind(this)
-
+        console.log(classnames({ active: this.state.mode === ALL }))
+        console.log(this.state.mode)
+        classnames.bind(this)
         this.handleOpenMailModal = this.handleOpenMailModal.bind(this);
         this.handleCloseMailModal = this.handleCloseMailModal.bind(this);
         this.handleReservation = this.handleReservation.bind(this);
@@ -182,14 +189,14 @@ export default class GuestHome extends React.Component {
      handleOpenMailModal (present) {
         this.setState({presentToReserve: present})
         this.setState({ showMailModal: true });
+        this.afterMailModalOpen();
      }
 
      handleReservation(present, email){
-        document.getElementById("emailCancel").hidden = true
-        document.getElementById("emailSubmit").hidden = true
-        document.getElementById("emailInput").hidden = true
-        document.getElementById("emailInfo").innerHTML = ""
-        document.getElementById("emailWaitInfo").innerHTML = "Czekaj, rezerwacja w trakcie ..."
+        document.getElementById("emailInput").disabled = true
+        document.getElementById("emailCancel").disabled = true
+        document.getElementById("emailSubmit").disabled = true
+        document.getElementById("emailWaitInfo").hidden = false
 
 		client({
 		    method: 'POST',
@@ -202,9 +209,11 @@ export default class GuestHome extends React.Component {
 		    headers: {'Content-Type': 'application/json'}
         })
         .done(response => {
+
             if(response.entity != "")
                 this.setState({email: email})
             this.synchPresentsStates( () => {this.turnOffMailModal ()} )
+            this.setState({showReservationConfirmedDialog: true})
 		})
 
      }
@@ -234,10 +243,10 @@ export default class GuestHome extends React.Component {
 	}
 
     turnOffMailModal(){
-        document.getElementById("emailCancel").hidden = false
-        document.getElementById("emailSubmit").hidden = false
-        document.getElementById("emailInput").hidden = false
-        document.getElementById("emailWaitInfo").innerHTML = ""
+        document.getElementById("emailInput").disabled = false
+        document.getElementById("emailCancel").disabled = false
+        document.getElementById("emailSubmit").disabled = false
+        document.getElementById("emailWaitInfo").hidden = true
         this.setState({ showMailModal: false });
     }
 
@@ -293,6 +302,7 @@ export default class GuestHome extends React.Component {
     onAfterPresentSuggestionSubmitted(response){
         this.refs.PresentDialogContent.setState({disabledMode:false})
         this.setState({ showPresentDialog: false });
+        this.setState({ showSuggestionConfirmedDialog: true})
     }
 
     changeMode(mode){
@@ -310,43 +320,73 @@ export default class GuestHome extends React.Component {
 		    this.setState({presents: response.entity})
 		});
     }
+    handleCloseReservationConfirmedDialog() {
+        this.setState({showReservationConfirmedDialog: false});
+    }
+    handleCloseSuggestionConfirmDialog() {
+        this.setState({showSuggestionConfirmedDialog: false});
+    }
 
 	render() {
-		var sectionStyle = {
-          width: "85%",
-          height: "100%",
-          marginLeft: "auto",
-          marginRight: "auto",
-
-        }
-
+        var styles = {
+            background: "url(../img/background_transparent.png) no-repeat center center fixed",
+            WebkitBackgroundSize: "cover",
+            MozBackgroundSize: "cover",
+            OBackgroundSize: "cover",
+        };
 		return (
-		    <div style={sectionStyle}>
+		    <div style={styles}>
 		        <Navbar/>
-		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}
-		            handleOpenMailModal={this.handleOpenMailModal}
-		            handleOpenPresentDialog={this.handleOpenPresentDialog}
-		            handleSubmitEditPresentDialog={this.handleSubmitEditPresentDialog}
-		            handleSubmitSuggestPresentDialog={this.handleSubmitSuggestPresentDialog}
-		            setPagination={this.setPagination} paginationOn={this.state.paginationOn}
-		            search={this.search}
-		            mode={this.state.mode} changeMode={this.changeMode} listKey={this.state.listKey} getPresentsFromList={this.getPresentsFromList}/>
+                <Row className="justify-content-center" style={{paddingTop:"5vh"}}>
+                    <Col sm={{ size: 8}}>
+                        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}
+                            handleOpenMailModal={this.handleOpenMailModal}
+                            handleOpenPresentDialog={this.handleOpenPresentDialog}
+                            handleSubmitEditPresentDialog={this.handleSubmitEditPresentDialog}
+                            handleSubmitSuggestPresentDialog={this.handleSubmitSuggestPresentDialog}
+                            setPagination={this.setPagination} paginationOn={this.state.paginationOn}
+                            search={this.search}
+                            mode={this.state.mode} changeMode={this.changeMode} listKey={this.state.listKey} getPresentsFromList={this.getPresentsFromList}/>
+                    </Col>
+                </Row>
 		        <Footer/>
-
-                <Modal ref="MailModal" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)'}}}
-                       isOpen={this.state.showMailModal} onAfterOpen={this.afterMailModalOpen} contentLabel="Type your mail">
-                    <MailModal ref="MailModalContent" handleReservation={this.handleReservation} handleCloseMailModal={this.handleCloseMailModal} presentToReserve={this.state.presentToReserve}/>
-                </Modal>
-
-                <Modal ref="PresentDialog" style={{content : {top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)', border: "solid 2px"}}}
-                       isOpen={this.state.showPresentDialog}  contentLabel="Present Dialog" >
+                <ModalB isOpen={this.state.showMailModal} contentLabel="Type your mail">
+                    <ModalBody>
+                        <MailModal ref="MailModalContent" handleReservation={this.handleReservation} handleCloseMailModal={this.handleCloseMailModal} presentToReserve={this.state.presentToReserve}/>
+                    </ModalBody>
+                </ModalB>
+                <ModalB size="lg" ref="PresentDialog" isOpen={this.state.showPresentDialog}  contentLabel="Present Dialog" >
+                    <ModalBody className="text-center">
                     <PresentDialog ref="PresentDialogContent"
                         handleClosePresentDialog={this.handleClosePresentDialog}
                         handleSubmitPresentDialog={this.state.presentDialogSubmitFun}
                         present={this.state.presentToDisplay}
                         title={this.state.presentDialogTitle}
                         listKey = {this.state.listKey} />
-                </Modal>
+                    </ModalBody>
+                </ModalB>
+                <ModalB isOpen={this.state.showReservationConfirmedDialog}>
+                    <ModalBody className="text-center">
+                        <h4 >Wspaniale !</h4>
+                        <p>
+                            Wybrany prezent został zarezerwowany.
+                        </p>
+                    </ModalBody>
+                    <ModalFooter style={{justifyContent: "center"}}>
+                        <Button className="text-center" color="primary" onClick={() => {this.handleCloseReservationConfirmedDialog()}}>Okej</Button>{' '}
+                    </ModalFooter>
+                </ModalB>
+                <ModalB isOpen={this.state.showSuggestionConfirmedDialog}>
+                    <ModalBody className="text-center">
+                        <h4>Dobra robota!</h4>
+                        <p>
+                            Propozycja prezentu została dodana.
+                        </p>
+                    </ModalBody>
+                    <ModalFooter style={{justifyContent: "center"}}>
+                        <Button className="text-center" color="primary" onClick={() => {this.handleCloseSuggestionConfirmDialog()}}>Okej</Button>{' '}
+                    </ModalFooter>
+                </ModalB>
 		    </div>
 		)
 	}
@@ -367,62 +407,48 @@ class MailModal extends React.Component{
             : "Podaj swój mail"
         var presentName = this.props.presentToReserve.name
         presentName = presentName.length > 35 ? presentName.substring(0,35) + "(...)" : presentName
-
+        var thumbnailStyles = {
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+            padding: "5px",
+            width: "150px",
+            display:"inline-block",
+        };
         return (
-            <div ref="MailModalDiv" style={sectionStyle}>
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color:"#FFFFFF" }}><br/>{presentName}<br/></div>
-                <div id="emailInfo" ref="MailInfo" style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color:"#FFFFFF"}}>{infoText}</div>
-
-                <div style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                    <input id="emailInput" type="text" placeholder="imie.nazwisko@domena"/>
-                </div>
-                <div id="emailWaitInfo" ref="MailWaitInfo" style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", color:"#FFFFFF"}}></div>
-                <div style={{ width:300, height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                    <button id="emailSubmit" style={{ width:100, height:20}} onClick={() => this.props.handleReservation(this.props.presentToReserve, document.getElementById("emailInput").value)}>Potwierdź</button>
-                    <button id="emailCancel" style={{ width:100, height:20, marginLeft:10}} onClick={this.props.handleCloseMailModal}>Anuluj</button>
-                </div>
+            <div>
+                <Form>
+                    <h2 style={{padding: "0.4em"}} className="text-center">Rezerwacja</h2>
+                    <FormGroup row>
+                        <Label for="email" sm={2}>Email</Label>
+                        <Col sm={9}>
+                            <Input type="email" name="email" id="emailInput" placeholder="jan.kowalski@domena.pl"/>
+                        </Col>
+                    </FormGroup>
+                    <div className="text-center">
+                        <div style={thumbnailStyles}>
+                            <div className="text-center">
+                                {this.props.presentToReserve.name}
+                            </div>
+                            <img style={{width:"80%", height: "80%"}} src={this.props.presentToReserve.imageUrl} alt="Zdjęcie prezentu do zarezerwowania" />
+                        </div>
+                    </div>
+                    <Row id="emailWaitInfo" hidden><Col sm="1"><div style={{position: "relative", top: "5px", left: "10px", borderTop: "0.5em solid rgba(255, 140, 47, 0.2)",borderRight: "0.5em solid rgba(255, 140, 47, 0.2)",
+                        borderBottom: "0.5em solid rgba(255, 140, 47, 0.2)", borderLeft: "0.5em solid rgba(255, 140, 47, 1)"}} className="loader" /></Col><Col><div style={{padding: "1em"}}>Rezerwacja w trakcie...</div></Col></Row>
+                    <div className="text-center" style={{padding: "1em"}}>
+                        <Button id="emailSubmit" style={{marginRight:"0.5em"}} color="primary" ref="submit" onClick={() => this.props.handleReservation(this.props.presentToReserve, document.getElementById("emailInput").value)}>Zatwierdź</Button>
+                        <Button id="emailCancel" style={{marginLeft:"0.5em"}} color="secondary"ref="cancel" onClick={this.props.handleCloseMailModal}>Anuluj</Button>
+                    </div>
+                </Form>
             </div>
+
         )
     }
 }
-
-class Header extends React.Component{
-    render(){
-        var sectionStyle={
-             width: "1200px",
-             border: ".1px solid #0066cc",
-             height: "50px",
-
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center"
-        }
-        return (
-            <div style={sectionStyle}>
-                <img src="img/cake.png" style={{marginLeft: "25px"}}/>
-                <div style={{marginLeft:"25px", fontWeight: "bold", fontFamily: 'Cochin', fontSize:"22px"}}>Prezenty</div>
-                <div style={{marginLeft:"25px", fontFamily: 'Cochin', fontSize:"17px"}}>Rezerwacje</div>
-                <div style={{fontFamily: 'Cochin', fontSize:"17px", border: ".1px solid #0066cc", marginLeft:"800px"}}>Wyloguj</div>
-
-            </div>
-        )
-    }
-}
-
 
 class Center extends React.Component{
 
     render(){
         var sectionStyle = {
-            position:"relative",
-            width: "1200px",
-            height: "950px",
-            backgroundImage: "url(img/background_transparent.png)",
-
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center"
         };
         return(
              <div style={sectionStyle}>
@@ -444,10 +470,7 @@ class Center extends React.Component{
 class ListSquare extends React.Component{
     render(){
         var sectionStyle = {
-            width: "1000px",
-            height: "800px",
-            background: "white",
-            opacity: 0.9
+            backgroundColor: "rgba(247, 247, 247, 0.9)",
          }
         return (
             <div style={sectionStyle}>
@@ -465,15 +488,14 @@ class ListSquare extends React.Component{
 class ListSquareHeader extends React.Component{
     render(){
         var sectionStyle = {
-             width: "1000px",
-             border: ".1px solid #0066cc",
-             height: "200px"
+
         }
         return(
             <div style={sectionStyle}>
-                <br/>
-                <div style={{height: "25px", width: "1000px", textAlign:"center", fontWeight: "bold", fontSize:"25px"}}> 19 urodzinki</div>
-                <div style={{height: "25px", width: "1000px", textAlign:"center", fontSize:"17px"}}> 20 maja 2018 (za 5 dni)</div>
+                <div  style={{padding: "2em 2em 4em 2em"}} id="header" className="text-center">
+                    <h1>19 urodzinki</h1>
+                    <h4>20 maja 2018 (za 5 dni)</h4>
+                </div>
                 <SearchBarComponent listKey={this.props.listKey} setPagination={this.props.setPagination} search={this.props.search}  getPresentsFromList={this.props.getPresentsFromList}/>
                 <ListSquareNavigationButtons mode={this.props.mode} changeMode={this.props.changeMode}/>
             </div>
@@ -489,8 +511,8 @@ class SearchBarComponent extends React.Component{
         this.onChange = this.onChange.bind(this)
     }
 
-    search(){
-        var query = this.refs.searchbar.state.value
+    search(query){
+        // var query = this.refs.searchbar.state.value
         if(query != "") {
             this.props.setPagination(false)
             this.props.search(query)
@@ -506,8 +528,8 @@ class SearchBarComponent extends React.Component{
 
     render(){
         return(
-            <div style={{width: "100%",  display: "flex", justifyContent:"center"}}>
-                <div style={{border: ".1px solid #000000", height:"60px", width: "80%", display: "flex", flexDirection: "row", alignItems: "center",}}>
+            <div style={{paddingBottom: "1em", width: "100%",  display: "flex", justifyContent:"center"}}>
+                <div style={{height:"60px", width: "80%", display: "flex", flexDirection: "row", alignItems: "center",}}>
                     <SearchBar
                       ref="searchbar"
                       onChange={this.onChange}
@@ -560,10 +582,33 @@ class ListSquareNavigationButtons extends React.Component{
         var all_color = this.props.mode == ALL ? "#FF8C2F" : "#666666"
 
         return (
-            <div style={sectionStyle}>
-                <button style={{borderRadius: "12px", height: "75px", background: all_color}} onClick={this.all}>Wszystkie(15)</button>
-                <button style={{borderRadius: "12px", height: "75px", background: not_reserved_color }} onClick={this.notReserved}>Niezarezerwowane(10)</button>
-                <button style={{borderRadius: "12px", height: "75px", background: reserved_color}} onClick={this.reserved}>Zarezerwowane(5)</button>
+            <div>
+            <Nav tabs>
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.props.mode === ALL }, "tab")}
+                        onClick={this.all}
+                    >
+                        Wszystkie(15)
+                    </NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.props.mode === RESERVED })}
+                        onClick={this.reserved}
+                    >
+                        Zarezerwowane(10)
+                    </NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.props.mode === NOT_RESERVED })}
+                        onClick={this.notReserved}
+                    >
+                        Niezarezerwowane(5)
+                    </NavLink>
+                </NavItem>
+            </Nav>
             </div>
         )
     }
@@ -596,31 +641,36 @@ class ListSquareMainBody extends React.Component{
         var layout = []
         var presentComponents = this.props.presents;
         var filteredPresents = typeof presentComponents != "undefined" ? presentComponents.filter(present => this.shouldShowPresent(present)) : []
+        var styles = {
+            backgroundColor: "rgba(247, 247, 247, 0.9)",
+            padding: "0 4em",
+        };
 
         presentComponents = filteredPresents.map(
             (present, i) => {
                 layout.push({i: present.presentId.toString(), x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true})
                 return(
-                    <div id={"present" + present.presentId} key={present.presentId} data-grid={{x: (i+1)%3, y: Math.floor((i+1)/3), w:1, h:1, static:true}} style={{border: ".1px solid #0066cc"}}>
+                    <Col style={{marginBottom: "2em"}} sm="4" id={"present" + present.presentId} key={present.presentId}>
                         <PresentComponent present={present}
                             handleOpenMailModal={this.props.handleOpenMailModal}
                             handleSubmitEditPresentDialog={this.props.handleSubmitEditPresentDialog}
                             handleOpenPresentDialog={this.props.handleOpenPresentDialog}/>
-                    </div>)
+                    </Col>)
             }
         );
-        // <ShowMorePagesButton presents={filteredPresents} loadNewPage={this.props.loadNewPage} />
+
         return(
-            <Scrollbars ref="scroll" onScrollStop={this.handleScrollStop} style={{ width: 1000, height: 600 }}>
-                <GridLayout layout={layout} className="layout" width={800}  rowHeight={300} cols={3} style={{ marginLeft:"100px", marginRight: "100px"}}>
-                    <div key="sugg" data-grid={{x: 0, y: 0, w:1, h:1, static:true}}>
-                        <SuggestComponent
-                            handleOpenPresentDialog={this.props.handleOpenPresentDialog}
-                            handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}/>
-                    </div>
-                    {presentComponents}
-                </GridLayout>
-            </Scrollbars>
+                <div style={styles} className="container-fluid">
+                    <Row>
+                        <Col style={{marginBottom: "2em"}} sm="4">
+                            <SuggestComponent
+                                handleOpenPresentDialog={this.props.handleOpenPresentDialog}
+                                handleSubmitSuggestPresentDialog={this.props.handleSubmitSuggestPresentDialog}/>
+                        </Col>
+                        {presentComponents}
+                    </Row>
+                    <ShowMorePagesButton presents={filteredPresents} loadNewPage={this.props.loadNewPage} />
+                </div>
         )
     }
 }
@@ -640,8 +690,8 @@ class ShowMorePagesButton extends React.Component{
         var justifyContent = this.props.presents.length == 0 ? "flex-start" : "center"
         var marginLeft = this.props.presents.length == 0 ? "190px" : "0px"
         return(
-            <div style={{marginLeft: marginLeft, width: 1000, height:50, display: "flex",  flexDirection:"row", justifyContent: justifyContent}}>
-                <button style={{height:30}} onClick={this.moreItems}>Pokaż więcej</button>
+            <div style={{padding: "2em", display: "flex",  flexDirection:"row", justifyContent: justifyContent}}>
+                <Button color="secondary" onClick={this.moreItems}>Pokaż więcej</Button>
             </div>
         )
     }
@@ -661,13 +711,11 @@ class SuggestComponent extends React.Component{
 
     render(){
         var sectionStyle = {
-            width:"100%", height: "100%",
+            height: "100%",
             border: ".1px solid #0066cc",
-            background: "#00DBFF",
-            fontSize: "35px"
         }
         return(
-            <button style={sectionStyle} onClick={this.suggest}> Zaproponuj </button>
+            <Button className="btn-block" color="primary" style={sectionStyle} onClick={this.suggest}><h1 style={{fontSize: "2.5rem"}}>Zaproponuj</h1></Button>
         )
     }
 }
@@ -683,32 +731,54 @@ class PresentComponent extends React.Component{
         var presentDescription = this.props.present.description
         var presentName = this.props.present.name
         var shopLink = this.props.present.shopLink
-        presentDescription = presentDescription.length > 135 ? presentDescription.substring(0, 135) + ("\n(...)") : presentDescription
+        var presentDescription = presentDescription.length > 135 ? presentDescription.substring(0, 135) + ("\n(...)") : presentDescription
         presentName = presentName.length > 10 ? presentName.substring(0,10).replace(/\s/g, '_') + "(...)" : presentName
         shopLink = shopLink.length > 35 ? "" : shopLink
+        let cardStyle = {
+            height: "100%",
+            backgroundColor: "rgba(247, 247, 247, 1)"
 
+        };
+        let buttonStyles = {
+            borderRadius: "8px"
+        };
+        let headingStyles = {
+            borderRadius: "2px",
+            padding: "0.7em 1em",
+            marginBottom: "1em",
+        };
+        let imgStyles = {
+            width: "100%",
+            margin: "0 0 2em 0.4em",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+        }
+        let iconStyles = {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingRight: "0",
+        };
         return(
-            <div >
-                <div style={{background: "#FF8C2F",  height:"30px", display: "flex", flexDirection:"row", alignItems:"center"}}>
-                    <div style={{marginLeft:"10px", fontSize:"20px"}}>{presentName}</div>
-                    <div style={{ width:"100%", display: "flex", flexDirection:"row", alignItems:"center", justifyContent:"flex-end"}}><button hidden={reserveButtonHidden} style={{width:"100px", marginRight:2}} onClick={() => this.props.handleOpenMailModal(this.props.present)}>Rezerwuj</button></div>
+            <Card style={cardStyle}>
+                <CardBody style={headingStyles} className="blue">
+                    <CardTitle>
+                        {presentName}<Button onClick={() => this.props.handleOpenMailModal(this.props.present)} hidden={reserveButtonHidden} style={buttonStyles} className="float-right btn-sm">Rezerwuj</Button>
+                    </CardTitle>
+                </CardBody>
+                <Row style={{height: "100%"}}>
+                    <Col style={iconStyles} sm="4"><img style={imgStyles} src={this.props.present.imageUrl} alt="Present icon" /></Col>
+                    <Col sm="8">
+                        <CardBody style={{padding: "0px 2em 2em 0px"}}>
+                            <CardText>{presentDescription}</CardText>
+                            <CardText><a style={{margin: "1em"}} target="_blank"  href={this.props.present.shopLink}>Link do Sklepu</a></CardText>
+                        </CardBody>
+                    </Col>
+                </Row>
+                <div className="text-center">
+                    <a className="btn btn-secondary" style={{margin: "1em"}} target="_blank"   onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}>Edytuj</a>
                 </div>
-
-                <div style={{ fontSize:"20px", width:"100%", height:"30px", display: "flex",  flexDirection:"row", alignItems:"center", justifyContent: "center"}}>
-                    Kategoria: {this.props.present.category}
-                </div>
-
-                <div style={{width:"100%", display: "flex", flexDirection:"row", alignItems: "center"}}>
-                    <img src={this.props.present.imageUrl} alt={this.props.present.imageUrl} style={{width: "100px", height:"130px", marginLeft:"5px"}} onError={(e)=>{e.target.src="img/default_present_img.png"}}/>
-                    <div style={{width: "120px", textAlign:"center", fontSize:"13px", marginRight:"5px"}}> {presentDescription}</div>
-                </div>
-                <div style={{width:"100%", height:"30px", display: "flex",  flexDirection:"row", justifyContent: "center", marginTop:25}}>
-                    <a href={this.props.present.shopLink}> {shopLink} </a>
-                </div>
-                <div style={{width:"100%", height:"30px", display: "flex", justifyContent:"center", marginTop:20}}>
-                    <button style={{height:"20px", display: "flex",  flexDirection:"row", alignItems: "center"}} onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}> Pokaż więcej </button>
-                </div>
-            </div>
+            </Card>
         )
     }
 }
