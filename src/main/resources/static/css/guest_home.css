@@ -19,6 +19,7 @@
 
 #center {
     background: url(../img/background_transparent.png) no-repeat center center fixed;
+    width: 1200px;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -34,6 +35,8 @@
     height: 800px;
     background: white;
     opacity: 0.9;
+    position: relative;
+    left: 100px;
 }
 
 #list-square-header{
