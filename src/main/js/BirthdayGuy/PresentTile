@@ -1,0 +1,67 @@
+'use strict';
+const React = require('react');
+import { Card, CardText, CardBody,
+    CardTitle, Row, Col, Button } from 'reactstrap';
+import './loader.css'
+export default class PresentTile extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+
+    handleClick() {
+        this.props.onClick(this.props.sId)
+    }
+
+    render() {
+        let cardStyle = {
+            height: "100%",
+            backgroundColor: "rgba(247, 247, 247, 1)"
+
+        };
+        let imgStyles = {
+            width: "100%",
+            margin: "0 0 2em 0.4em",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+        }
+        let iconStyles = {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingRight: "0",
+        };
+
+        let buttonStyles = {
+            borderRadius: "8px"
+        };
+        let headingStyles = {
+            borderRadius: "2px",
+            padding: "0.7em 1em",
+            marginBottom: "1em",
+        };
+        let title = this.props.title;
+
+        let headerNotAccepted =  <CardBody className="blue" style={headingStyles}><CardTitle>{title}<Button onClick={() => this.handleClick()} style={buttonStyles} className="float-right btn-sm">Akceptuj</Button></CardTitle></CardBody>
+        let headerAccepted = <CardBody className="blue" style={headingStyles}><CardTitle>{title}<span style={{fontSize: "0.9rem"}}className="float-right text-muted">Zaakceptowano</span></CardTitle></CardBody>
+        let headerLoading = <CardBody className="blue" style={headingStyles}><CardTitle>{title}<div className="float-right loader"></div></CardTitle></CardBody>
+
+        return (
+              <Card style={cardStyle}>
+                  {this.props.accepting?headerLoading:this.props.accepted? headerAccepted : headerNotAccepted}
+                  <Row style={{height: "100%"}}>
+                      <Col style={iconStyles} sm="4"><img style={imgStyles} src={this.props.icon} alt="Present icon" /></Col>
+                      <Col sm="8">
+                          <CardBody style={{padding: "0px 2em 2em 0px"}}>
+                              <CardText>{this.props.description}</CardText>
+                          </CardBody>
+                      </Col>
+                  </Row>
+                  <div className="text-center">
+                      <a style={{margin: "1em"}} target="_blank" className="btn btn-secondary" href={this.props.shopLink}>Sklep</a>
+                  </div>
+              </Card>
+        );
+    }
+}

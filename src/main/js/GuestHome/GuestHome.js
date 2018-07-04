@@ -3,12 +3,14 @@
 import SearchBar from 'material-ui-search-bar'
 import GridLayout from 'react-grid-layout'
 import Modal from 'react-modal';
-import PresentDialog from './PresentDialog'
+import PresentDialog from '../PresentDialog'
+import Footer from "../Footer";
+import Navbar from "./Navbar"
 
 const React = require('react');
 const ReactDOM = require('react-dom');
-const client = require('./client_react');
-const follow = require('./follow');
+const client = require('../client_react');
+const follow = require('../follow');
 
 import { Scrollbars } from 'react-custom-scrollbars';
 
@@ -320,7 +322,7 @@ export default class GuestHome extends React.Component {
 
 		return (
 		    <div style={sectionStyle}>
-		        <Header/>
+		        <Navbar/>
 		        <Center presents={this.state.presents} loadNewPage={this.loadNewPage}
 		            handleOpenMailModal={this.handleOpenMailModal}
 		            handleOpenPresentDialog={this.handleOpenPresentDialog}
@@ -407,56 +409,6 @@ class Header extends React.Component{
     }
 }
 
-class Footer extends React.Component{
-    render(){
-		var sectionStyle = {
-             width: "1200px",
-             border: ".1px solid #0066cc",
-             height: "200px"
-        }
-        return(
-            <div style={sectionStyle}>
-                <br/>
-                <div style={{marginLeft:"15px", height: "25px", width: "1200px", textAlign:"left", fontWeight: "bold", fontSize:"25px"}}>Prezenty</div>
-                <br/>
-                <div style={{marginLeft:"15px", height: "25px", width: "1200px", textAlign:"left", fontSize:"17px"}}> Aby wygodnie publikować swoje listy prezentów, już nie musisz szukać dalej</div>
-                <br/>
-                <div style={{height: "25px", width: "1200px", textAlign:"center", fontSize:"17px", fontWeight: "bold"}}>Znajdz nas na:</div>
-                <ServicesIcons/>
-            </div>
-        )
-    }
-}
-
-class ServicesIcons extends React.Component{
-
-    fbClicked(){
-        console.log("Fb was clicked")
-    }
-
-    render(){
-        var sectionStyle={
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center"
-        }
-        return (
-            <div style={sectionStyle}>
-
-                <button style={{borderRadius: "12px", display: "flex", flexDirection: "row", alignItems: "center", height: "75px"}} onClick={this.fbClicked}>
-                    <img src="img/fb.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-                 </button>
-
-                <img src="img/service.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-                <img src="img/google.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-                <img src="img/pinterest.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-                <img src="img/twitter.png" style={{marginLeft:"15px", marginRight:"15px"}}/>
-
-            </div>
-        )
-    }
-}
 
 class Center extends React.Component{
 

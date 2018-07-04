@@ -4,7 +4,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('./client_react');
 const follow = require('./follow');
-
+import { Col,Row, Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import ReactPencil from "react-pencil"
 import $ from 'jquery'
 
@@ -12,8 +12,18 @@ export default class PresentDialog extends React.Component{
 
     constructor(props){
 		super(props);
-
-		this.state = {currentImgLink: props.present.imageUrl, showChangeIconBtn: "none", nameErrorMsg: "", canSubmit:true, disabledMode:false}
+		this.state = {
+		    currentImgLink: props.present.imageUrl,
+            showChangeIconBtn: "none",
+            nameErrorMsg: "",
+            canSubmit:true,
+            disabledMode:false,
+            name: props.present.name,
+            description: props.present.description,
+            category:  props.present.category,
+            shopLink:  props.present.shopLink,
+            imageUrl:  props.present.imageUrl,
+		};
 
 		this.handleImgLinkChange = this.handleImgLinkChange.bind(this)
 		this.changeIcon = this.changeIcon.bind(this)
@@ -40,17 +50,21 @@ export default class PresentDialog extends React.Component{
     checkName(){
         this.setState({nameErrorMsg : this.refs.name.value == "" ? "Pole nazwy nie może być puste" : "", canSubmit: this.refs.name.value != ""})
     }
+    handleChange(event) {
+        this.setState({[event.target.id]: event.target.value});
+    }
 
     handleSubmit(){
         const present = {
             presentId: this.props.present.presentId,
-            name: this.refs.name.value,
-            description: this.refs.description.value,
-            category: this.refs.category.value,
-            shopLink: this.refs.shopLink.value,
-            imageUrl: this.refs.imgLink.value,
+            name: this.state.name,
+            description: this.state.description,
+            category: this.state.category,
+            shopLink: this.state.shopLink,
+            imageUrl: this.state.imageUrl,
             wishListKey: this.props.listKey
         }
+        console.log(present)
         this.props.handleSubmitPresentDialog(present)
     }
 
@@ -63,71 +77,62 @@ export default class PresentDialog extends React.Component{
         }
 
         return (
-            <div ref="PresentDialogDiv" style={sectionStyle}>
 
-                <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginBottom: 50}}>
-                    <h1>{this.props.title}</h1>
-                </div>
-                <div style={{display: "flex", flexDirection: "row"}}>
-                    <div style={{width:(width/2)}}>
+        <Form>
+            <h1 style={{padding: "0.4em"}} className="text-center">{this.props.title}</h1>
+            <Row>
+                <Col sm="6">
+                    <FormGroup row>
+                        <Label for="nazwa" sm={3}>Nazwa</Label>
+                        <Col sm={9}>
+                            <Input value={this.state.name} onChange={this.handleChange.bind(this)} type="text" ref="name" id="name" placeholder="Nazwa prezentu" />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Label for="stronaSklepu" sm={3}>Strona sklepu</Label>
+                        <Col sm={9}>
+                            <Input value={this.state.shopLink} onChange={this.handleChange.bind(this)} ref="shopLink" type="url" name="stronaSklepu" id="shopLink" placeholder="Link do produktu w sklepie" />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Label for="kategoria" sm={3}>Kategoria</Label>
+                        <Col sm={9}>
+                            <Input value={this.state.category} onChange={this.handleChange.bind(this)} ref="category" type="select" name="kategoria" id="category">
+                                <option value="Inne">Inne</option>
+                                <option value="Gry">Gry</option>
+                                <option value="Książki">Książki</option>
+                                <option value="Filmy">Filmy</option>
 
-                        <div>
-                            <div style={{height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                                <h3 style={{marginRight: 5}}>Nazwa prezentu</h3>
-                                <input ref="name" id="name" type="text" placeholder="Nazwa prezentu"
-                                    style={{width:"100%", textAlign: "center", border: "none", borderBottom: "1px solid grey", wordBreak: "breakWord"}}
-                                    defaultValue={this.props.present.name} onChange={this.checkName}/>
-                            </div>
-                            <div style={{textAlign: "center", fontSize: 18, color: "red", marginLeft: 75}}>
-                                {this.state.nameErrorMsg}
-                            </div>
-                        </div>
+                            </Input>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Label for="opis" sm={3}>Opis</Label>
+                        <Col sm={9}>
+                            <Input onChange={this.handleChange.bind(this)} ref="description" style={{resize:"none"}} rows="8" type="textarea" name="opis" id="description" />
+                        </Col>
+                    </FormGroup>
 
-                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <h3 style={{marginRight: 5}}>Link do strony sklepu</h3>
-                            <input ref="shopLink" id="shopLink" type="text" placeholder="Link do sklepu" defaultValue={this.props.present.shopLink} style={{width:"100%", textAlign: "center", border: "none", borderBottom: "1px solid grey"}}/>
-                        </div>
-
-                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <h3 style={{marginRight: 5}}>Opis prezentu</h3>
-                            <textArea ref="description" id="description" rows={15} style={{ border: "solid 1px", width:"100%"}} defaultValue={this.props.present.description}/>
-                        </div>
-                        <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <h3 style={{marginRight: 5}}>Kategoria prezentu</h3>
-                            <select ref="category" id="category" style={{width:"100%"}} defaultValue={this.props.present.category}>
-                              <option value="Inne">Inne</option>
-                              <option value="Gry">Gry</option>
-                              <option value="Książki">Książki</option>
-                              <option value="Filmy">Filmy</option>
-                            </select>
-                        </div>
+                </Col>
+                <Col sm="6">
+                    <img style={{ width: "50%", height:"50%"}} src={this.state.currentImgLink} onError={(e)=>{e.target.src="img/default_present_img.png"}}></img>
+                    <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", fontWeight: "bold", fontSize:22}}>
+                        Link ikonki prezentu
                     </div>
-                    <div style={{width:(width/2)}}>
-                        <div style={{ height:30, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", fontWeight: "bold", fontSize:22}}>
-                           Wybierz ikonkę od prezentu
-                        </div>
-
-                        <div style={{ width: (width/2), height:200,  marginLeft: 5, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                            <img style={{ width: "50%", height:"90%"}} src={this.state.currentImgLink} onError={(e)=>{e.target.src="img/default_present_img.png"}}></img>
-                        </div>
-
-                        <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", fontWeight: "bold", fontSize:22}}>
-                            Link ikonki prezentu
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <input ref="imgLink" id="imgLink" type="text" placeholder="Link ikonki" onChange={this.handleImgLinkChange} defaultValue={this.state.currentImgLink}
-                                style={{width:"75%", height:"auto", textAlign: "center", border: "none", resize: "none", borderBottom: "1px solid grey", overflow:"hidden"}}/>
-                        </div>
-                        <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop:10}}>
-                            <button style={{display: this.state.showChangeIconBtn, flexDirection: "row", justifyContent: "center", alignItems: "center", borderRadius: "12px", width:150, height:40, background: "#FF8C2F"}} onClick={this.changeIcon}>Zmień ikonkę</button>
-                        </div>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                        <input onChange={this.handleChange.bind(this)} ref="imageUrl" id="imageUrl" type="text" placeholder="Link ikonki" defaultValue={this.state.currentImgLink}
+                               style={{width:"75%", height:"auto", textAlign: "center", border: "none", resize: "none", borderBottom: "1px solid grey", overflow:"hidden"}}/>
                     </div>
-                </div>
-                <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop:10, marginBottom:20}}>
-                    <button ref="submit" onClick={this.handleSubmit} disabled={!this.state.canSubmit || this.state.disabledMode} style={{borderRadius: "12px", width:150, height: 40, background: "#FF8C2F"}}>Zatwierdź</button>
-                    <button disabled={this.state.disabledMode} ref="cancel" onClick={this.props.handleClosePresentDialog} style={{marginLeft:5, borderRadius: "12px", width:150, height: 40, background: "#FF8C2F"}}>Anuluj</button>
-                </div>
+                    <div style={{  display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop:10}}>
+                        <Button color="secondary" style={{display: this.state.showChangeIconBtn, flexDirection: "row", justifyContent: "center", alignItems: "center"}} onClick={this.changeIcon}>Zmień ikonkę</Button>
+                    </div>
+                </Col>
+            </Row>
+            <div className="text-center" style={{padding: "1em"}}>
+                <Button style={{marginRight:"0.5em"}} color="primary" ref="submit" onClick={this.handleSubmit} disabled={!this.state.canSubmit || this.state.disabledMode}>Zatwierdź</Button>
+                <Button style={{marginLeft:"0.5em"}} color="secondary" disabled={this.state.disabledMode} ref="cancel" onClick={this.props.handleClosePresentDialog}>Anuluj</Button>
             </div>
+        </Form>
         )
     }
 }

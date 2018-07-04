@@ -1,9 +1,13 @@
-'use strict';
+// 'use strict';
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-import BirthdayGuyHome from './BirthdayGuyHome';
-import GuestHome from './GuestHome';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'font-awesome/css/font-awesome.min.css';
+import './main.css'
+import BirthdayGuyHome from './BirthdayGuy/BirthdayGuyHome';
+import GuestHome from './GuestHome/GuestHome';
+
 
 try{
     ReactDOM.render(

@@ -88,7 +88,8 @@ public class PresentController {
     }
 
     @PostMapping("/suggestions")
-    public Suggestion createSuggestion(@RequestBody Suggestion suggestion) {
+    public Suggestion createSuggestion(@RequestBody Suggestion suggestion,@PathVariable("key") String key) {
+        suggestion.setWishListKey(key);
         return presentService.saveSuggestion(suggestion);
     }
 
