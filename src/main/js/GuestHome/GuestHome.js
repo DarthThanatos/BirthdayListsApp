@@ -7,6 +7,7 @@ import PresentDialog from '../PresentDialog'
 import Footer from "../Footer";
 import Navbar from "./Navbar"
 import '../loader.css'
+import '../main.css'
 
 import { Row, Col, Button, Modal as ModalB, ModalBody, ModalFooter,
     TabContent, TabPane, CardBody,Nav, NavItem, NavLink, Card, CardTitle, CardText,Form, FormGroup, Label,Input
@@ -185,6 +186,13 @@ export default class GuestHome extends React.Component {
         return res
     }
 
+
+    showConfirmReservation() {
+	    this.setState({showConfirmReservationModal: true})
+    }
+    confirmReservation() {
+        this.setState({showConfirmReservationModal: true})
+    }
 
      handleOpenMailModal (present) {
         this.setState({presentToReserve: present})
@@ -395,6 +403,21 @@ export default class GuestHome extends React.Component {
 
 class MailModal extends React.Component{
 
+    constructor(props) {
+        super(props)
+        this.showConfirmDialog = this.showConfirmDialog.bind(this)
+        this.handleCloseConfirmDialog = this.handleCloseConfirmDialog.bind(this)
+        this.state = {};
+    }
+
+    showConfirmDialog() {
+        this.setState({showConfirmDialog: true});
+    }
+
+    handleCloseConfirmDialog() {
+        this.setState({showConfirmDialog: false});
+    }
+
     render(){
         var sectionStyle = {
             width: 300,
@@ -435,10 +458,19 @@ class MailModal extends React.Component{
                     <Row id="emailWaitInfo" hidden><Col sm="1"><div style={{position: "relative", top: "5px", left: "10px", borderTop: "0.5em solid rgba(255, 140, 47, 0.2)",borderRight: "0.5em solid rgba(255, 140, 47, 0.2)",
                         borderBottom: "0.5em solid rgba(255, 140, 47, 0.2)", borderLeft: "0.5em solid rgba(255, 140, 47, 1)"}} className="loader" /></Col><Col><div style={{padding: "1em"}}>Rezerwacja w trakcie...</div></Col></Row>
                     <div className="text-center" style={{padding: "1em"}}>
-                        <Button id="emailSubmit" style={{marginRight:"0.5em"}} color="primary" ref="submit" onClick={() => this.props.handleReservation(this.props.presentToReserve, document.getElementById("emailInput").value)}>Zatwierdź</Button>
+                        <Button id="emailSubmit" style={{marginRight:"0.5em"}} color="primary" ref="submit" onClick={this.showConfirmDialog}>Zatwierdź</Button>
                         <Button id="emailCancel" style={{marginLeft:"0.5em"}} color="secondary"ref="cancel" onClick={this.props.handleCloseMailModal}>Anuluj</Button>
                     </div>
                 </Form>
+                <ModalB style={{position: "relative", top: "20vh"}}  isOpen={this.state.showConfirmDialog}>
+                    <ModalBody className="text-center">
+                        <h4 >Jesteś pewien ?</h4>
+                    </ModalBody>
+                    <ModalFooter style={{justifyContent: "center"}}>
+                        <Button className="text-center" color="primary" onClick={() => {this.handleCloseConfirmDialog(); this.props.handleReservation(this.props.presentToReserve, document.getElementById("emailInput").value)}}>Tak</Button>{' '}
+                        <Button className="text-center" color="secondary" onClick={() => {this.handleCloseConfirmDialog()}}>Nie</Button>{' '}
+                    </ModalFooter>
+                </ModalB>
             </div>
 
         )
@@ -531,10 +563,11 @@ class SearchBarComponent extends React.Component{
             <div style={{paddingBottom: "1em", width: "100%",  display: "flex", justifyContent:"center"}}>
                 <div style={{height:"60px", width: "80%", display: "flex", flexDirection: "row", alignItems: "center",}}>
                     <SearchBar
+                      hintText="Znajdź Prezent"
                       ref="searchbar"
                       onChange={this.onChange}
                       onRequestSearch={this.search}
-                      style={{ margin: '0 auto', backgroundColor: 'rgb(255,240,240)', width: "98%" }} />
+                      style={{ margin: '0 auto', backgroundColor: 'rgb(247, 247, 247)', width: "98%" }} />
                 </div>
             </div>
         )
@@ -576,6 +609,10 @@ class ListSquareNavigationButtons extends React.Component{
             alignItems: 'flex-start',
             marginLeft:"10%"
         }
+        var tabStyles = {
+            cursor: "pointer",
+            borderBottomColor: "rgba(255, 140, 47, 1)",
+        }
 
         var reserved_color = this.props.mode == RESERVED ? "#FF8C2F" : "#666666"
         var not_reserved_color = this.props.mode == NOT_RESERVED ? "#FF8C2F" : "#666666"
@@ -584,28 +621,43 @@ class ListSquareNavigationButtons extends React.Component{
         return (
             <div>
             <Nav tabs>
-                <NavItem>
+                <NavItem style={tabStyles}>
                     <NavLink
-                        className={classnames({ active: this.props.mode === ALL }, "tab")}
+                        className={classnames(
+                            { active: this.props.mode === ALL },
+                            { activeTabBorder: this.props.mode === ALL},
+                            { tabBorder: this.props.mode !== ALL},
+                        )
+                        }
                         onClick={this.all}
                     >
                         Wszystkie(15)
                     </NavLink>
                 </NavItem>
-                <NavItem>
+                <NavItem style={{pointerEvents: "none",cursor: "not-allowed",}} className="disabled">
                     <NavLink
-                        className={classnames({ active: this.props.mode === RESERVED })}
+                        className={classnames(
+                            { active: this.props.mode === RESERVED },
+                            { activeTabBorder: this.props.mode === RESERVED},
+                            { tabBorder: this.props.mode !== RESERVED},
+                            "disabled")
+                        }
                         onClick={this.reserved}
                     >
-                        Zarezerwowane(10)
+                        Zarezerwowane(0)
                     </NavLink>
                 </NavItem>
-                <NavItem>
+                <NavItem style={tabStyles}>
                     <NavLink
-                        className={classnames({ active: this.props.mode === NOT_RESERVED })}
+                        className={classnames(
+                            {active: this.props.mode === NOT_RESERVED },
+                            {activeTabBorder: this.props.mode === NOT_RESERVED},
+                            {tabBorder: this.props.mode !== NOT_RESERVED},
+                            )
+                        }
                         onClick={this.notReserved}
                     >
-                        Niezarezerwowane(5)
+                        Niezarezerwowane(15)
                     </NavLink>
                 </NavItem>
             </Nav>
@@ -680,6 +732,7 @@ class ShowMorePagesButton extends React.Component{
     constructor(props){
         super(props)
         this.moreItems = this.moreItems.bind(this)
+
     }
 
     moreItems(){
@@ -766,6 +819,7 @@ class PresentComponent extends React.Component{
                         {presentName}<Button onClick={() => this.props.handleOpenMailModal(this.props.present)} hidden={reserveButtonHidden} style={buttonStyles} className="float-right btn-sm">Rezerwuj</Button>
                     </CardTitle>
                 </CardBody>
+                <h6 className="text-center">Kategoria: {this.props.present.category}</h6>
                 <Row style={{height: "100%"}}>
                     <Col style={iconStyles} sm="4"><img style={imgStyles} src={this.props.present.imageUrl} alt="Present icon" /></Col>
                     <Col sm="8">
@@ -776,7 +830,7 @@ class PresentComponent extends React.Component{
                     </Col>
                 </Row>
                 <div className="text-center">
-                    <a className="btn btn-secondary" style={{margin: "1em"}} target="_blank"   onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}>Edytuj</a>
+                    <Button className="btn btn-secondary" style={{margin: "1em"}} target="_blank"   onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}>Edytuj</Button>
                 </div>
             </Card>
         )

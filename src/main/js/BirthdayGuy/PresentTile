@@ -50,6 +50,7 @@ export default class PresentTile extends React.Component {
         return (
               <Card style={cardStyle}>
                   {this.props.accepting?headerLoading:this.props.accepted? headerAccepted : headerNotAccepted}
+                  <h6 className="text-center">Kategoria: {this.props.category}</h6>
                   <Row style={{height: "100%"}}>
                       <Col style={iconStyles} sm="4"><img style={imgStyles} src={this.props.icon} alt="Present icon" /></Col>
                       <Col sm="8">

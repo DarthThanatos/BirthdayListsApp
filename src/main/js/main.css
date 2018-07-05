@@ -58,20 +58,20 @@ body {
 }
 
 .btn-secondary:focus, .btn-secondary.focus {
-    box-shadow: 0 0 0 0.2rem white;
+    box-shadow: 0 0 0 0.2rem rgba(247, 247, 247, 1);
 }
 
 .btn-secondary.disabled, .btn-secondary:disabled {
     color: #1E1E1E;
     border-color: #1E1E1E;
-    background: white;
+    background: rgba(247, 247, 247, 1);
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,
 .show > .btn-secondary.dropdown-toggle {
     color: #1E1E1E;
     border-color: #1E1E1E;
-    background: white;
+    background: rgba(247, 247, 247, 1);
 }
 
 h1, .h1 {
@@ -97,4 +97,16 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 a.tab.active {
     background-color:rgba(255, 140, 47, 1);
+}
+
+.disabled:hover {
+
+}
+
+.activeTabBorder {
+    border-color: rgba(255, 140, 47, 1) rgba(255, 140, 47, 1)#fff
+}
+
+.tabBorder {
+    border-bottom-color: rgba(255, 140, 47, 1)
 }

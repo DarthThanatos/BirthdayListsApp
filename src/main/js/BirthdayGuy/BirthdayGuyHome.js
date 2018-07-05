@@ -248,7 +248,7 @@ export default class BirthdayGuyHome extends React.Component{
                                     listKey = {this.state.listKey} />
                      </ModalBody>
                  </ModalB>
-                 <ModalB isOpen={this.state.showConfirmDialog}>
+                 <ModalB style={{position: "relative", top: "20vh"}} isOpen={this.state.showConfirmDialog}>
                      <ModalBody className="text-center">
                          <h4 >Dobra robota!</h4>
                          <p>

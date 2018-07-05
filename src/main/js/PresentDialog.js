@@ -4,7 +4,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('./client_react');
 const follow = require('./follow');
-import { Col,Row, Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Col,Row, Button, Form, FormGroup, Label, Input, FormText,Modal as ModalB, ModalBody, ModalFooter }  from 'reactstrap';
 import ReactPencil from "react-pencil"
 import $ from 'jquery'
 
@@ -24,12 +24,13 @@ export default class PresentDialog extends React.Component{
             shopLink:  props.present.shopLink,
             imageUrl:  props.present.imageUrl,
 		};
-
 		this.handleImgLinkChange = this.handleImgLinkChange.bind(this)
 		this.changeIcon = this.changeIcon.bind(this)
 
 		this.checkName = this.checkName.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
+        this.showConfirmDialog = this.showConfirmDialog.bind(this)
+        this.handleCloseConfirmDialog = this.handleCloseConfirmDialog.bind(this)
     }
 
 
@@ -41,6 +42,9 @@ export default class PresentDialog extends React.Component{
                 tmpImgLink : event.target.value
             }
         )
+    }
+    handleCloseConfirmDialog() {
+        this.setState({showConfirmDialog: false});
     }
 
     changeIcon(){
@@ -54,7 +58,12 @@ export default class PresentDialog extends React.Component{
         this.setState({[event.target.id]: event.target.value});
     }
 
+    showConfirmDialog() {
+        this.setState({showConfirmDialog: true});
+    }
+
     handleSubmit(){
+        this.setState({showConfirmDialog: false})
         const present = {
             presentId: this.props.present.presentId,
             name: this.state.name,
@@ -129,9 +138,18 @@ export default class PresentDialog extends React.Component{
                 </Col>
             </Row>
             <div className="text-center" style={{padding: "1em"}}>
-                <Button style={{marginRight:"0.5em"}} color="primary" ref="submit" onClick={this.handleSubmit} disabled={!this.state.canSubmit || this.state.disabledMode}>Zatwierdź</Button>
+                <Button style={{marginRight:"0.5em"}} color="primary" ref="submit" onClick={this.showConfirmDialog} disabled={!this.state.canSubmit || this.state.disabledMode}>Zatwierdź</Button>
                 <Button style={{marginLeft:"0.5em"}} color="secondary" disabled={this.state.disabledMode} ref="cancel" onClick={this.props.handleClosePresentDialog}>Anuluj</Button>
             </div>
+            <ModalB style={{position: "relative", top: "20vh"}}  isOpen={this.state.showConfirmDialog}>
+                <ModalBody className="text-center">
+                    <h4 >Jesteś pewien ?</h4>
+                </ModalBody>
+                <ModalFooter style={{justifyContent: "center"}}>
+                    <Button className="text-center" color="primary" onClick={() => {this.handleSubmit()}}>Tak</Button>{' '}
+                    <Button className="text-center" color="secondary" onClick={() => {this.handleCloseConfirmDialog()}}>Nie</Button>{' '}
+                </ModalFooter>
+            </ModalB>
         </Form>
         )
     }
