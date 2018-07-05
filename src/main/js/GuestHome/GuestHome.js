@@ -373,7 +373,7 @@ export default class GuestHome extends React.Component {
                         listKey = {this.state.listKey} />
                     </ModalBody>
                 </ModalB>
-                <ModalB isOpen={this.state.showReservationConfirmedDialog}>
+                <ModalB style={{position: "relative", top: "20vh"}} isOpen={this.state.showReservationConfirmedDialog}>
                     <ModalBody className="text-center">
                         <h4 >Wspaniale !</h4>
                         <p>
