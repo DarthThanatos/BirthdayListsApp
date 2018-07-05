@@ -1,7 +1,7 @@
 'use strict';
 const React = require('react');
 import { Card, CardText, CardBody,
-    CardTitle, Row, Col, Button } from 'reactstrap';
+    CardTitle, Row, Col, UncontrolledTooltip, Button} from 'reactstrap';
 import '../loader.css'
 export default class PresentTile extends React.Component {
 
@@ -11,7 +11,7 @@ export default class PresentTile extends React.Component {
 
 
     handleClick() {
-        this.props.onClick(this.props.sId)
+        this.props.onClick(this.props.present.id)
     }
 
     render() {
@@ -41,25 +41,39 @@ export default class PresentTile extends React.Component {
             padding: "0.7em 1em",
             marginBottom: "1em",
         };
-        let title = this.props.title;
+        let title = this.props.present.name;
 
-        let headerNotAccepted =  <CardBody className="blue" style={headingStyles}><CardTitle>{title}<Button onClick={() => this.handleClick()} style={buttonStyles} className="float-right btn-sm">Akceptuj</Button></CardTitle></CardBody>
+        let headerNotAccepted =  <CardBody className="blue" style={headingStyles}><CardTitle>{title}<Button id={"accept-button-" + this.props.present.name} onClick={() => this.handleClick()} style={buttonStyles} className="float-right btn-sm">Akceptuj</Button><UncontrolledTooltip style={{border: "1px solid black", backgroundColor: "white", color:"black"}} placement="top"  target={"accept-button-" + this.props.present.name}>Kliknij aby zaakceptować propozycję</UncontrolledTooltip></CardTitle></CardBody>
         let headerAccepted = <CardBody className="blue" style={headingStyles}><CardTitle>{title}<span style={{fontSize: "0.9rem"}}className="float-right text-muted">Zaakceptowano</span></CardTitle></CardBody>
         let headerLoading = <CardBody className="blue" style={headingStyles}><CardTitle>{title}<div className="float-right loader"></div></CardTitle></CardBody>
-
+        let editButtonDisabled =    (
+            <div className="text-center">
+                <Button id={this.props.present.name} className="btn btn-secondary disabled" style={{margin: "1em"}} target="_blank">Edytuj</Button>
+                <UncontrolledTooltip style={{border: "1px solid black", backgroundColor: "white", color:"black"}} placement="top"  target={this.props.present.name}>
+                    Zaakceptuj propozycję zanim przejdziesz do jej edycji.
+                </UncontrolledTooltip>
+            </div>);
+        let editButtonEnabled =(
+                <div className="text-center">
+                <Button id={this.props.present.name} className="btn btn-secondary" style={{margin: "1em"}} target="_blank"   onClick={() => this.props.onEditClick(this.props.present)}>Edytuj</Button>
+                </div>);
+        console.log("IN PRESENT TILE")
+        console.log(this.props.present)
         return (
+
               <Card style={cardStyle}>
                   {this.props.accepting?headerLoading:this.props.accepted? headerAccepted : headerNotAccepted}
-                  <h6 className="text-center">Kategoria: {this.props.category}</h6>
+                  <h6 className="text-center">Kategoria: {this.props.present.category}</h6>
                   <Row style={{height: "100%"}}>
-                      <Col style={iconStyles} sm="4"><img style={imgStyles} src={this.props.icon} alt="Present icon" /></Col>
+                      <Col style={iconStyles} sm="4"><img style={imgStyles} src={this.props.present.imageUrl} alt="Present icon" /></Col>
                       <Col sm="8">
                           <CardBody style={{padding: "0px 2em 2em 0px"}}>
-                              <CardText>{this.props.description}</CardText>
-                              <CardText><a style={{margin: "1em"}} target="_blank"  href={this.props.shopLink}>Link do Sklepu</a></CardText>
+                              <CardText>{this.props.present.description}</CardText>
+                              <CardText><a style={{margin: "1em"}} target="_blank"  href={this.props.present.shopLink}>Link do Sklepu</a></CardText>
                           </CardBody>
                       </Col>
                   </Row>
+                  {this.props.accepted?editButtonEnabled:editButtonDisabled}
               </Card>
         );
     }

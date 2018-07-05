@@ -14,6 +14,7 @@ export default class BirthdayGuyHome extends React.Component{
     constructor(props) {
         super(props);
         this.handleClosePresentDialog = this.handleClosePresentDialog.bind(this);
+        this.handleSubmitAddPresentDialog = this.handleSubmitAddPresentDialog.bind(this);
         this.handleSubmitEditPresentDialog = this.handleSubmitEditPresentDialog.bind(this);
         this.state =
             {
@@ -160,22 +161,42 @@ export default class BirthdayGuyHome extends React.Component{
                 "shopLink": "https://www.decathlon.pl/kask-miejski-na-rower-300-dla-dzieci-zielony-id_8173787.html",
                 "imageUrl": "https://www.decathlon.pl/media/835/8355467/big_b9e6541f9b2e4e3b927d19916ff1a2f3.jpg"
             }
+        this.setState({submitFunction:this.handleSubmitAddPresentDialog})
         this.setState( {presentToDisplay: present, presentDialogTitle: "Dodaj nowy prezent",showPresentDialog: true});
         }
+    handleOpenEditPresentDialog (present) {
+        this.setState({submitFunction:this.handleSubmitEditPresentDialog})
+        this.setState( {presentToDisplay: present, presentDialogTitle: "Edytuj prezent",showPresentDialog: true});
+    }
     handleClosePresentDialog () {
         this.setState({ showPresentDialog: false });
     }
     handleCloseConfirmDialog() {
         this.setState({showConfirmDialog: false});
     }
-    handleSubmitEditPresentDialog(present){
+    handleSubmitAddPresentDialog(present){
         client({method: 'POST', path: 'api/list/key/' + this.state.listKey + '/present',
             entity: present,
             headers: {'Content-Type': 'application/json'}})
             .done( response => {
                 var presents = this.state.presents.slice();
                 presents.unshift(present);
+                this.setState({modalMessage: "Prezent został dodany."})
                 this.setState({ showConfirmDialog: true, showPresentDialog: false, presents: presents })
+            });
+    }
+    handleSubmitEditPresentDialog(present){
+        client({method: 'POST', path: 'api/list/key/' + this.state.listKey + '/present',
+            entity: present,
+            headers: {'Content-Type': 'application/json'}})
+            .done( response => {
+                this.state.presents.find((s) => s.id === present.id).name = present.name;
+                this.state.presents.find((s) => s.id === present.id).imageUrl = present.imageUrl;
+                this.state.presents.find((s) => s.id === present.id).category = present.category;
+                this.state.presents.find((s) => s.id === present.id).description = present.description;
+                this.state.presents.find((s) => s.id === present.id).shopLink = present.shopLink;
+                this.setState({modalMessage: "Prezent został edytowany."})
+                this.setState({ showConfirmDialog: true, showPresentDialog: false })
             });
     }
     handleAcceptClick(sId) {
@@ -232,7 +253,7 @@ export default class BirthdayGuyHome extends React.Component{
 							 </div>
 						 </div>
 						 <div className="col-10" style={col10}>
-							 <MainPanel onAddPresentClick={()=> {this.handleOpenPresentDialog()}} onClick={(sId) => this.handleAcceptClick(sId)} suggestions={this.state.suggestions} presents={this.state.presents}/>
+							 <MainPanel onEditClick={(present) => this.handleOpenEditPresentDialog(present)} onAddPresentClick={()=> {this.handleOpenPresentDialog()}} onClick={(sId) => this.handleAcceptClick(sId)} suggestions={this.state.suggestions} presents={this.state.presents}/>
 
 						 </div>
 					 </div>
@@ -242,9 +263,9 @@ export default class BirthdayGuyHome extends React.Component{
                      <ModalBody className="text-center">
                      <PresentDialog ref="PresentDialogContent"
                                     handleClosePresentDialog={this.handleClosePresentDialog}
-                                    handleSubmitPresentDialog={this.handleSubmitEditPresentDialog}
+                                    handleSubmitPresentDialog={this.state.submitFunction}
                                     present={this.state.presentToDisplay}
-                                    title={"Dodaj nowy prezent"}
+                                    title={this.state.presentDialogTitle}
                                     listKey = {this.state.listKey} />
                      </ModalBody>
                  </ModalB>
@@ -252,7 +273,7 @@ export default class BirthdayGuyHome extends React.Component{
                      <ModalBody className="text-center">
                          <h4 >Dobra robota!</h4>
                          <p>
-                             Prezent został dodany.
+                             {this.state.modalMessage}
                          </p>
                      </ModalBody>
                      <ModalFooter style={{justifyContent: "center"}}>

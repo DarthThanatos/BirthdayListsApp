@@ -10,7 +10,7 @@ import '../loader.css'
 import '../main.css'
 
 import { Row, Col, Button, Modal as ModalB, ModalBody, ModalFooter,
-    TabContent, TabPane, CardBody,Nav, NavItem, NavLink, Card, CardTitle, CardText,Form, FormGroup, Label,Input
+    TabContent, TabPane, CardBody,Nav, NavItem, NavLink, Card, CardTitle, CardText,Form, FormGroup, Label,Input,UncontrolledTooltip
 } from 'reactstrap';
 import classnames from 'classnames';
 const React = require('react');
@@ -787,6 +787,7 @@ class PresentComponent extends React.Component{
         var presentDescription = presentDescription.length > 135 ? presentDescription.substring(0, 135) + ("\n(...)") : presentDescription
         presentName = presentName.length > 10 ? presentName.substring(0,10).replace(/\s/g, '_') + "(...)" : presentName
         shopLink = shopLink.length > 35 ? "" : shopLink
+        let id = this.props.present.presentId;
         let cardStyle = {
             height: "100%",
             backgroundColor: "rgba(247, 247, 247, 1)"
@@ -816,7 +817,10 @@ class PresentComponent extends React.Component{
             <Card style={cardStyle}>
                 <CardBody style={headingStyles} className="blue">
                     <CardTitle>
-                        {presentName}<Button onClick={() => this.props.handleOpenMailModal(this.props.present)} hidden={reserveButtonHidden} style={buttonStyles} className="float-right btn-sm">Rezerwuj</Button>
+                        {presentName}<Button id = {"reserve-" + id} onClick={() => this.props.handleOpenMailModal(this.props.present)} hidden={reserveButtonHidden} style={buttonStyles} className="float-right btn-sm">Zarezerwuj</Button>
+                        <UncontrolledTooltip style={{border: "1px solid black", backgroundColor: "white", color:"black"}} placement="top"  target={"reserve-" + id}>
+                            Naciśnij, aby zarezerwować prezent.
+                        </UncontrolledTooltip>
                     </CardTitle>
                 </CardBody>
                 <h6 className="text-center">Kategoria: {this.props.present.category}</h6>
@@ -829,9 +833,9 @@ class PresentComponent extends React.Component{
                         </CardBody>
                     </Col>
                 </Row>
-                <div className="text-center">
-                    <Button className="btn btn-secondary" style={{margin: "1em"}} target="_blank"   onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}>Edytuj</Button>
-                </div>
+                {/*<div className="text-center">*/}
+                    {/*<Button className="btn btn-secondary" style={{margin: "1em"}} target="_blank"   onClick={() => this.props.handleOpenPresentDialog(this.props.present, "Szczegóły prezentu", this.props.handleSubmitEditPresentDialog)}>Edytuj</Button>*/}
+                {/*</div>*/}
             </Card>
         )
     }

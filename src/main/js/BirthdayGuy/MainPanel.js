@@ -16,9 +16,9 @@ export default class MainPanel extends React.Component{
     }
     renderTiles(){
         var suggestions = this.props.suggestions.map(
-            (s) => <Col sm="4" style={{marginBottom: "2em"}}><PresentTile onClick={(sId) => this.props.onClick(sId)} category={s.category} shopLink={s.shopLink} accepted={s.accepted} accepting={s.accepting} title={s.name} description={s.description} icon={s.imageUrl} sId={s.id}/></Col>);
+            (s) => <Col sm="4" style={{marginBottom: "2em"}}><PresentTile onEditClick={this.props.onEditClick} onClick={(sId) => this.props.onClick(sId)} present={s} accepted={s.accepted} accepting={s.accepting}/></Col>);
         var presents = this.props.presents.map(
-            (s) => <Col sm="4" style={{marginBottom: "2em"}}><PresentTile onClick={(sId) => this.props.onClick(sId)} category={s.category} shopLink={s.shopLink} accepted={true} title={s.name} description={s.description} icon={s.imageUrl} sId={s.id}/></Col>);
+            (s) => <Col sm="4" style={{marginBottom: "2em"}}><PresentTile onEditClick={this.props.onEditClick} onClick={(sId) => this.props.onClick(sId)} present={s} accepted={true}/></Col>);
 
         var all = suggestions.concat(presents)
         return all;
@@ -32,7 +32,7 @@ export default class MainPanel extends React.Component{
             height: "100%",
         };
         var tiles = this.renderTiles();
-        var showMoreButton = <div className="text-center" style={{margin: "2em"}}><Button color="secondary" onClick={() =>  {let toShow = this.state.toShow + 6;this.setState({toShow: toShow})}}>Pokaż więcej prezentów</Button></div>
+        var showMoreButton = <div className="text-center" style={{padding: "2em"}}><Button color="secondary" onClick={() =>  {let toShow = this.state.toShow + 6;this.setState({toShow: toShow})}}>Pokaż więcej prezentów</Button></div>
         return (
           <div style={styles}>
                   <Row>
@@ -43,9 +43,9 @@ export default class MainPanel extends React.Component{
                           </div>
                       </Col>
                   </Row>
-                  <Row>
+              <Row>
                       <Col sm="4" style={{marginBottom: "2em"}}>
-                          <Button color="primary"   onClick={()=>{this.props.onAddPresentClick()}}style={addPresentButtonStyles} className="orange fontColor btn-block"><h1>Dodaj</h1><h1>Prezent</h1></Button>
+                          <Button color="primary"   onClick={()=>{this.props.onAddPresentClick()}} style={addPresentButtonStyles} className="orange fontColor btn-block"><h1>Dodaj</h1><h1>Prezent</h1></Button>
                       </Col>
                       {tiles.slice(0,this.state.toShow)}
                   </Row>
