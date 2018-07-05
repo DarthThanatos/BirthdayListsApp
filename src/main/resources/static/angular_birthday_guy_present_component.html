@@ -1,0 +1,22 @@
+<div style="border: .1px solid #0066cc;">
+    <div style="background: #FF8C2F;  width:100%; height:30px; display: flex; flex-direction:row; align-items:center;">
+        <div style="width:50px; margin-left:10px; font-size:20px;">{{present.name | trimPresentName}}</div>
+        <div id="{{present.name}}-accept-text" hidden style="margin-left:90px">Zaakceptowano</div>
+        <button id="{{present.name}}-accept-button" ng-show="!present.boughtOrReserved" style="width:100px; margin-left:80px;" ng-click="accept(present)">Akceptuj</button>
+    </div>
+
+    <div style="font-size:20px; width:100%; height:30px; display: flex;  flex-direction:row; align-items:center; justify-content: center;">
+        Kategoria: {{present.category}}
+    </div>
+
+    <div style="width:100%; height:130px; display: flex; flex-direction:row; align-items: center;">
+        <img src="{{present.imageUrl}}" alt="present img" style="width: 100px; margin-left:5px;"  onError="this.src = 'img/default_present_img.png'"/>
+        <div style="width: 120px; text-align:center; font-size:13px; margin-right:5px;"> {{present.description | trimPresentDescription}}</div>
+    </div>
+    <div style="width:100%; height:30px; display: flex;  flex-direction:row; justify-content: center;">
+        <a href="{{present.shopLink}}">{{present.shopLink | trimShopLink}}</a>
+    </div>
+    <div style="width:100%; height:30px; display: flex; justify-content:center;">
+        <button style="height:20px; display: flex;  flex-direction:row; align-items: center;" ng-click="editPresent(present)"> Pokaż więcej </button>
+    </div>
+</div>
